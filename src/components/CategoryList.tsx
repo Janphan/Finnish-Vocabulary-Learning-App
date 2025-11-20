@@ -13,12 +13,50 @@ const categoryImages: Record<string, string> = {
   food: 'https://images.unsplash.com/photo-1547825407-6d03f5aa43dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb29kJTIwTm9yZGljJTIwYnJlYWtmYXN0fGVufDF8fHx8MTc2MzY2NjIyMnww&ixlib=rb-4.1.0&q=80&w=1080',
   colors: 'https://images.unsplash.com/photo-1645738384923-2a57d86aa26e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2xvciUyMHBhbGV0dGUlMjBwYWludHxlbnwxfHx8fDE3NjM2NjYyMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080',
   family: 'https://images.unsplash.com/photo-1628270251031-9262ac25387b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW1pbHklMjB0b2dldGhlciUyMG1pbmltYWx8ZW58MXx8fHwxNzYzNjY2MjIyfDA&ixlib=rb-4.1.0&q=80&w=1080',
-  weather: 'https://images.unsplash.com/photo-1631728815316-323e4340748d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWF0aGVyJTIwY2xvdWRzJTIwc2t5fGVufDF8fHx8MTc2MzY1MzcxNHww&ixlib=rb-4.1.0&q=80&w=1080',
+  weather: 'https://images.unsplash.com/photo-1631728815316-323e4340748d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHN3ZWF0aGVyJTIwY2xvdWRzJTIwc2t5fGVufDF8fHx8MTc2MzY1MzcxNHww&ixlib=rb-4.1.0&q=80&w=1080',
+  // Dynamic categories from Wiktextract
+  body: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  animals: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  clothing: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  transportation: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  time: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  home: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  work: 'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  emotions: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  actions: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  adjectives: 'https://images.unsplash.com/photo-1502691876148-a84978e59af8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+  general: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+};
+
+const categoryEmojis: Record<string, string> = {
+  greetings: '👋',
+  numbers: '🔢',
+  food: '🍽️',
+  colors: '🎨',
+  family: '👨‍👩‍👧‍👦',
+  weather: '⛅',
+  body: '👤',
+  animals: '🐕',
+  clothing: '👕',
+  transportation: '🚗',
+  time: '⏰',
+  home: '🏠',
+  work: '💼',
+  emotions: '😊',
+  actions: '🏃',
+  adjectives: '📝',
+  general: '📚',
 };
 
 export function CategoryList({ categories, vocabularyWords, onSelectCategory }: CategoryListProps) {
   const getWordCount = (categoryId: string) => {
-    return vocabularyWords.filter((word) => word.categoryId === categoryId).length;
+    // Use the count from Wiktextract data if available, otherwise calculate
+    const category = categories.find(cat => cat.id === categoryId);
+    return category?.count || vocabularyWords.filter((word) => word.categoryId === categoryId).length;
+  };
+
+  const getCategoryEmoji = (categoryId: string) => {
+    return categoryEmojis[categoryId] || '📚';
   };
 
   return (
@@ -33,11 +71,15 @@ export function CategoryList({ categories, vocabularyWords, onSelectCategory }: 
             {/* Image */}
             <div className="relative h-2/3 overflow-hidden bg-gray-100">
               <ImageWithFallback
-                src={categoryImages[category.id]}
+                src={categoryImages[category.id] || categoryImages.general}
                 alt={category.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              {/* Emoji overlay */}
+              <div className="absolute top-2 right-2 bg-white/90 backdrop-blur rounded-full p-1">
+                <span className="text-lg">{getCategoryEmoji(category.id)}</span>
+              </div>
             </div>
 
             {/* Content */}

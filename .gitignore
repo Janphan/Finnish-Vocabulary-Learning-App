@@ -13,6 +13,11 @@ dist/
 .vite/
 build/
 
+# Wiktextract data files (large JSON files)
+public/data/*.json
+public/data/*filtered*
+*.ndjson
+
 # Environment
 .env
 .env.*.local
