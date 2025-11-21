@@ -69,35 +69,64 @@ A modern, interactive web application for learning Finnish vocabulary with Fireb
 
 ```
 src/
-├── App.tsx                          # Main application component
-├── main.tsx                        # Application entry point
-├── index.css                       # Global styles
-├── components/                     # React components
-│   ├── CategoryList.tsx           # Category selection with 11 categories
-│   ├── VocabularySwiper.tsx       # Interactive word learning interface
-│   ├── FolderManager.tsx          # Custom vocabulary collections
-│   ├── AddToFolderModal.tsx       # Add words to personal folders
-│   └── ui/                        # Reusable UI components (shadcn/ui)
-├── database/                      # 🔥 Firebase integration layer
-│   ├── index.ts                   # Clean database exports
+├── App.tsx                          # Main application component & data flow controller
+├── main.tsx                        # React application entry point
+├── index.css                       # Global styles & CSS imports
+├── components/                     # React UI components
+│   ├── CategoryList.tsx           # Category grid with dynamic word counts
+│   ├── VocabularySwiper.tsx       # Interactive word learning cards
+│   ├── FolderManager.tsx          # User vocabulary collections
+│   ├── AddToFolderModal.tsx       # Modal for organizing words
+│   ├── figma/                     # Image components
+│   │   └── ImageWithFallback.tsx  # Fallback image handler
+│   └── ui/                        # Reusable shadcn/ui components
+│       ├── button.tsx, card.tsx   # Core UI primitives
+│       ├── dialog.tsx, input.tsx  # Form & modal components
+│       ├── tabs.tsx, tooltip.tsx  # Navigation & info components
+│       └── [20+ more components]  # Complete UI component library
+├── database/                      # 🔥 Firebase integration & data layer
+│   ├── index.ts                   # Centralized database exports
 │   ├── firebase.ts                # Firebase config & initialization
-│   ├── firebaseVocabularyService.ts  # CRUD operations & data management
-│   ├── useFirebaseVocabulary.ts   # React hooks for data fetching
-│   └── seed-firebase.js           # 📊 Seeds 253 words + 11 categories
+│   ├── firebaseVocabularyService.ts  # Complete CRUD operations & queries
+│   ├── useFirebaseVocabulary.ts   # React hooks for data management
+│   └── seed-firebase.js           # 📊 Database seeding (133 words + 11 categories)
+├── guidelines/                    # Development documentation
+│   └── Guidelines.md              # Project development guidelines
 └── styles/
-    └── globals.css                # Tailwind CSS configuration
+    └── globals.css                # Tailwind CSS configuration & custom styles
 ```
 
 ## 🛠️ Tech Stack
 
 - **⚛️ Frontend**: React 18.3.1 + TypeScript + Vite 6.3.5
-- **🔥 Backend**: Firebase Firestore (NoSQL database)
-- **🎨 UI Framework**: Tailwind CSS + shadcn/ui components
-- **📱 Icons**: Lucide React
-- **🔄 State Management**: React Hooks + Firebase real-time sync
-- **📦 Build Tool**: Vite (fast development & optimized builds)
+- **🔥 Backend**: Firebase Firestore (NoSQL cloud database)
+- **🎨 UI Framework**: Tailwind CSS + shadcn/ui component library
+- **📱 Icons**: Lucide React (beautiful icon system)
+- **🔄 State Management**: React Hooks + Firebase real-time synchronization
+- **📦 Build Tool**: Vite (lightning-fast development & optimized production builds)
+- **🔧 Development**: TypeScript for type safety, ESLint for code quality
 
-## 📚 Vocabulary Categories
+## 📊 Architecture Overview
+
+### **Data Flow**
+
+```
+🔥 Firebase Firestore ← 🔄 Service Layer ← 🎣 React Hooks ← 📱 Components
+```
+
+### **Key Components**
+
+- **`firebaseVocabularyService.ts`**: Core data operations (CRUD, search, pagination)
+- **`useFirebaseVocabulary.ts`**: React hooks for state management & data fetching
+- **`App.tsx`**: Main controller managing data flow & view switching
+- **`CategoryList.tsx`**: Dynamic category grid with real word counts
+- **`VocabularySwiper.tsx`**: Interactive learning cards with pronunciation guides
+
+### **Database Schema**
+
+- **`vocabulary` collection**: 133 Finnish words with translations, pronunciation, examples
+- **`categories` collection**: 11 thematic categories with metadata & word counts
+- **Real-time sync**: Changes instantly reflected across all connected devices## 📚 Vocabulary Categories
 
 | Category           | Count    | Emoji | Description                             |
 | ------------------ | -------- | ----- | --------------------------------------- |
@@ -113,7 +142,44 @@ src/
 | School & Education | 10 words | 📚    | Learning and academic terms             |
 | Home               | 5 words  | 🏠    | House, rooms, and furniture             |
 
-**Total: 253+ Finnish vocabulary words** 🇫🇮
+**Total: 133 unique Finnish vocabulary words** 🇫🇮
+
+## 🚀 Data Seeding & Architecture
+
+### **Database Seeding Process**
+
+```bash
+node src/database/seed-firebase.js
+```
+
+This one-time setup script:
+
+1. **🧹 Cleans existing data** to prevent duplicates
+2. **📚 Uploads 133 vocabulary words** with complete metadata
+3. **📂 Creates 11 categories** with accurate word counts
+4. **✅ Validates data integrity** and reports success
+
+### **Data Structure & Flow**
+
+```
+📄 Seed Script → 🔥 Firebase Firestore → 🎣 React Hooks → 📱 App Components
+```
+
+Each vocabulary word includes:
+
+- **Translations**: English ↔ Finnish with context
+- **Pronunciation**: Phonetic spelling guides (e.g., "kis-sa")
+- **Examples**: Real usage sentences in Finnish
+- **Metadata**: Part of speech, difficulty (beginner/intermediate), frequency rating
+- **Categories**: Thematic organization (supports multiple categories per word)
+
+### **Key Technical Features**
+
+- **🔄 Real-time sync**: Firebase Firestore updates instantly across devices
+- **📊 Dynamic counting**: Category word counts calculated from actual data
+- **🔍 Smart filtering**: Words filtered by category array for accurate results
+- **⚡ Performance**: Dual loading strategy (paginated + full dataset)
+- **🛡️ Type safety**: Full TypeScript interfaces for data integrity
 
 ## 🔧 Development Commands
 
