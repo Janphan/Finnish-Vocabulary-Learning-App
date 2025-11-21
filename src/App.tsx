@@ -199,7 +199,7 @@ export default function App() {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900">
-                    Finnish
+                    Finnish Vocabulary
                   </h1>
                   <p className="text-xs text-gray-600">{allWords.length} words</p>
                 </div>
@@ -216,31 +216,23 @@ export default function App() {
                 <p className="text-xs font-medium text-gray-600 mb-2">
                   Choose level:
                 </p>
-                <div className="flex gap-2">
-                  {[
-                    { value: 'all', label: 'All', emoji: '🌟', count: allWords.length },
-                    { value: 'beginner', label: 'Basic', emoji: '🌱', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'beginner').length },
-                    { value: 'intermediate', label: 'Inter', emoji: '⭐', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'intermediate').length },
-                    { value: 'advanced', label: 'Adv', emoji: '🚀', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'advanced').length }
-                  ].map((level) => (
-                    <button
-                      key={level.value}
-                      onClick={() => setSelectedDifficulty(level.value as 'beginner' | 'intermediate' | 'advanced' | 'all')}
-                      className={`flex-1 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
-                        selectedDifficulty === level.value
-                          ? 'bg-gray-700 text-white shadow-lg transform scale-105'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-800 border border-transparent hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-center gap-1 mb-0.5">
-                        <span>{level.emoji}</span>
-                        <span>{level.label}</span>
-                      </div>
-                      <div className={`text-xs ${
-                        selectedDifficulty === level.value ? 'text-gray-300' : 'text-gray-500'
-                      }`}>{level.count}</div>
-                    </button>
-                  ))}
+                <div className="relative">
+                  <select
+                    value={selectedDifficulty}
+                    onChange={(e) => setSelectedDifficulty(e.target.value as 'beginner' | 'intermediate' | 'advanced' | 'all')}
+                    className="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-white text-gray-800 border-2 border-gray-300 focus:border-green-500 focus:bg-green-50 focus:text-green-800 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                    style={{ 
+                      appearance: 'none',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                      backgroundImage: 'none'
+                    }}
+                  >
+                    <option value="all">🌟 All Levels</option>
+                    <option value="beginner">🌱 Basic Level</option>
+                    <option value="intermediate">⭐ Intermediate Level</option>
+                    <option value="advanced">🚀 Advanced Level</option>
+                  </select>
                 </div>
               </div>
             </div>

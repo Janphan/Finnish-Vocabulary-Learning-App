@@ -1194,6 +1194,18 @@ html {
   font-size: var(--font-size);
 }
 
+/* Remove dropdown arrows completely */
+select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: none !important;
+}
+
+select::-ms-expand {
+  display: none !important;
+}
+
 @property --tw-space-y-reverse {
   syntax: "*";
   inherits: false;
