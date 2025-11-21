@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { CategoryList } from './components/CategoryList';
 import { VocabularySwiper } from './components/VocabularySwiper';
 import { FolderManager } from './components/FolderManager';
-import { Folder, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Folder, ArrowLeft } from 'lucide-react';
 // Use API server for vocabulary data
 import { useApiVocabulary } from './hooks/useApiVocabulary';
 
@@ -144,32 +144,44 @@ export default function App() {
   if (currentView === 'loading') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <h2 className="text-lg font-medium text-gray-900 mb-2">Loading Finnish Vocabulary</h2>
-          
-          <p className="text-gray-600 text-sm">
-            {loading ? 'Loading vocabulary...' : 'Preparing vocabulary...'}
-          </p>
-          
-          <div className="mt-2 text-xs text-gray-500">
-            Debug: Loading={loading ? 'yes' : 'no'}, 
-            Words={allWords.length}, Categories={categories.length}
+        <div className="text-center max-w-sm mx-auto px-4">
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full animate-pulse"></div>
+            <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full animate-bounce"></div>
+            </div>
           </div>
           
-          {error && (
-            <div className="mt-4 p-4 bg-red-50 rounded-lg">
-              <p className="text-red-700 text-sm">Error: {error}</p>
-              <p className="text-red-600 text-xs mt-1">
-                Make sure Firebase is configured and contains vocabulary data
-              </p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Loading Finnish</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            {loading ? 'Getting vocabulary...' : 'Almost ready...'}
+          </p>
+          
+          {/* Progress dots */}
+          <div className="flex justify-center gap-1 mb-6">
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+          </div>
+          
+          {allWords.length > 0 && (
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 transform transition-all duration-500 animate-pulse">
+              <div className="flex items-center justify-center gap-2 text-green-700">
+                <span className="text-lg">✨</span>
+                <p className="font-medium">
+                  {allWords.length} words loaded!
+                </p>
+              </div>
             </div>
           )}
           
-          {allWords.length > 0 && (
-            <p className="text-green-600 text-sm mt-2">
-              🎉 Loaded {allWords.length} vocabulary words from API!
-            </p>
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-pulse">
+              <div className="flex items-center justify-center gap-2 text-red-700">
+                <span>⚠️</span>
+                <p className="text-sm">Connection error</p>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -183,41 +195,50 @@ export default function App() {
         <>
           {/* Header */}
           <div className="bg-white border-b border-gray-200">
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="max-w-md mx-auto px-4 py-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-gray-900">Finnish Vocabulary</h1>
-                  <p className="text-gray-500 text-sm">Choose a category • {allWords.length} words loaded</p>
+                  <h1 className="text-xl font-semibold text-gray-900">
+                    Finnish
+                  </h1>
+                  <p className="text-xs text-gray-600">{allWords.length} words</p>
                 </div>
                 <button
                   onClick={() => setCurrentView('folders')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
                 >
-                  <Folder className="w-5 h-5 text-gray-700" />
+                  <Folder className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
                 </button>
               </div>
               
               {/* Difficulty Level Selector */}
               <div className="mt-4">
-                <p className="text-sm text-gray-600 mb-2">Difficulty Level:</p>
+                <p className="text-xs font-medium text-gray-600 mb-2">
+                  Choose level:
+                </p>
                 <div className="flex gap-2">
                   {[
-                    { value: 'all', label: 'All Levels', count: allWords.length },
-                    { value: 'beginner', label: 'Beginner', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'beginner').length },
-                    { value: 'intermediate', label: 'Intermediate', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'intermediate').length },
-                    { value: 'advanced', label: 'Advanced', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'advanced').length }
+                    { value: 'all', label: 'All', emoji: '🌟', count: allWords.length },
+                    { value: 'beginner', label: 'Basic', emoji: '🌱', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'beginner').length },
+                    { value: 'intermediate', label: 'Inter', emoji: '⭐', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'intermediate').length },
+                    { value: 'advanced', label: 'Adv', emoji: '🚀', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'advanced').length }
                   ].map((level) => (
                     <button
                       key={level.value}
                       onClick={() => setSelectedDifficulty(level.value as 'beginner' | 'intermediate' | 'advanced' | 'all')}
-                      className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`flex-1 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
                         selectedDifficulty === level.value
-                          ? 'bg-blue-100 text-blue-800 border-2 border-blue-200'
-                          : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200'
+                          ? 'bg-gray-700 text-white shadow-lg transform scale-105'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-800 border border-transparent hover:border-gray-300'
                       }`}
                     >
-                      <div>{level.label}</div>
-                      <div className="text-xs opacity-75">{level.count} words</div>
+                      <div className="flex items-center justify-center gap-1 mb-0.5">
+                        <span>{level.emoji}</span>
+                        <span>{level.label}</span>
+                      </div>
+                      <div className={`text-xs ${
+                        selectedDifficulty === level.value ? 'text-gray-300' : 'text-gray-500'
+                      }`}>{level.count}</div>
                     </button>
                   ))}
                 </div>
