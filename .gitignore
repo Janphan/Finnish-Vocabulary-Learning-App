@@ -17,6 +17,7 @@ build/
 public/data/*.json
 public/data/*filtered*
 *.ndjson
+public/kaikki.org-dictionary-Finnish.jsonl
 
 # Environment
 .env
