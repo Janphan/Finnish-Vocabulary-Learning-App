@@ -5,6 +5,7 @@ interface CategoryListProps {
   categories: Category[];
   vocabularyWords: VocabularyWord[];
   onSelectCategory: (categoryId: string) => void;
+  selectedDifficulty: 'beginner' | 'intermediate' | 'advanced' | 'all';
 }
 
 const categoryImages: Record<string, string> = {
@@ -48,12 +49,35 @@ const categoryEmojis: Record<string, string> = {
   general: '📚',
 };
 
-export function CategoryList({ categories, vocabularyWords, onSelectCategory }: CategoryListProps) {
+export function CategoryList({ categories, vocabularyWords, onSelectCategory, selectedDifficulty }: CategoryListProps) {
   const getWordCount = (categoryId: string) => {
     // Calculate actual count from vocabulary words that include this category
-    return vocabularyWords.filter((word) => 
+    let words = vocabularyWords.filter((word) => 
       word.categories && word.categories.includes(categoryId)
-    ).length;
+    );
+    
+    console.log(`🔍 Category ${categoryId} before difficulty filter:`, words.length, 'words');
+    
+    // Filter by difficulty level if not 'all'
+    if (selectedDifficulty !== 'all') {
+      const beforeFilter = words.length;
+      words = words.filter(word => word.difficulty === selectedDifficulty);
+      console.log(`🔍 Category ${categoryId} after ${selectedDifficulty} filter:`, words.length, 'words (was', beforeFilter, ')');
+      
+      // Debug: Show first few words and their difficulties
+      if (beforeFilter > 0 && words.length === 0) {
+        const sample = vocabularyWords.filter((word) => 
+          word.categories && word.categories.includes(categoryId)
+        ).slice(0, 3);
+        console.log(`🔍 Sample words in ${categoryId}:`, sample.map(w => ({ 
+          finnish: w.finnish, 
+          difficulty: w.difficulty,
+          hasProperty: 'difficulty' in w
+        })));
+      }
+    }
+    
+    return words.length;
   };
 
   const getCategoryEmoji = (categoryId: string) => {

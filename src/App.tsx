@@ -16,7 +16,7 @@ export interface VocabularyWord {
   example: string;
   partOfSpeech?: string;
   examples?: string[];
-  difficulty?: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced'; // Made required for filtering
   frequency?: number;
 }
 
@@ -39,6 +39,7 @@ type View = 'categories' | 'vocabulary' | 'folders' | 'loading';
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('loading');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'beginner' | 'intermediate' | 'advanced' | 'all'>('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [folders, setFolders] = useState<UserFolder[]>([]);
   
@@ -49,6 +50,31 @@ export default function App() {
   
   // Load ALL vocabulary words for accurate category counting
   const { words: allWords, isLoading: allWordsLoading } = useAllVocabularyWords();
+  
+  // Debug: Log the allWords to see what we're getting
+  useEffect(() => {
+    if (allWords.length > 0) {
+      console.log('🔍 Debug allWords sample:', allWords.slice(0, 3));
+      
+      // Check if difficulty property exists and log actual values
+      const sample = allWords.slice(0, 10);
+      console.log('🔍 Debug difficulty values:', sample.map(w => ({
+        finnish: w.finnish,
+        difficulty: w.difficulty,
+        difficultyType: typeof w.difficulty,
+        hasOwnProperty: w.hasOwnProperty('difficulty')
+      })));
+      
+      console.log('🔍 Debug difficulty counts:', {
+        total: allWords.length,
+        beginner: allWords.filter(w => w.difficulty === 'beginner').length,
+        intermediate: allWords.filter(w => w.difficulty === 'intermediate').length,
+        advanced: allWords.filter(w => w.difficulty === 'advanced').length,
+        undefined: allWords.filter(w => !w.difficulty).length,
+        all_difficulties: [...new Set(allWords.map(w => w.difficulty))]
+      });
+    }
+  }, [allWords]);
   
   // Switch to categories view when Firebase data is ready
   useEffect(() => {
@@ -134,9 +160,16 @@ export default function App() {
   };
 
   const getCategoryWords = (categoryId: string) => {
-    return allWords.filter((word: VocabularyWord) => 
+    let words = allWords.filter((word: VocabularyWord) => 
       word.categories && word.categories.includes(categoryId)
     );
+    
+    // Filter by difficulty level if not 'all'
+    if (selectedDifficulty !== 'all') {
+      words = words.filter((word: VocabularyWord) => word.difficulty === selectedDifficulty);
+    }
+    
+    return words;
   };
 
   const selectedCategory = categories.find((c: Category) => c.id === selectedCategoryId);
@@ -221,12 +254,39 @@ export default function App() {
                   <Folder className="w-5 h-5 text-gray-700" />
                 </button>
               </div>
+              
+              {/* Difficulty Level Selector */}
+              <div className="mt-4">
+                <p className="text-sm text-gray-600 mb-2">Difficulty Level:</p>
+                <div className="flex gap-2">
+                  {[
+                    { value: 'all', label: 'All Levels', count: allWords.length },
+                    { value: 'beginner', label: 'Beginner', count: allWords.filter(w => w.difficulty === 'beginner').length },
+                    { value: 'intermediate', label: 'Intermediate', count: allWords.filter(w => w.difficulty === 'intermediate').length },
+                    { value: 'advanced', label: 'Advanced', count: allWords.filter(w => w.difficulty === 'advanced').length }
+                  ].map((level) => (
+                    <button
+                      key={level.value}
+                      onClick={() => setSelectedDifficulty(level.value as 'beginner' | 'intermediate' | 'advanced' | 'all')}
+                      className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        selectedDifficulty === level.value
+                          ? 'bg-blue-100 text-blue-800 border-2 border-blue-200'
+                          : 'bg-gray-100 text-gray-600 border-2 border-transparent hover:bg-gray-200'
+                      }`}
+                    >
+                      <div>{level.label}</div>
+                      <div className="text-xs opacity-75">{level.count} words</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           <CategoryList
             categories={categories}
             vocabularyWords={allWords}
             onSelectCategory={handleCategorySelect}
+            selectedDifficulty={selectedDifficulty}
           />
         </>
       )}

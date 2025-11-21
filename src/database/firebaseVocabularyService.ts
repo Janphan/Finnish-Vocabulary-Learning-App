@@ -46,12 +46,13 @@ class FirebaseVocabularyService {
   async getVocabularyWords(
     pageSize: number = 50,
     lastDoc?: DocumentSnapshot,
-    categoryFilter?: string
+    categoryFilter?: string,
+    difficultyFilter?: 'beginner' | 'intermediate' | 'advanced'
   ): Promise<{ words: VocabularyWord[]; lastDoc: DocumentSnapshot | null }> {
     try {
       if (categoryFilter) {
         // For category filtering, use the dedicated method
-        const words = await this.getWordsByCategory(categoryFilter, pageSize);
+        const words = await this.getWordsByCategory(categoryFilter, pageSize, difficultyFilter);
         return { words, lastDoc: null };
       }
 
@@ -68,10 +69,15 @@ class FirebaseVocabularyService {
       const q = query(collection(db, this.VOCABULARY_COLLECTION), ...constraints);
       const snapshot = await getDocs(q);
 
-      const words: VocabularyWord[] = snapshot.docs.map(doc => {
+      let words: VocabularyWord[] = snapshot.docs.map(doc => {
         const data = doc.data() as FirestoreVocabularyWord;
         return this.convertToVocabularyWord(doc.id, data);
       });
+
+      // Filter by difficulty in memory if specified
+      if (difficultyFilter) {
+        words = words.filter(word => (word as any).difficulty === difficultyFilter);
+      }
 
       const newLastDoc = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
 
@@ -85,7 +91,8 @@ class FirebaseVocabularyService {
   // Get words by category - Fixed to avoid index requirements
   async getWordsByCategory(
     categoryId: string, 
-    pageSize: number = 20
+    pageSize: number = 20,
+    difficultyFilter?: 'beginner' | 'intermediate' | 'advanced'
   ): Promise<VocabularyWord[]> {
     try {
       // Use simple query without compound ordering to avoid index requirements
@@ -96,10 +103,15 @@ class FirebaseVocabularyService {
       );
 
       const snapshot = await getDocs(q);
-      const words = snapshot.docs.map(doc => {
+      let words = snapshot.docs.map(doc => {
         const data = doc.data() as FirestoreVocabularyWord;
         return this.convertToVocabularyWord(doc.id, data);
       });
+
+      // Filter by difficulty in memory to avoid complex Firebase queries
+      if (difficultyFilter) {
+        words = words.filter(word => (word as any).difficulty === difficultyFilter);
+      }
 
       // Sort by frequency in memory to avoid index requirement
       return words.sort((a, b) => (b as any).frequency - (a as any).frequency);
@@ -248,6 +260,11 @@ class FirebaseVocabularyService {
 
   // Helper method to convert Firestore data to VocabularyWord
   private convertToVocabularyWord(id: string, data: FirestoreVocabularyWord): VocabularyWord & { frequency: number } {
+    // Log the difficulty value for debugging
+    if (!data.difficulty) {
+      console.warn(`⚠️ Word "${data.finnish}" (${id}) is missing difficulty field, defaulting to 'beginner'`);
+    }
+    
     return {
       id,
       finnish: data.finnish,
@@ -256,6 +273,7 @@ class FirebaseVocabularyService {
       categories: data.categories || [data.categoryId || 'general'],
       pronunciation: data.pronunciation,
       example: data.examples?.[0] || `${data.english} - ${data.finnish}`,
+      difficulty: data.difficulty || 'beginner', // Ensure we always have a difficulty value
       frequency: data.frequency || 0 // Preserve frequency for sorting
     };
   }
