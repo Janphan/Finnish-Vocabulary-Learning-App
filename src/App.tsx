@@ -3,8 +3,8 @@ import { CategoryList } from './components/CategoryList';
 import { VocabularySwiper } from './components/VocabularySwiper';
 import { FolderManager } from './components/FolderManager';
 import { Folder, ArrowLeft, RefreshCw } from 'lucide-react';
-// Use Firebase for production-ready data management
-import { useFirebaseVocabulary, useFirebaseCategories, useFirebaseConnection, useAllVocabularyWords } from './database';
+// Use API server for vocabulary data
+import { useApiVocabulary } from './hooks/useApiVocabulary';
 
 export interface VocabularyWord {
   id: string;
@@ -43,40 +43,22 @@ export default function App() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [folders, setFolders] = useState<UserFolder[]>([]);
   
-  // Use Firebase for scalable, production-ready vocabulary data
-  const { words, isLoading, error } = useFirebaseVocabulary({ autoLoad: true });
-  const { categories, isLoading: categoriesLoading } = useFirebaseCategories();
-  const { isConnected } = useFirebaseConnection();
+  // Use API server for vocabulary data
+  const { 
+    words: allWords, 
+    categories, 
+    loading, 
+    error
+  } = useApiVocabulary({
+    pageSize: 1500 // Get all words
+  });
   
-  // Load ALL vocabulary words for accurate category counting
-  const { words: allWords, isLoading: allWordsLoading } = useAllVocabularyWords();
-  
-  // Switch to categories view when Firebase data is ready
+  // Switch to categories view when API data is ready (but don't override vocabulary view)
   useEffect(() => {
-    console.log('🔍 Loading state check:', {
-      isLoading,
-      categoriesLoading,
-      allWordsLoading,
-      wordsLength: words.length,
-      allWordsLength: allWords.length,
-      categories: categories.length,
-      isConnected
-    });
-    
-    if (!isLoading && !categoriesLoading && !allWordsLoading && allWords.length > 0) {
-      console.log('✅ Switching to categories view');
+    if (!loading && categories.length > 0 && currentView === 'loading') {
       setCurrentView('categories');
     }
-  }, [isLoading, categoriesLoading, allWordsLoading, words, allWords, categories, isConnected]);
-  
-  // Show connection status
-  useEffect(() => {
-    if (isConnected === false) {
-      console.warn('❌ Firebase connection failed - check your configuration');
-    } else if (isConnected === true) {
-      console.log('✅ Firebase connected successfully');
-    }
-  }, [isConnected]);
+  }, [loading, allWords, categories, currentView]);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
@@ -135,16 +117,20 @@ export default function App() {
   };
 
   const getCategoryWords = (categoryId: string) => {
-    let words = allWords.filter((word: VocabularyWord) => 
-      word.categories && word.categories.includes(categoryId)
-    );
+    let categoryWords = allWords.filter((word: VocabularyWord) => {
+      const hasCategories = word.categories && Array.isArray(word.categories);
+      const includesCategory = hasCategories ? word.categories.includes(categoryId) : false;
+      const matchesCategoryId = word.categoryId === categoryId;
+      
+      return includesCategory || matchesCategoryId;
+    });
     
     // Filter by difficulty level if not 'all'
     if (selectedDifficulty !== 'all') {
-      words = words.filter((word: VocabularyWord) => word.difficulty === selectedDifficulty);
+      categoryWords = categoryWords.filter((word: VocabularyWord) => word.difficulty === selectedDifficulty);
     }
     
-    return words;
+    return categoryWords;
   };
 
   const selectedCategory = categories.find((c: Category) => c.id === selectedCategoryId);
@@ -157,27 +143,13 @@ export default function App() {
           <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
           <h2 className="text-lg font-medium text-gray-900 mb-2">Loading Finnish Vocabulary</h2>
           
-          {/* Firebase connection status */}
-          {isConnected === null && (
-            <p className="text-gray-600 text-sm mb-2">🔗 Connecting to Firebase...</p>
-          )}
-          {isConnected === false && (
-            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800 text-sm">⚠️ Firebase connection failed</p>
-              <p className="text-yellow-700 text-xs mt-1">Check your Firebase configuration in .env file</p>
-            </div>
-          )}
-          {isConnected === true && (
-            <p className="text-green-600 text-sm mb-2">✅ Connected to Firebase</p>
-          )}
-          
           <p className="text-gray-600 text-sm">
-            {isLoading || categoriesLoading ? 'Loading vocabulary from Firebase...' : 'Preparing vocabulary...'}
+            {loading ? 'Loading vocabulary...' : 'Preparing vocabulary...'}
           </p>
           
           <div className="mt-2 text-xs text-gray-500">
-            Debug: Loading={isLoading ? 'yes' : 'no'}, Categories={categoriesLoading ? 'loading' : 'ready'}, 
-            Words={words.length}, Categories={categories.length}
+            Debug: Loading={loading ? 'yes' : 'no'}, 
+            Words={allWords.length}, Categories={categories.length}
           </div>
           
           {error && (
@@ -189,21 +161,10 @@ export default function App() {
             </div>
           )}
           
-          {words.length > 0 && (
+          {allWords.length > 0 && (
             <p className="text-green-600 text-sm mt-2">
-              🎉 Loaded {words.length} vocabulary words from Firebase!
+              🎉 Loaded {allWords.length} vocabulary words from API!
             </p>
-          )}
-          
-          {isConnected === false && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg text-left">
-              <p className="text-blue-800 text-sm font-medium">Need to setup Firebase?</p>
-              <p className="text-blue-700 text-xs mt-1">
-                1. Follow FIREBASE_SETUP.md<br/>
-                2. Add your config to .env file<br/>
-                3. Upload vocabulary data
-              </p>
-            </div>
           )}
         </div>
       </div>
@@ -212,15 +173,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      
       {currentView === 'categories' && (
         <>
           {/* Header */}
           <div className="bg-white border-b border-gray-200">
-            <div className="max-w-md mx-auto px-4 py-4">
+            <div className="max-w-4xl mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-gray-900">Finnish Vocabulary</h1>
-                  <p className="text-gray-500 text-sm">Choose a category • {words.length} words loaded</p>
+                  <p className="text-gray-500 text-sm">Choose a category • {allWords.length} words loaded</p>
                 </div>
                 <button
                   onClick={() => setCurrentView('folders')}
@@ -236,9 +198,9 @@ export default function App() {
                 <div className="flex gap-2">
                   {[
                     { value: 'all', label: 'All Levels', count: allWords.length },
-                    { value: 'beginner', label: 'Beginner', count: allWords.filter(w => w.difficulty === 'beginner').length },
-                    { value: 'intermediate', label: 'Intermediate', count: allWords.filter(w => w.difficulty === 'intermediate').length },
-                    { value: 'advanced', label: 'Advanced', count: allWords.filter(w => w.difficulty === 'advanced').length }
+                    { value: 'beginner', label: 'Beginner', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'beginner').length },
+                    { value: 'intermediate', label: 'Intermediate', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'intermediate').length },
+                    { value: 'advanced', label: 'Advanced', count: allWords.filter((w: VocabularyWord) => w.difficulty === 'advanced').length }
                   ].map((level) => (
                     <button
                       key={level.value}
@@ -277,16 +239,15 @@ export default function App() {
           onBack={handleBack}
         />
       )}
-
       {currentView === 'folders' && (
         <>
           {/* Header */}
           <div className="bg-white border-b border-gray-200">
-            <div className="max-w-md mx-auto px-4 py-4">
-              <div className="flex items-center gap-3">
+            <div className="max-w-4xl mx-auto px-4 py-6">
+              <div className="flex items-center gap-4">
                 <button
-                  onClick={() => setCurrentView('categories')}
-                  className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  onClick={handleBack}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
@@ -300,7 +261,7 @@ export default function App() {
           <FolderManager
             folders={folders}
             favorites={favorites}
-            vocabularyWords={words}
+            vocabularyWords={allWords}
             onCreateFolder={handleCreateFolder}
             onDeleteFolder={handleDeleteFolder}
           />
