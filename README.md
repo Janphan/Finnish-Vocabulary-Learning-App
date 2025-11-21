@@ -1,132 +1,128 @@
 # Finnish Vocabulary Learning App
 
-A simple React app for learning Finnish vocabulary with a clean API-based architecture.
+A modern, interactive vocabulary learning application for Finnish language learners built with React, TypeScript, and Vite.
 
-## Project Structure
+## ✨ Features
 
-```
-Finnish-Vocabulary-Learning-App/
-├── api-server/               # Express API server
-│   ├── server.js            # Main server file
-│   ├── package.json         # Server dependencies
-│   └── node_modules/        # Server dependencies
-├── src/
-│   ├── App.tsx              # Main React app
-│   ├── main.tsx             # React entry point
-│   ├── components/          # React components
-│   │   ├── CategoryList.tsx
-│   │   ├── VocabularySwiper.tsx
-│   │   ├── FolderManager.tsx
-│   │   ├── AddToFolderModal.tsx
-│   │   └── figma/
-│   │       └── ImageWithFallback.tsx
-│   └── hooks/
-│       └── useApiVocabulary.ts  # API hook
-├── public/
-│   └── polished-vocabulary.json  # 1,500 curated vocabulary words
-├── package.json              # React app dependencies
-└── README.md                 # This file
-```
+- **111,000+ Finnish vocabulary words** extracted from authentic linguistic data
+- **Category-based learning** (actions, descriptions, food, animals, etc.)
+- **Interactive flashcards** with swipe gestures
+- **Pronunciation guide** with IPA notation
+- **Real Finnish examples** showing words in context
+- **Difficulty levels** for progressive learning
+- **Responsive design** works on desktop and mobile
 
-## Features
+## 🏗️ Architecture
 
-- **1,500 High-Quality Words**: Curated Finnish vocabulary with translations
-- **14 Categories**: Organized by topics (greetings, food, animals, etc.)
-- **Difficulty Levels**: Beginner, intermediate, and advanced words
-- **Interactive Learning**: Swipe-based vocabulary practice
-- **Personal Folders**: Save words to custom collections
-- **Clean API**: RESTful endpoints for vocabulary data
+**Simple and Clean:**
 
-## Quick Start
+- **React frontend** - Single-page application
+- **Direct JSON loading** - No API server needed
+- **Static data** - Vocabulary loaded from JSON files
+- **Client-side filtering** - Fast category and difficulty filtering
 
-### 1. Start the API Server
+## 🚀 Quick Start
+
+1. **Clone and install:**
 
 ```bash
-cd api-server
+git clone <repository-url>
+cd finnish-vocabulary-learning-app
 npm install
-npm start
 ```
 
-Server runs on http://localhost:3002
-
-### 2. Start the React App
+2. **Start development server:**
 
 ```bash
-npm install
 npm run dev
 ```
 
-App runs on http://localhost:5173
+3. **Open your browser:**
 
-## API Endpoints
+- App will be available at `http://localhost:3000`
+- That's it! No API server setup needed.
 
-- `GET /api/health` - Server health check
-- `GET /api/vocabulary` - Get all vocabulary (with filters)
-- `GET /api/categories` - Get all categories
-- `GET /api/vocabulary/random/:category` - Get random words from category
-- `GET /api/stats` - Get vocabulary statistics
+## 📁 Project Structure
 
-### Example API Calls
+```
+src/
+├── components/          # Reusable UI components
+│   ├── VocabularySwiper.tsx   # Flashcard interface
+│   ├── CategoryList.tsx       # Category navigation
+│   └── ui/                    # Shadcn/ui components
+├── hooks/
+│   └── useApiVocabulary.ts    # Vocabulary data loading
+├── App.tsx              # Main application
+└── main.tsx            # Entry point
 
-```bash
-# Get all vocabulary
-curl http://localhost:3002/api/vocabulary
+public/
+└── extracted-finnish-vocab.json  # 111k vocabulary words
 
-# Get words from 'food' category
-curl http://localhost:3002/api/vocabulary?category=food
-
-# Get beginner level words
-curl http://localhost:3002/api/vocabulary?difficulty=beginner
-
-# Get 10 random animal words
-curl http://localhost:3002/api/vocabulary/random/animals?count=10
-
-# Get statistics
-curl http://localhost:3002/api/stats
+scripts/
+└── extract-vocabulary.js         # Data processing utilities
 ```
 
-## Vocabulary Quality
+## 📊 Data Quality
 
-The vocabulary dataset has been intelligently filtered from 170k+ words to 1,500 high-quality entries:
+- **111,295 vocabulary words** from kaikki.org dictionary
+- **Authentic Finnish** - Filtered to exclude borrowed words and morphemes
+- **Linguistic accuracy** - Part-of-speech tags and pronunciations
+- **Learning-focused** - Curated for vocabulary acquisition
 
-- **Quality Score**: 100/100 average
-- **Clean Translations**: Removed technical jargon and parenthetical explanations
-- **Balanced Categories**: Even distribution across topics
-- **Frequency-Based**: Most commonly used words prioritized
-- **Difficulty Graded**: Appropriate for language learners
+## 🎯 Why No API Server?
 
-## Development
+**Before:** React ↔ Express API ↔ JSON files
+**Now:** React → JSON files directly
 
-- **Framework**: React 18 + TypeScript + Vite
-- **Backend**: Express.js with CORS
-- **Data**: Static JSON file (no database required)
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
+**Benefits:**
 
-## Testing with Postman
+- ✅ **Simpler setup** - Just `npm run dev` and go
+- ✅ **Faster loading** - No network requests to localhost
+- ✅ **Fewer dependencies** - No Express.js needed
+- ✅ **Better reliability** - No server crashes or port conflicts
+- ✅ **Easier deployment** - Static site deployment
 
-You can test the API endpoints using Postman:
+## 🛠️ Development
 
-1. Import the following requests:
+**Add vocabulary:**
 
-   - GET `http://localhost:3002/api/health`
-   - GET `http://localhost:3002/api/vocabulary`
-   - GET `http://localhost:3002/api/categories`
-   - GET `http://localhost:3002/api/stats`
+1. Edit `public/extracted-finnish-vocab.json`
+2. Refresh the app - changes appear immediately
 
-2. Add query parameters as needed:
-   - `category`: Filter by category ID
-   - `difficulty`: Filter by difficulty level
-   - `limit`: Number of words to return
-   - `search`: Search Finnish or English text
+**Modify categories:**
 
-## Data Source
+1. Update the `categoryEmojiMap` in `useApiVocabulary.ts`
+2. Add new category logic as needed
 
-The vocabulary data comes from Wiktextract (kaikki.org) and has been processed through:
+**Custom examples:**
 
-1. **Extraction**: 3.86GB raw data → 45MB clean JSONL
-2. **Filtering**: 170k+ entries → 1,500 top-quality words
-3. **Enhancement**: Added pronunciations, examples, categories, difficulty levels
-4. **Optimization**: Cleaned translations and balanced distribution
+- The app auto-generates Finnish examples
+- Edit `generateFinnishExample()` function to customize
 
-Perfect for local development and testing without external dependencies!
+## 🚀 Deployment
+
+Since this is now a pure static site:
+
+1. **Build for production:**
+
+```bash
+npm run build
+```
+
+2. **Deploy anywhere:**
+
+- Netlify, Vercel, GitHub Pages
+- Any static hosting service
+- No server configuration needed!
+
+## 🧹 Recent Improvements
+
+- ✅ **Removed API server complexity** - Direct JSON loading
+- ✅ **Fixed Finnish examples** - Real sentences instead of translations
+- ✅ **Filtered partial words** - No more "-laatuisuus" compound endings
+- ✅ **Improved data quality** - 111k clean vocabulary words
+- ✅ **Simplified architecture** - One server instead of two
+
+## 📝 License
+
+MIT License - Feel free to use for learning Finnish! 🇫🇮

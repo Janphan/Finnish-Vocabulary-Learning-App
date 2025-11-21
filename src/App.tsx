@@ -18,6 +18,7 @@ export interface VocabularyWord {
   examples?: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced'; // Made required for filtering
   frequency?: number;
+  cefr?: string; // CEFR level (A1, A2, B1, B2, C1, C2)
 }
 
 export interface Category {
@@ -50,7 +51,7 @@ export default function App() {
     loading, 
     error
   } = useApiVocabulary({
-    pageSize: 1500 // Get all words
+    // Don't limit pageSize - we want all vocabulary for proper difficulty counts
   });
   
   // Switch to categories view when API data is ready (but don't override vocabulary view)

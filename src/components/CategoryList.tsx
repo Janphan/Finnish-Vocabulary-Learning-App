@@ -30,6 +30,48 @@ const categoryImages: Record<string, string> = {
 };
 
 const categoryEmojis: Record<string, string> = {
+  // Semantic categories (from our new categorization system)
+  'Family & People': '👨‍👩‍👧‍👦',
+  'Time & Numbers': '⏰',
+  'Basic Actions': '🏃',
+  'Nature & Weather': '🌦️',
+  'Colors & Appearance': '🎨',
+  'Body': '👤',
+  'Food & Drink': '🍽️',
+  'Animals': '🐾',
+  'Work & Education': '🎓',
+  'Transportation': '🚗',
+  'Emotions & Mental States': '😊',
+  'Home & Living': '🏠',
+  
+  // Part of speech categories
+  'noun': '📦',
+  'verb': '🏃',
+  'adjective': '🎨',
+  'adverb': '⚡',
+  'pronoun': '👤',
+  'proper_noun': '🏷️',
+  'preposition': '🔗',
+  'interjection': '❗',
+  
+  // Legacy categories (fallback for any remaining old categories)
+  'Family': '👨‍👩‍👧‍👦',
+  'People': '👥',
+  'Anatomy': '👤',
+  'Food': '🍎',
+  'Cooking': '🍳',
+  'Sports': '⚽',
+  'Music': '🎵',
+  'Clothing': '👕',
+  'Colors': '🌈',
+  'Emotions': '😊',
+  'Home': '🏠',
+  'Weather': '☁️',
+  'Time': '⏰',
+  'Education': '🎓',
+  'Work': '💼',
+  'Chemistry': '⚗️',
+  'Computing': '💻',
   greetings: '👋',
   numbers: '🔢',
   food: '🍽️',
