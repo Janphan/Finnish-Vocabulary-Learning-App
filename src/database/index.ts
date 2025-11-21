@@ -4,6 +4,7 @@ export { firebaseVocabularyService } from './firebaseVocabularyService';
 export { 
   useFirebaseVocabulary, 
   useFirebaseCategories, 
-  useFirebaseConnection 
+  useFirebaseConnection,
+  useAllVocabularyWords
 } from './useFirebaseVocabulary';
 export type { FirestoreCategory, FirestoreVocabularyWord } from './firebaseVocabularyService';

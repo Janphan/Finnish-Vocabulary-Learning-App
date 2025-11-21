@@ -50,9 +50,10 @@ const categoryEmojis: Record<string, string> = {
 
 export function CategoryList({ categories, vocabularyWords, onSelectCategory }: CategoryListProps) {
   const getWordCount = (categoryId: string) => {
-    // Use the count from Wiktextract data if available, otherwise calculate
-    const category = categories.find(cat => cat.id === categoryId);
-    return category?.count || vocabularyWords.filter((word) => word.categoryId === categoryId).length;
+    // Calculate actual count from vocabulary words that include this category
+    return vocabularyWords.filter((word) => 
+      word.categories && word.categories.includes(categoryId)
+    ).length;
   };
 
   const getCategoryEmoji = (categoryId: string) => {

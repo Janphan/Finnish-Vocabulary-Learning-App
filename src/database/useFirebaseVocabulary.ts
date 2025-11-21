@@ -164,3 +164,45 @@ export function useFirebaseConnection() {
 
   return { isConnected };
 }
+
+// Hook specifically for loading all vocabulary words for category counting
+export function useAllVocabularyWords() {
+  const [state, setState] = useState<{
+    words: VocabularyWord[];
+    isLoading: boolean;
+    error: string | null;
+  }>({
+    words: [],
+    isLoading: false,
+    error: null
+  });
+
+  const loadAllWords = useCallback(async () => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+
+    try {
+      // Load all words with a large page size
+      const { words } = await firebaseVocabularyService.getVocabularyWords(500);
+      setState({
+        words,
+        isLoading: false,
+        error: null
+      });
+    } catch (error) {
+      setState({
+        words: [],
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to load all vocabulary'
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAllWords();
+  }, [loadAllWords]);
+
+  return {
+    ...state,
+    refresh: loadAllWords
+  };
+}

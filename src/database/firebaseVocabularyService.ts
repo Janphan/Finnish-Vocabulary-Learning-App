@@ -42,21 +42,24 @@ class FirebaseVocabularyService {
   private readonly VOCABULARY_COLLECTION = 'vocabulary';
   private readonly CATEGORIES_COLLECTION = 'categories';
 
-  // Get paginated vocabulary words
+  // Get paginated vocabulary words - Fixed to avoid index requirements
   async getVocabularyWords(
     pageSize: number = 50,
     lastDoc?: DocumentSnapshot,
     categoryFilter?: string
   ): Promise<{ words: VocabularyWord[]; lastDoc: DocumentSnapshot | null }> {
     try {
+      if (categoryFilter) {
+        // For category filtering, use the dedicated method
+        const words = await this.getWordsByCategory(categoryFilter, pageSize);
+        return { words, lastDoc: null };
+      }
+
+      // For general queries, use simple ordering
       const constraints: QueryConstraint[] = [
         orderBy('frequency', 'desc'),
         limit(pageSize)
       ];
-
-      if (categoryFilter) {
-        constraints.unshift(where('categoryId', '==', categoryFilter));
-      }
 
       if (lastDoc) {
         constraints.push(startAfter(lastDoc));
@@ -79,27 +82,49 @@ class FirebaseVocabularyService {
     }
   }
 
-  // Get words by category
+  // Get words by category - Fixed to avoid index requirements
   async getWordsByCategory(
     categoryId: string, 
     pageSize: number = 20
   ): Promise<VocabularyWord[]> {
     try {
+      // Use simple query without compound ordering to avoid index requirements
       const q = query(
         collection(db, this.VOCABULARY_COLLECTION),
         where('categories', 'array-contains', categoryId),
-        orderBy('frequency', 'desc'),
         limit(pageSize)
       );
 
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => {
+      const words = snapshot.docs.map(doc => {
         const data = doc.data() as FirestoreVocabularyWord;
         return this.convertToVocabularyWord(doc.id, data);
       });
+
+      // Sort by frequency in memory to avoid index requirement
+      return words.sort((a, b) => (b as any).frequency - (a as any).frequency);
     } catch (error) {
       console.error('Error fetching words by category:', error);
-      return [];
+      
+      // Fallback: try with categoryId field instead
+      try {
+        const fallbackQ = query(
+          collection(db, this.VOCABULARY_COLLECTION),
+          where('categoryId', '==', categoryId),
+          limit(pageSize)
+        );
+        
+        const fallbackSnapshot = await getDocs(fallbackQ);
+        const fallbackWords = fallbackSnapshot.docs.map(doc => {
+          const data = doc.data() as FirestoreVocabularyWord;
+          return this.convertToVocabularyWord(doc.id, data);
+        });
+        
+        return fallbackWords.sort((a, b) => (b as any).frequency - (a as any).frequency);
+      } catch (fallbackError) {
+        console.error('Fallback query also failed:', fallbackError);
+        return [];
+      }
     }
   }
 
@@ -144,19 +169,36 @@ class FirebaseVocabularyService {
     }
   }
 
-  // Get all categories
+  // Get all categories with dynamic word counts
   async getCategories(): Promise<FirestoreCategory[]> {
     try {
-      const q = query(
-        collection(db, this.CATEGORIES_COLLECTION),
-        orderBy('count', 'desc')
-      );
+      const [categoriesSnapshot, vocabularySnapshot] = await Promise.all([
+        getDocs(query(collection(db, this.CATEGORIES_COLLECTION))),
+        getDocs(collection(db, this.VOCABULARY_COLLECTION))
+      ]);
       
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as FirestoreCategory));
+      // Count words per category dynamically
+      const categoryCounts = new Map<string, number>();
+      vocabularySnapshot.docs.forEach(doc => {
+        const data = doc.data() as FirestoreVocabularyWord;
+        const categoryId = data.categoryId || data.categories?.[0];
+        if (categoryId) {
+          categoryCounts.set(categoryId, (categoryCounts.get(categoryId) || 0) + 1);
+        }
+      });
+      
+      // Return categories with actual word counts
+      return categoriesSnapshot.docs.map(doc => {
+        const data = doc.data();
+        const categoryId = data.id || doc.id;
+        return {
+          id: doc.id,
+          name: data.name,
+          count: categoryCounts.get(categoryId) || 0, // Use actual count
+          emoji: data.emoji,
+          description: data.description
+        } as FirestoreCategory;
+      }).sort((a, b) => b.count - a.count); // Sort by actual word count
     } catch (error) {
       console.error('Error fetching categories:', error);
       return [];
@@ -205,14 +247,16 @@ class FirebaseVocabularyService {
   }
 
   // Helper method to convert Firestore data to VocabularyWord
-  private convertToVocabularyWord(id: string, data: FirestoreVocabularyWord): VocabularyWord {
+  private convertToVocabularyWord(id: string, data: FirestoreVocabularyWord): VocabularyWord & { frequency: number } {
     return {
       id,
       finnish: data.finnish,
       english: data.english,
       categoryId: data.categoryId || data.categories?.[0] || 'general',
+      categories: data.categories || [data.categoryId || 'general'],
       pronunciation: data.pronunciation,
-      example: data.examples?.[0] || `${data.english} - ${data.finnish}`
+      example: data.examples?.[0] || `${data.english} - ${data.finnish}`,
+      frequency: data.frequency || 0 // Preserve frequency for sorting
     };
   }
 

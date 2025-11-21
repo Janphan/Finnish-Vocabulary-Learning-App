@@ -4,21 +4,28 @@ import { VocabularySwiper } from './components/VocabularySwiper';
 import { FolderManager } from './components/FolderManager';
 import { Folder, ArrowLeft, RefreshCw } from 'lucide-react';
 // Use Firebase for production-ready data management
-import { useFirebaseVocabulary, useFirebaseCategories, useFirebaseConnection } from './database';
+import { useFirebaseVocabulary, useFirebaseCategories, useFirebaseConnection, useAllVocabularyWords } from './database';
 
 export interface VocabularyWord {
   id: string;
   finnish: string;
   english: string;
   categoryId: string;
+  categories: string[]; // Array of category IDs this word belongs to
   pronunciation: string;
   example: string;
+  partOfSpeech?: string;
+  examples?: string[];
+  difficulty?: string;
+  frequency?: number;
 }
 
 export interface Category {
   id: string;
   name: string;
   count: number;
+  emoji?: string;
+  description?: string;
 }
 
 export interface UserFolder {
@@ -40,21 +47,26 @@ export default function App() {
   const { categories, isLoading: categoriesLoading } = useFirebaseCategories();
   const { isConnected } = useFirebaseConnection();
   
+  // Load ALL vocabulary words for accurate category counting
+  const { words: allWords, isLoading: allWordsLoading } = useAllVocabularyWords();
+  
   // Switch to categories view when Firebase data is ready
   useEffect(() => {
     console.log('🔍 Loading state check:', {
       isLoading,
       categoriesLoading,
+      allWordsLoading,
       wordsLength: words.length,
+      allWordsLength: allWords.length,
       categories: categories.length,
       isConnected
     });
     
-    if (!isLoading && !categoriesLoading && words.length > 0) {
+    if (!isLoading && !categoriesLoading && !allWordsLoading && allWords.length > 0) {
       console.log('✅ Switching to categories view');
       setCurrentView('categories');
     }
-  }, [isLoading, categoriesLoading, words, categories, isConnected]);
+  }, [isLoading, categoriesLoading, allWordsLoading, words, allWords, categories, isConnected]);
   
   // Show connection status
   useEffect(() => {
@@ -122,7 +134,9 @@ export default function App() {
   };
 
   const getCategoryWords = (categoryId: string) => {
-    return words.filter((word: VocabularyWord) => word.categoryId === categoryId);
+    return allWords.filter((word: VocabularyWord) => 
+      word.categories && word.categories.includes(categoryId)
+    );
   };
 
   const selectedCategory = categories.find((c: Category) => c.id === selectedCategoryId);
@@ -211,7 +225,7 @@ export default function App() {
           </div>
           <CategoryList
             categories={categories}
-            vocabularyWords={words}
+            vocabularyWords={allWords}
             onSelectCategory={handleCategorySelect}
           />
         </>

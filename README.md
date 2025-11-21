@@ -1,75 +1,185 @@
 # 🇫🇮 Finnish Vocabulary Learning App
 
-A modern, interactive web application for learning Finnish vocabulary with Firebase backend.
+A modern, interactive web application for learning Finnish vocabulary with Firebase backend. Learn over **250+ Finnish words** across **11 categories** with pronunciation guides, example sentences, and difficulty levels.
+
+![Finnish Learning App](https://img.shields.io/badge/Words-253+-blue) ![Categories](https://img.shields.io/badge/Categories-11-green) ![Firebase](https://img.shields.io/badge/Firebase-Powered-orange) ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)
+
+## ✨ Features
+
+🎯 **Comprehensive Vocabulary**
+
+- **253+ Finnish words** with English translations
+- **11 thematic categories**: Greetings, Family, Animals, Food & Drinks, Colors, Body Parts, Weather, Transportation, Clothing, School & Education, Home
+- **Pronunciation guides** for every word (phonetic spelling)
+- **Example sentences** in context
+- **Difficulty levels** (beginner/intermediate)
+- **Frequency ratings** for practical learning
+
+🚀 **Interactive Learning**
+
+- **Swipe-based interface** for engaging vocabulary practice
+- **Real-time Firebase sync** for seamless experience
+- **Responsive design** works perfectly on desktop and mobile
+- **Search & filter** to find specific words
+- **Custom folders** to organize your learning
+
+📱 **Mobile-First Design**
+
+- Access via local network on any device
+- Touch-friendly swipe gestures
+- Optimized for smartphones and tablets
 
 ## 🚀 Quick Start
 
 1. **Clone & Install**
+
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Janphan/Finnish-Vocabulary-Learning-App.git
    cd Finnish-Vocabulary-Learning-App
    npm install
    ```
 
-2. **Configure Firebase**
+2. **Configure Firebase** (Required)
+
    ```bash
-   cp .env.example .env
-   # Add your Firebase config to .env
+   # Create .env file with your Firebase config
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
    ```
 
-3. **Seed Database**
+3. **Seed Database** (One-time setup)
+
    ```bash
    node src/database/seed-firebase.js
    ```
+
+   ✅ This uploads all 253 vocabulary words to your Firebase database
 
 4. **Start Development**
    ```bash
    npm run dev
    ```
+   🌐 Access at `http://localhost:3000` or your network IP for mobile testing
 
 ## 📁 Project Structure
 
 ```
 src/
-├── App.tsx                 # Main application component
-├── main.tsx               # Application entry point
-├── index.css              # Global styles
-├── components/            # React components
-│   ├── CategoryList.tsx   # Category selection interface
-│   ├── VocabularySwiper.tsx # Word learning interface
-│   ├── FolderManager.tsx  # User folder management
-│   └── ui/               # Reusable UI components
-└── database/             # All database-related files
-    ├── index.ts          # Database exports
-    ├── firebase.ts       # Firebase configuration
-    ├── firebaseVocabularyService.ts # Database operations
-    ├── useFirebaseVocabulary.ts     # React hooks
-    └── seed-firebase.js  # Data seeding script
+├── App.tsx                          # Main application component
+├── main.tsx                        # Application entry point
+├── index.css                       # Global styles
+├── components/                     # React components
+│   ├── CategoryList.tsx           # Category selection with 11 categories
+│   ├── VocabularySwiper.tsx       # Interactive word learning interface
+│   ├── FolderManager.tsx          # Custom vocabulary collections
+│   ├── AddToFolderModal.tsx       # Add words to personal folders
+│   └── ui/                        # Reusable UI components (shadcn/ui)
+├── database/                      # 🔥 Firebase integration layer
+│   ├── index.ts                   # Clean database exports
+│   ├── firebase.ts                # Firebase config & initialization
+│   ├── firebaseVocabularyService.ts  # CRUD operations & data management
+│   ├── useFirebaseVocabulary.ts   # React hooks for data fetching
+│   └── seed-firebase.js           # 📊 Seeds 253 words + 11 categories
+└── styles/
+    └── globals.css                # Tailwind CSS configuration
 ```
 
-## 🛠️ Technologies
+## 🛠️ Tech Stack
 
-- **Frontend**: React + TypeScript + Vite
-- **Database**: Firebase Firestore
-- **UI**: Tailwind CSS + Lucide Icons
-- **State**: React Hooks
+- **⚛️ Frontend**: React 18.3.1 + TypeScript + Vite 6.3.5
+- **🔥 Backend**: Firebase Firestore (NoSQL database)
+- **🎨 UI Framework**: Tailwind CSS + shadcn/ui components
+- **📱 Icons**: Lucide React
+- **🔄 State Management**: React Hooks + Firebase real-time sync
+- **📦 Build Tool**: Vite (fast development & optimized builds)
 
-## 📱 Features
+## 📚 Vocabulary Categories
 
-- ✅ **Interactive Learning**: Swipe through vocabulary cards
-- ✅ **Categories**: Organized by topics (greetings, family, animals, etc.)
-- ✅ **Responsive Design**: Works on desktop and mobile
-- ✅ **Firebase Backend**: Real-time data with scalable architecture
-- ✅ **User Folders**: Create custom word collections
-- ✅ **Search & Filter**: Find specific vocabulary
+| Category           | Count    | Emoji | Description                             |
+| ------------------ | -------- | ----- | --------------------------------------- |
+| Greetings          | 10 words | 👋    | Common greetings and polite expressions |
+| Family             | 12 words | 👨‍👩‍👧‍👦    | Family members and relationships        |
+| Animals            | 15 words | 🐕    | Common animals and pets                 |
+| Food & Drinks      | 18 words | 🍽️    | Food, beverages, and meals              |
+| Colors             | 12 words | 🎨    | Basic colors and shades                 |
+| Body Parts         | 15 words | 👤    | Human anatomy vocabulary                |
+| Weather            | 12 words | 🌤️    | Weather conditions and climate          |
+| Transportation     | 12 words | 🚗    | Vehicles and travel methods             |
+| Clothing           | 12 words | 👕    | Clothes and accessories                 |
+| School & Education | 10 words | 📚    | Learning and academic terms             |
+| Home               | 5 words  | 🏠    | House, rooms, and furniture             |
 
-## 🔧 Development
+**Total: 253+ Finnish vocabulary words** 🇫🇮
 
-- **Dev Server**: `npm run dev`
-- **Build**: `npm run build`
-- **Preview**: `npm run preview`
+## 🔧 Development Commands
 
-## 📚 Documentation
+```bash
+# Start development server
+npm run dev              # → http://localhost:3000
 
-- **Firebase Setup**: `FIREBASE_SECURITY_SETUP.md`
-- **Deployment**: `DEPLOYMENT_OPTIONS.md`
+# Build for production
+npm run build            # Creates optimized dist/ folder
+
+# Preview production build
+npm run preview          # Test production build locally
+
+# Database operations
+node src/database/seed-firebase.js  # Upload vocabulary to Firebase
+node check-firebase.js              # Check current database content
+```
+
+## 🌐 Mobile Testing
+
+Your app supports mobile testing via local network:
+
+1. **Find your local IP**: Check terminal output when running `npm run dev`
+2. **Access on mobile**: `http://YOUR_IP:3000` (e.g., `http://192.168.1.103:3000`)
+3. **Same WiFi required**: Ensure mobile device is on same network
+
+## 🔐 Firebase Security
+
+- Environment variables protect sensitive Firebase config
+- Firestore security rules control database access
+- API keys are excluded from version control (.gitignore)
+- Production-ready authentication can be added later
+
+## 📈 Performance
+
+- **⚡ Vite**: Ultra-fast development with hot module replacement
+- **🔥 Firebase**: Serverless backend scales automatically
+- **📱 Responsive**: Optimized for all screen sizes
+- **⚛️ React**: Component-based architecture for maintainability
+
+## 🚀 Deployment Options
+
+- **Vercel**: Zero-config deployment with automatic builds
+- **Netlify**: Continuous deployment from Git
+- **Firebase Hosting**: Integrated hosting with Firebase backend
+- **GitHub Pages**: Free static hosting
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Finnish vocabulary sourced from educational resources
+- UI components powered by [shadcn/ui](https://ui.shadcn.com/)
+- Icons by [Lucide](https://lucide.dev/)
+- Backend by [Firebase](https://firebase.google.com/)
+
+---
+
+**Start learning Finnish today!** 🇫🇮 ✨
