@@ -4,7 +4,7 @@ A modern, interactive vocabulary learning application for Finnish language learn
 
 ## ✨ Features
 
-- **4,700+ High-Quality Finnish vocabulary words** with authentic translations
+- **4,400+ High-Quality Finnish vocabulary words** with authentic translations
 - **16 Semantic categories** (Family & People, Nature & Weather, Food & Drink, etc.)
 - **Interactive flashcards** with swipe gestures
 - **Pronunciation guide** with IPA notation

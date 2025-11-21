@@ -30,6 +30,9 @@ export function VocabularySwiper({
 
   const currentWord = words[currentIndex];
   
+  // Calculate if current word is favorite
+  const isFavorite = favorites.has(currentWord?.id || '');
+  
   // Safety check - if no current word, don't render
   if (!currentWord) {
     return (
@@ -47,8 +50,6 @@ export function VocabularySwiper({
       </div>
     );
   }
-  
-  const isFavorite = favorites.has(currentWord.id);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientY);
@@ -130,7 +131,7 @@ export function VocabularySwiper({
               <h2 className="text-gray-900 text-6xl mb-4">{currentWord.finnish}</h2>
               <div className="flex items-center justify-center gap-2 text-gray-500">
                 <Volume2 className="w-4 h-4" />
-                <span>/{currentWord.pronunciation}/</span>
+                <span>{currentWord.pronunciation}</span>
               </div>
             </div>
 
@@ -146,7 +147,9 @@ export function VocabularySwiper({
             {/* Example Sentence */}
             <div className="text-center">
               <div className="text-gray-400 text-sm mb-2">Example</div>
-              <div className="text-gray-600 italic max-w-sm mx-auto">{currentWord.example}</div>
+              <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
+                {currentWord.example}
+              </div>
             </div>
           </div>
         </div>
