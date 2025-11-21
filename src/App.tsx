@@ -51,31 +51,6 @@ export default function App() {
   // Load ALL vocabulary words for accurate category counting
   const { words: allWords, isLoading: allWordsLoading } = useAllVocabularyWords();
   
-  // Debug: Log the allWords to see what we're getting
-  useEffect(() => {
-    if (allWords.length > 0) {
-      console.log('🔍 Debug allWords sample:', allWords.slice(0, 3));
-      
-      // Check if difficulty property exists and log actual values
-      const sample = allWords.slice(0, 10);
-      console.log('🔍 Debug difficulty values:', sample.map(w => ({
-        finnish: w.finnish,
-        difficulty: w.difficulty,
-        difficultyType: typeof w.difficulty,
-        hasOwnProperty: w.hasOwnProperty('difficulty')
-      })));
-      
-      console.log('🔍 Debug difficulty counts:', {
-        total: allWords.length,
-        beginner: allWords.filter(w => w.difficulty === 'beginner').length,
-        intermediate: allWords.filter(w => w.difficulty === 'intermediate').length,
-        advanced: allWords.filter(w => w.difficulty === 'advanced').length,
-        undefined: allWords.filter(w => !w.difficulty).length,
-        all_difficulties: [...new Set(allWords.map(w => w.difficulty))]
-      });
-    }
-  }, [allWords]);
-  
   // Switch to categories view when Firebase data is ready
   useEffect(() => {
     console.log('🔍 Loading state check:', {

@@ -260,11 +260,6 @@ class FirebaseVocabularyService {
 
   // Helper method to convert Firestore data to VocabularyWord
   private convertToVocabularyWord(id: string, data: FirestoreVocabularyWord): VocabularyWord & { frequency: number } {
-    // Log the difficulty value for debugging
-    if (!data.difficulty) {
-      console.warn(`⚠️ Word "${data.finnish}" (${id}) is missing difficulty field, defaulting to 'beginner'`);
-    }
-    
     return {
       id,
       finnish: data.finnish,
@@ -273,7 +268,7 @@ class FirebaseVocabularyService {
       categories: data.categories || [data.categoryId || 'general'],
       pronunciation: data.pronunciation,
       example: data.examples?.[0] || `${data.english} - ${data.finnish}`,
-      difficulty: data.difficulty || 'beginner', // Ensure we always have a difficulty value
+      difficulty: data.difficulty || 'beginner',
       frequency: data.frequency || 0 // Preserve frequency for sorting
     };
   }
