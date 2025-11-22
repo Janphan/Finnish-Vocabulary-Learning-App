@@ -2,9 +2,159 @@ import { useState, useEffect } from 'react';
 import { CategoryList } from './components/CategoryList';
 import { VocabularySwiper } from './components/VocabularySwiper';
 import { FolderManager } from './components/FolderManager';
-import { Folder, ArrowLeft } from 'lucide-react';
+import { Folder, ArrowLeft, Globe } from 'lucide-react';
 // Use API server for vocabulary data
 import { useApiVocabulary } from './hooks/useApiVocabulary';
+
+// Language translations
+const translations = {
+  en: {
+    title: "Finnish Vocabulary",
+    words: "words",
+    chooseLevel: "Choose level:",
+    allLevels: "All Levels",
+    basicLevel: "Basic Level", 
+    intermediateLevel: "Intermediate Level",
+    advancedLevel: "Advanced Level",
+    myFolders: "My Folders",
+    organizeVocabulary: "Organize your vocabulary",
+    loading: "Loading Finnish",
+    gettingVocabulary: "Getting vocabulary...",
+    almostReady: "Almost ready...",
+    wordsLoaded: "words loaded!",
+    connectionError: "Connection error"
+  },
+  fi: {
+    title: "Suomen sanasto",
+    words: "sanaa",
+    chooseLevel: "Valitse taso:",
+    allLevels: "Kaikki tasot",
+    basicLevel: "Alkeistaso",
+    intermediateLevel: "Keskitaso", 
+    advancedLevel: "Edistynyt taso",
+    myFolders: "Omat kansiot",
+    organizeVocabulary: "Järjestä sanastosi",
+    loading: "Ladataan suomea",
+    gettingVocabulary: "Haetaan sanastoa...",
+    almostReady: "Melkein valmis...",
+    wordsLoaded: "sanaa ladattu!",
+    connectionError: "Yhteysvirhe"
+  }
+};
+
+// Category name translations
+const categoryTranslations = {
+  en: {
+    // Semantic categories
+    'Family & People': 'Family & People',
+    'Time & Numbers': 'Time & Numbers', 
+    'Basic Actions': 'Basic Actions',
+    'Nature & Weather': 'Nature & Weather',
+    'Colors & Appearance': 'Colors & Appearance',
+    'Body': 'Body',
+    'Food & Drink': 'Food & Drink',
+    'Animals': 'Animals',
+    'Work & Education': 'Work & Education',
+    'Transportation': 'Transportation',
+    'Emotions & Mental States': 'Emotions & Mental States',
+    'Home & Living': 'Home & Living',
+    
+    // Grammar categories (lowercase - from data)
+    'noun': 'Noun',
+    'verb': 'Verb',
+    'adjective': 'Adjective',
+    'adverb': 'Adverb',
+    'pronoun': 'Pronoun',
+    'proper_noun': 'Proper Noun',
+    'preposition': 'Preposition',
+    'interjection': 'Interjection',
+    
+    // Grammar categories (capitalized - from useApiVocabulary)  
+    'Noun': 'Noun',
+    'Verb': 'Verb',
+    'Adjective': 'Adjective',
+    'Adverb': 'Adverb',
+    'Pronoun': 'Pronoun',
+    'Proper_noun': 'Proper Noun',
+    'Preposition': 'Preposition',
+    'Interjection': 'Interjection',
+    
+    // Legacy categories
+    'greetings': 'Greetings',
+    'numbers': 'Numbers',
+    'food': 'Food',
+    'colors': 'Colors',
+    'family': 'Family',
+    'weather': 'Weather',
+    'body': 'Body',
+    'animals': 'Animals',
+    'clothing': 'Clothing',
+    'transportation': 'Transportation',
+    'time': 'Time',
+    'home': 'Home',
+    'work': 'Work',
+    'emotions': 'Emotions',
+    'actions': 'Actions',
+    'adjectives': 'Adjectives',
+    'general': 'General'
+  },
+  fi: {
+    // Semantic categories
+    'Family & People': 'Perhe & Ihmiset',
+    'Time & Numbers': 'Aika & Numerot',
+    'Basic Actions': 'Perustoiminnot', 
+    'Nature & Weather': 'Luonto & Sää',
+    'Colors & Appearance': 'Värit & Ulkonäkö',
+    'Body': 'Keho',
+    'Food & Drink': 'Ruoka & Juoma',
+    'Animals': 'Eläimet',
+    'Work & Education': 'Työ & Koulutus',
+    'Transportation': 'Liikenne',
+    'Emotions & Mental States': 'Tunteet & Mielentilat',
+    'Home & Living': 'Koti & Asuminen',
+    
+    // Grammar categories (lowercase - from data)
+    'noun': 'Substantiivi',
+    'verb': 'Verbi', 
+    'adjective': 'Adjektiivi',
+    'adverb': 'Adverbi',
+    'pronoun': 'Pronomini',
+    'proper_noun': 'Erisnimi',
+    'preposition': 'Prepositio',
+    'interjection': 'Huudahdus',
+    
+    // Grammar categories (capitalized - from useApiVocabulary)
+    'Noun': 'Substantiivi',
+    'Verb': 'Verbi',
+    'Adjective': 'Adjektiivi', 
+    'Adverb': 'Adverbi',
+    'Pronoun': 'Pronomini',
+    'Proper_noun': 'Erisnimi',
+    'Preposition': 'Prepositio',
+    'Interjection': 'Huudahdus',
+    
+    // Legacy categories
+    'greetings': 'Tervehdykset',
+    'numbers': 'Numerot',
+    'food': 'Ruoka',
+    'colors': 'Värit',
+    'family': 'Perhe',
+    'weather': 'Sää',
+    'body': 'Keho',
+    'animals': 'Eläimet', 
+    'clothing': 'Vaatteet',
+    'transportation': 'Liikenne',
+    'time': 'Aika',
+    'home': 'Koti',
+    'work': 'Työ',
+    'emotions': 'Tunteet',
+    'actions': 'Toiminnot',
+    'adjectives': 'Adjektiivit',
+    'general': 'Yleinen'
+  }
+};
+
+type Language = 'en' | 'fi';
 
 export interface VocabularyWord {
   id: string;
@@ -47,6 +197,10 @@ export default function App() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<'beginner' | 'intermediate' | 'advanced' | 'all'>('all');
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [folders, setFolders] = useState<UserFolder[]>([]);
+  const [language, setLanguage] = useState<Language>('en');
+  
+  // Get current translations
+  const t = translations[language];
   
   // Use API server for vocabulary data
   const { 
@@ -152,9 +306,9 @@ export default function App() {
             </div>
           </div>
           
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Loading Finnish</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t.loading}</h2>
           <p className="text-sm text-gray-600 mb-6">
-            {loading ? 'Getting vocabulary...' : 'Almost ready...'}
+            {loading ? t.gettingVocabulary : t.almostReady}
           </p>
           
           {/* Progress dots */}
@@ -169,7 +323,7 @@ export default function App() {
               <div className="flex items-center justify-center gap-2 text-green-700">
                 <span className="text-lg">✨</span>
                 <p className="font-medium">
-                  {allWords.length} words loaded!
+                  {allWords.length} {t.wordsLoaded}
                 </p>
               </div>
             </div>
@@ -179,7 +333,7 @@ export default function App() {
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-pulse">
               <div className="flex items-center justify-center gap-2 text-red-700">
                 <span>⚠️</span>
-                <p className="text-sm">Connection error</p>
+                <p className="text-sm">{t.connectionError}</p>
               </div>
             </div>
           )}
@@ -199,22 +353,32 @@ export default function App() {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900">
-                    Finnish Vocabulary
+                    {t.title}
                   </h1>
-                  <p className="text-xs text-gray-600">{allWords.length} words</p>
+                  <p className="text-xs text-gray-600">{allWords.length} {t.words}</p>
                 </div>
-                <button
-                  onClick={() => setCurrentView('folders')}
-                  className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                >
-                  <Folder className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Language Switcher */}
+                  <button
+                    onClick={() => setLanguage(language === 'en' ? 'fi' : 'en')}
+                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
+                    title={language === 'en' ? 'Suomeksi' : 'In English'}
+                  >
+                    <Globe className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentView('folders')}
+                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
+                  >
+                    <Folder className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
+                  </button>
+                </div>
               </div>
               
               {/* Difficulty Level Selector */}
               <div className="mt-4">
                 <p className="text-xs font-medium text-gray-600 mb-2">
-                  Choose level:
+                  {t.chooseLevel}
                 </p>
                 <div className="relative">
                   <select
@@ -228,10 +392,10 @@ export default function App() {
                       backgroundImage: 'none'
                     }}
                   >
-                    <option value="all">🌟 All Levels</option>
-                    <option value="beginner">🌱 Basic Level</option>
-                    <option value="intermediate">⭐ Intermediate Level</option>
-                    <option value="advanced">🚀 Advanced Level</option>
+                    <option value="all">🌟 {t.allLevels}</option>
+                    <option value="beginner">🌱 {t.basicLevel}</option>
+                    <option value="intermediate">⭐ {t.intermediateLevel}</option>
+                    <option value="advanced">🚀 {t.advancedLevel}</option>
                   </select>
                 </div>
               </div>
@@ -242,6 +406,8 @@ export default function App() {
             vocabularyWords={allWords}
             onSelectCategory={handleCategorySelect}
             selectedDifficulty={selectedDifficulty}
+            language={language}
+            categoryTranslations={categoryTranslations}
           />
         </>
       )}
@@ -249,12 +415,12 @@ export default function App() {
       {currentView === 'vocabulary' && selectedCategory && (
         <VocabularySwiper
           words={getCategoryWords(selectedCategory.id)}
-          category={selectedCategory}
           favorites={favorites}
           folders={folders}
           onToggleFavorite={handleToggleFavorite}
           onAddToFolder={handleAddToFolder}
           onBack={handleBack}
+          language={language}
         />
       )}
       {currentView === 'folders' && (
@@ -270,8 +436,8 @@ export default function App() {
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                  <h1 className="text-gray-900">My Folders</h1>
-                  <p className="text-gray-500 text-sm">Organize your vocabulary</p>
+                  <h1 className="text-gray-900">{t.myFolders}</h1>
+                  <p className="text-gray-500 text-sm">{t.organizeVocabulary}</p>
                 </div>
               </div>
             </div>

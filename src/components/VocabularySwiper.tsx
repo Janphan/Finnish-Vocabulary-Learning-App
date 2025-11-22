@@ -1,26 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
-import { VocabularyWord, Category, UserFolder } from '../App';
+import { VocabularyWord, UserFolder } from '../App';
 import { Star, FolderPlus, ArrowLeft, Volume2 } from 'lucide-react';
 import { AddToFolderModal } from './AddToFolderModal';
 
 interface VocabularySwiperProps {
   words: VocabularyWord[];
-  category: Category;
   favorites: Set<string>;
   folders: UserFolder[];
   onToggleFavorite: (wordId: string) => void;
   onAddToFolder: (wordId: string, folderId: string) => void;
   onBack: () => void;
+  language?: 'en' | 'fi';
 }
 
 export function VocabularySwiper({
   words,
-  category,
   favorites,
   folders,
   onToggleFavorite,
   onAddToFolder,
   onBack,
+  language = 'en',
 }: VocabularySwiperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFolderModal, setShowFolderModal] = useState(false);
@@ -29,6 +29,12 @@ export function VocabularySwiper({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentWord = words[currentIndex];
+  
+  // Language labels
+  const labels = {
+    en: { finnish: 'Finnish', english: 'English', example: 'Example' },
+    fi: { finnish: 'Suomi', english: 'Englanti', example: 'Esimerkki' }
+  };
   
   // Calculate if current word is favorite
   const isFavorite = favorites.has(currentWord?.id || '');
@@ -75,15 +81,21 @@ export function VocabularySwiper({
   };
 
   const handleNext = () => {
-    if (currentIndex < words.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    // Generate random index that's different from current
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * words.length);
+    } while (randomIndex === currentIndex && words.length > 1);
+    setCurrentIndex(randomIndex);
   };
 
   const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    // Generate random index that's different from current
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * words.length);
+    } while (randomIndex === currentIndex && words.length > 1);
+    setCurrentIndex(randomIndex);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -127,11 +139,12 @@ export function VocabularySwiper({
           <div className="w-full max-w-md space-y-8">
             {/* Finnish Word */}
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-3">Finnish</div>
+              <div className="text-gray-400 text-sm mb-3">{labels[language].finnish}</div>
               <h2 className="text-gray-900 text-6xl mb-4">{currentWord.finnish}</h2>
               <div className="flex items-center justify-center gap-2 text-gray-500">
                 <Volume2 className="w-4 h-4" />
                 <span>{currentWord.pronunciation}</span>
+                <span className="text-gray-400">({currentWord.partOfSpeech})</span>
               </div>
             </div>
 
@@ -140,13 +153,13 @@ export function VocabularySwiper({
 
             {/* English Translation */}
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">English</div>
+              <div className="text-gray-400 text-sm mb-2">{labels[language].english}</div>
               <div className="text-gray-900 text-3xl">{currentWord.english}</div>
             </div>
 
             {/* Example Sentence */}
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">Example</div>
+              <div className="text-gray-400 text-sm mb-2">{labels[language].example}</div>
               <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
                 {currentWord.example}
               </div>

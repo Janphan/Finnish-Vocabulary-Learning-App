@@ -6,6 +6,8 @@ interface CategoryListProps {
   vocabularyWords: VocabularyWord[];
   onSelectCategory: (categoryId: string) => void;
   selectedDifficulty: 'beginner' | 'intermediate' | 'advanced' | 'all';
+  language: 'en' | 'fi';
+  categoryTranslations: Record<'en' | 'fi', Record<string, string>>;
 }
 
 const categoryImages: Record<string, string> = {
@@ -53,7 +55,7 @@ const categoryImages: Record<string, string> = {
   'general': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop',
 };
 
-export function CategoryList({ categories, vocabularyWords, onSelectCategory, selectedDifficulty }: CategoryListProps) {
+export function CategoryList({ categories, vocabularyWords, onSelectCategory, selectedDifficulty, language, categoryTranslations }: CategoryListProps) {
   const getWordCount = (categoryId: string) => {
     // Calculate actual count from vocabulary words that include this category
     let words = vocabularyWords.filter((word) => 
@@ -103,7 +105,7 @@ export function CategoryList({ categories, vocabularyWords, onSelectCategory, se
               {/* Content */}
               <div className="p-3">
                 <h3 className="text-sm font-semibold text-gray-900 text-left leading-tight group-hover:text-gray-700 transition-colors mb-2">
-                  {category.name}
+                  {categoryTranslations[language][category.name] || category.name}
                 </h3>
                 
                 {/* Progress indicator */}
