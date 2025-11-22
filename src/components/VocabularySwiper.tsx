@@ -159,9 +159,20 @@ export function VocabularySwiper({
             {/* Example Sentence */}
             <div className="text-center">
               <div className="text-gray-400 text-sm mb-2">{labels[language].example}</div>
-              <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
-                {currentWord.example}
-              </div>
+                {/* Show examples array if present, else fallback to example field */}
+                {Array.isArray(currentWord.examples) && currentWord.examples.length > 0 ? (
+                  <div className="space-y-2">
+                    {currentWord.examples.map((ex, idx) => (
+                      <div key={idx} className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
+                        {typeof ex === 'string' ? ex : (ex as { text?: string }).text || JSON.stringify(ex)}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
+                    {currentWord.example}
+                  </div>
+                )}
             </div>
           </div>
         </div>
