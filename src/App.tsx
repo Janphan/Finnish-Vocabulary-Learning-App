@@ -369,9 +369,11 @@ export default function App() {
                   <button
                     onClick={() => setCurrentView('folders')}
                     className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
+                    title="My Folders"
                   >
                     <Folder className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
                   </button>
+
                 </div>
               </div>
               
@@ -452,6 +454,8 @@ export default function App() {
           />
         </>
       )}
+
+
     </div>
   );
 }

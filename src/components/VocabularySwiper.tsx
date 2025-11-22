@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { VocabularyWord, UserFolder } from '../App';
-import { Star, FolderPlus, ArrowLeft, Volume2 } from 'lucide-react';
+import { Star, FolderPlus, ArrowLeft } from 'lucide-react';
 import { AddToFolderModal } from './AddToFolderModal';
 
 interface VocabularySwiperProps {
@@ -140,9 +140,8 @@ export function VocabularySwiper({
             {/* Finnish Word */}
             <div className="text-center">
               <div className="text-gray-400 text-sm mb-3">{labels[language].finnish}</div>
-              <h2 className="text-gray-900 text-6xl mb-4">{currentWord.finnish}</h2>
-              <div className="flex items-center justify-center gap-2 text-gray-500">
-                <Volume2 className="w-4 h-4" />
+              <div className="text-gray-900 text-6xl mb-4">{currentWord.finnish}</div>
+              <div className="flex items-center justify-center gap-3 text-gray-500">
                 <span>{currentWord.pronunciation}</span>
                 <span className="text-gray-400">({currentWord.partOfSpeech})</span>
               </div>
