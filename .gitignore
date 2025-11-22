@@ -18,7 +18,7 @@ public/data/*.json
 public/data/*filtered*
 *.ndjson
 public/kaikki.org-dictionary-Finnish.jsonl
-finnish-vocab-ai-enhanced.json
+public/finnish-vocab-ai-enhanced.json
 
 # Environment
 .env
