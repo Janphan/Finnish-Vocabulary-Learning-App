@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
-import { CategoryList } from './components/CategoryList';
-import { VocabularySwiper } from './components/VocabularySwiper';
-import { FolderManager } from './components/FolderManager';
-import { Folder, ArrowLeft, Globe } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { CategoryList } from "./components/CategoryList";
+import { VocabularySwiper } from "./components/VocabularySwiper";
+import { FolderManager } from "./components/FolderManager";
+import { Folder, ArrowLeft, Globe } from "lucide-react";
 // Use Firestore for vocabulary data instead of JSON files
-import { useFirestoreVocabulary } from './hooks/useFirestoreVocabulary';
+import { useFirestoreVocabulary } from "./hooks/useFirestoreVocabulary";
+import { Brain } from "lucide-react";
+import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
 
 // Language translations
 const translations = {
@@ -13,7 +15,7 @@ const translations = {
     words: "words",
     chooseLevel: "Choose level:",
     allLevels: "All Levels",
-    basicLevel: "Basic Level", 
+    basicLevel: "Basic Level",
     intermediateLevel: "Intermediate Level",
     advancedLevel: "Advanced Level",
     myFolders: "My Folders",
@@ -22,7 +24,7 @@ const translations = {
     gettingVocabulary: "Getting vocabulary...",
     almostReady: "Almost ready...",
     wordsLoaded: "words loaded!",
-    connectionError: "Connection error"
+    connectionError: "Connection error",
   },
   fi: {
     title: "Suomen sanasto",
@@ -30,7 +32,7 @@ const translations = {
     chooseLevel: "Valitse taso:",
     allLevels: "Kaikki tasot",
     basicLevel: "Alkeistaso",
-    intermediateLevel: "Keskitaso", 
+    intermediateLevel: "Keskitaso",
     advancedLevel: "Edistynyt taso",
     myFolders: "Omat kansiot",
     organizeVocabulary: "Järjestä sanastosi",
@@ -38,123 +40,123 @@ const translations = {
     gettingVocabulary: "Haetaan sanastoa...",
     almostReady: "Melkein valmis...",
     wordsLoaded: "sanaa ladattu!",
-    connectionError: "Yhteysvirhe"
-  }
+    connectionError: "Yhteysvirhe",
+  },
 };
 
 // Category name translations
 const categoryTranslations = {
   en: {
     // Semantic categories
-    'Family & People': 'Family & People',
-    'Time & Numbers': 'Time & Numbers', 
-    'Basic Actions': 'Basic Actions',
-    'Nature & Weather': 'Nature & Weather',
-    'Colors & Appearance': 'Colors & Appearance',
-    'Body': 'Body',
-    'Food & Drink': 'Food & Drink',
-    'Animals': 'Animals',
-    'Work & Education': 'Work & Education',
-    'Transportation': 'Transportation',
-    'Emotions & Mental States': 'Emotions & Mental States',
-    'Home & Living': 'Home & Living',
-    
+    "Family & People": "Family & People",
+    "Time & Numbers": "Time & Numbers",
+    "Basic Actions": "Basic Actions",
+    "Nature & Weather": "Nature & Weather",
+    "Colors & Appearance": "Colors & Appearance",
+    Body: "Body",
+    "Food & Drink": "Food & Drink",
+    Animals: "Animals",
+    "Work & Education": "Work & Education",
+    Transportation: "Transportation",
+    "Emotions & Mental States": "Emotions & Mental States",
+    "Home & Living": "Home & Living",
+
     // Grammar categories (lowercase - from data)
-    'noun': 'Noun',
-    'verb': 'Verb',
-    'adjective': 'Adjective',
-    'adverb': 'Adverb',
-    'pronoun': 'Pronoun',
-    'proper_noun': 'Proper Noun',
-    'preposition': 'Preposition',
-    'interjection': 'Interjection',
-    
-    // Grammar categories (capitalized - from useApiVocabulary)  
-    'Noun': 'Noun',
-    'Verb': 'Verb',
-    'Adjective': 'Adjective',
-    'Adverb': 'Adverb',
-    'Pronoun': 'Pronoun',
-    'Proper_noun': 'Proper Noun',
-    'Preposition': 'Preposition',
-    'Interjection': 'Interjection',
-    
+    noun: "Noun",
+    verb: "Verb",
+    adjective: "Adjective",
+    adverb: "Adverb",
+    pronoun: "Pronoun",
+    proper_noun: "Proper Noun",
+    preposition: "Preposition",
+    interjection: "Interjection",
+
+    // Grammar categories (capitalized - from useApiVocabulary)
+    Noun: "Noun",
+    Verb: "Verb",
+    Adjective: "Adjective",
+    Adverb: "Adverb",
+    Pronoun: "Pronoun",
+    Proper_noun: "Proper Noun",
+    Preposition: "Preposition",
+    Interjection: "Interjection",
+
     // Legacy categories
-    'greetings': 'Greetings',
-    'numbers': 'Numbers',
-    'food': 'Food',
-    'colors': 'Colors',
-    'family': 'Family',
-    'weather': 'Weather',
-    'body': 'Body',
-    'animals': 'Animals',
-    'clothing': 'Clothing',
-    'transportation': 'Transportation',
-    'time': 'Time',
-    'home': 'Home',
-    'work': 'Work',
-    'emotions': 'Emotions',
-    'actions': 'Actions',
-    'adjectives': 'Adjectives',
-    'general': 'General'
+    greetings: "Greetings",
+    numbers: "Numbers",
+    food: "Food",
+    colors: "Colors",
+    family: "Family",
+    weather: "Weather",
+    body: "Body",
+    animals: "Animals",
+    clothing: "Clothing",
+    transportation: "Transportation",
+    time: "Time",
+    home: "Home",
+    work: "Work",
+    emotions: "Emotions",
+    actions: "Actions",
+    adjectives: "Adjectives",
+    general: "General",
   },
   fi: {
     // Semantic categories
-    'Family & People': 'Perhe & Ihmiset',
-    'Time & Numbers': 'Aika & Numerot',
-    'Basic Actions': 'Perustoiminnot', 
-    'Nature & Weather': 'Luonto & Sää',
-    'Colors & Appearance': 'Värit & Ulkonäkö',
-    'Body': 'Keho',
-    'Food & Drink': 'Ruoka & Juoma',
-    'Animals': 'Eläimet',
-    'Work & Education': 'Työ & Koulutus',
-    'Transportation': 'Liikenne',
-    'Emotions & Mental States': 'Tunteet & Mielentilat',
-    'Home & Living': 'Koti & Asuminen',
-    
+    "Family & People": "Perhe & Ihmiset",
+    "Time & Numbers": "Aika & Numerot",
+    "Basic Actions": "Perustoiminnot",
+    "Nature & Weather": "Luonto & Sää",
+    "Colors & Appearance": "Värit & Ulkonäkö",
+    Body: "Keho",
+    "Food & Drink": "Ruoka & Juoma",
+    Animals: "Eläimet",
+    "Work & Education": "Työ & Koulutus",
+    Transportation: "Liikenne",
+    "Emotions & Mental States": "Tunteet & Mielentilat",
+    "Home & Living": "Koti & Asuminen",
+
     // Grammar categories (lowercase - from data)
-    'noun': 'Substantiivi',
-    'verb': 'Verbi', 
-    'adjective': 'Adjektiivi',
-    'adverb': 'Adverbi',
-    'pronoun': 'Pronomini',
-    'proper_noun': 'Erisnimi',
-    'preposition': 'Prepositio',
-    'interjection': 'Huudahdus',
-    
+    noun: "Substantiivi",
+    verb: "Verbi",
+    adjective: "Adjektiivi",
+    adverb: "Adverbi",
+    pronoun: "Pronomini",
+    proper_noun: "Erisnimi",
+    preposition: "Prepositio",
+    interjection: "Huudahdus",
+
     // Grammar categories (capitalized - from useApiVocabulary)
-    'Noun': 'Substantiivi',
-    'Verb': 'Verbi',
-    'Adjective': 'Adjektiivi', 
-    'Adverb': 'Adverbi',
-    'Pronoun': 'Pronomini',
-    'Proper_noun': 'Erisnimi',
-    'Preposition': 'Prepositio',
-    'Interjection': 'Huudahdus',
-    
+    Noun: "Substantiivi",
+    Verb: "Verbi",
+    Adjective: "Adjektiivi",
+    Adverb: "Adverbi",
+    Pronoun: "Pronomini",
+    Proper_noun: "Erisnimi",
+    Preposition: "Prepositio",
+    Interjection: "Huudahdus",
+
     // Legacy categories
-    'greetings': 'Tervehdykset',
-    'numbers': 'Numerot',
-    'food': 'Ruoka',
-    'colors': 'Värit',
-    'family': 'Perhe',
-    'weather': 'Sää',
-    'body': 'Keho',
-    'animals': 'Eläimet', 
-    'clothing': 'Vaatteet',
-    'transportation': 'Liikenne',
-    'time': 'Aika',
-    'home': 'Koti',
-    'work': 'Työ',
-    'emotions': 'Tunteet',
-    'actions': 'Toiminnot',
-    'adjectives': 'Adjektiivit',
-    'general': 'Yleinen'
-  }
+    greetings: "Tervehdykset",
+    numbers: "Numerot",
+    food: "Ruoka",
+    colors: "Värit",
+    family: "Perhe",
+    weather: "Sää",
+    body: "Keho",
+    animals: "Eläimet",
+    clothing: "Vaatteet",
+    transportation: "Liikenne",
+    time: "Aika",
+    home: "Koti",
+    work: "Työ",
+    emotions: "Tunteet",
+    actions: "Toiminnot",
+    adjectives: "Adjektiivit",
+    general: "Yleinen",
+  },
 };
 
-type Language = 'en' | 'fi';
+type Language = "en" | "fi";
 
 export interface VocabularyWord {
   id: string;
@@ -174,7 +176,7 @@ export interface VocabularyWord {
   aiService?: string | null; // Which AI service was used (openai, gemini, claude, etc.)
   // Computed fields (added by upload script or app logic)
   categoryId?: string;
-  difficulty?: 'beginner' | 'intermediate' | 'advanced'; // Computed from CEFR or difficultyScore
+  difficulty?: "beginner" | "intermediate" | "advanced"; // Computed from CEFR or difficultyScore
   fallbackUsed?: boolean; // True if fallback example was used
 }
 
@@ -192,43 +194,47 @@ export interface UserFolder {
   wordIds: string[];
 }
 
-type View = 'categories' | 'vocabulary' | 'folders' | 'loading';
+type View = "categories" | "vocabulary" | "folders" | "loading" | "practice";
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<View>('loading');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'beginner' | 'intermediate' | 'advanced' | 'all'>('all');
+  const [currentView, setCurrentView] = useState<View>("loading");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
+  const [selectedDifficulty, setSelectedDifficulty] = useState<
+    "beginner" | "intermediate" | "advanced" | "all"
+  >("all");
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [folders, setFolders] = useState<UserFolder[]>([]);
-  const [language, setLanguage] = useState<Language>('en');
-  
+  const [language, setLanguage] = useState<Language>("en");
+
   // Get current translations
   const t = translations[language];
-  
+
   // Use Firestore for vocabulary data instead of JSON files
-  const { 
-    words: allWords, 
-    categories, 
-    loading, 
-    error
+  const {
+    words: allWords,
+    categories,
+    loading,
+    error,
   } = useFirestoreVocabulary({
     // Don't limit pageSize - we want all vocabulary for proper difficulty counts
   });
-  
+
   // Switch to categories view when API data is ready (but don't override vocabulary view)
   useEffect(() => {
-    if (!loading && categories.length > 0 && currentView === 'loading') {
-      setCurrentView('categories');
+    if (!loading && categories.length > 0 && currentView === "loading") {
+      setCurrentView("categories");
     }
   }, [loading, allWords, categories, currentView]);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
-    setCurrentView('vocabulary');
+    setCurrentView("vocabulary");
   };
 
   const handleBack = () => {
-    setCurrentView('categories');
+    setCurrentView("categories");
     setSelectedCategoryId(null);
   };
 
@@ -281,24 +287,30 @@ export default function App() {
   const getCategoryWords = (categoryId: string) => {
     let categoryWords = allWords.filter((word: VocabularyWord) => {
       const hasCategories = word.categories && Array.isArray(word.categories);
-      const includesCategory = hasCategories ? word.categories.includes(categoryId) : false;
+      const includesCategory = hasCategories
+        ? word.categories.includes(categoryId)
+        : false;
       const matchesCategoryId = word.categoryId === categoryId;
-      
+
       return includesCategory || matchesCategoryId;
     });
-    
+
     // Filter by difficulty level if not 'all'
-    if (selectedDifficulty !== 'all') {
-      categoryWords = categoryWords.filter((word: VocabularyWord) => word.difficulty === selectedDifficulty);
+    if (selectedDifficulty !== "all") {
+      categoryWords = categoryWords.filter(
+        (word: VocabularyWord) => word.difficulty === selectedDifficulty
+      );
     }
-    
+
     return categoryWords;
   };
 
-  const selectedCategory = categories.find((c: Category) => c.id === selectedCategoryId);
+  const selectedCategory = categories.find(
+    (c: Category) => c.id === selectedCategoryId
+  );
 
   // Loading state
-  if (currentView === 'loading') {
+  if (currentView === "loading") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-sm mx-auto px-4">
@@ -308,19 +320,30 @@ export default function App() {
               <div className="w-6 h-6 bg-gradient-to-r from-gray-500 to-gray-600 rounded-full animate-bounce"></div>
             </div>
           </div>
-          
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">{t.loading}</h2>
+
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            {t.loading}
+          </h2>
           <p className="text-sm text-gray-600 mb-6">
             {loading ? t.gettingVocabulary : t.almostReady}
           </p>
-          
+
           {/* Progress dots */}
           <div className="flex justify-center gap-1 mb-6">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+            <div
+              className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"
+              style={{ animationDelay: "0ms" }}
+            ></div>
+            <div
+              className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"
+              style={{ animationDelay: "150ms" }}
+            ></div>
+            <div
+              className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"
+              style={{ animationDelay: "300ms" }}
+            ></div>
           </div>
-          
+
           {allWords.length > 0 && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 transform transition-all duration-500 animate-pulse">
               <div className="flex items-center justify-center gap-2 text-green-700">
@@ -331,7 +354,7 @@ export default function App() {
               </div>
             </div>
           )}
-          
+
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-pulse">
               <div className="flex items-center justify-center gap-2 text-red-700">
@@ -347,8 +370,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
-      {currentView === 'categories' && (
+      {currentView === "categories" && (
         <>
           {/* Header */}
           <div className="bg-white border-b border-gray-200">
@@ -358,28 +380,38 @@ export default function App() {
                   <h1 className="text-xl font-semibold text-gray-900">
                     {t.title}
                   </h1>
-                  <p className="text-xs text-gray-600">{allWords.length} {t.words}</p>
+                  <p className="text-xs text-gray-600">
+                    {allWords.length} {t.words}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   {/* Language Switcher */}
                   <button
-                    onClick={() => setLanguage(language === 'en' ? 'fi' : 'en')}
+                    onClick={() => setLanguage(language === "en" ? "fi" : "en")}
                     className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                    title={language === 'en' ? 'Suomeksi' : 'In English'}
+                    title={language === "en" ? "Suomeksi" : "In English"}
                   >
                     <Globe className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
                   </button>
+                  {/* Folder Manager Button */}
                   <button
-                    onClick={() => setCurrentView('folders')}
+                    onClick={() => setCurrentView("folders")}
                     className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
                     title="My Folders"
                   >
                     <Folder className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
                   </button>
-
+                  {/* Floating Practice Button */}
+                  <button
+                    onClick={() => setCurrentView("practice")}
+                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
+                    title="Practice Quiz"
+                  >
+                    <Brain className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
+                  </button>
                 </div>
               </div>
-              
+
               {/* Difficulty Level Selector */}
               <div className="mt-4">
                 <p className="text-xs font-medium text-gray-600 mb-2">
@@ -388,18 +420,28 @@ export default function App() {
                 <div className="relative">
                   <select
                     value={selectedDifficulty}
-                    onChange={(e) => setSelectedDifficulty(e.target.value as 'beginner' | 'intermediate' | 'advanced' | 'all')}
+                    onChange={(e) =>
+                      setSelectedDifficulty(
+                        e.target.value as
+                          | "beginner"
+                          | "intermediate"
+                          | "advanced"
+                          | "all"
+                      )
+                    }
                     className="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-white text-gray-800 border-2 border-gray-300 focus:border-green-500 focus:bg-green-50 focus:text-green-800 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                    style={{ 
-                      appearance: 'none',
-                      WebkitAppearance: 'none',
-                      MozAppearance: 'none',
-                      backgroundImage: 'none'
+                    style={{
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      MozAppearance: "none",
+                      backgroundImage: "none",
                     }}
                   >
                     <option value="all">🌟 {t.allLevels}</option>
                     <option value="beginner">🌱 {t.basicLevel}</option>
-                    <option value="intermediate">⭐ {t.intermediateLevel}</option>
+                    <option value="intermediate">
+                      ⭐ {t.intermediateLevel}
+                    </option>
                     <option value="advanced">🚀 {t.advancedLevel}</option>
                   </select>
                 </div>
@@ -417,7 +459,7 @@ export default function App() {
         </>
       )}
 
-      {currentView === 'vocabulary' && selectedCategory && (
+      {currentView === "vocabulary" && selectedCategory && (
         <VocabularySwiper
           words={getCategoryWords(selectedCategory.id)}
           favorites={favorites}
@@ -429,7 +471,7 @@ export default function App() {
         />
       )}
 
-      {currentView === 'folders' && (
+      {currentView === "folders" && (
         <>
           {/* Header */}
           <div className="bg-white border-b border-gray-200">
@@ -443,7 +485,9 @@ export default function App() {
                 </button>
                 <div>
                   <h1 className="text-gray-900">{t.myFolders}</h1>
-                  <p className="text-gray-500 text-sm">{t.organizeVocabulary}</p>
+                  <p className="text-gray-500 text-sm">
+                    {t.organizeVocabulary}
+                  </p>
                 </div>
               </div>
             </div>
@@ -458,7 +502,19 @@ export default function App() {
         </>
       )}
 
-
+      {currentView === "practice" && (
+        <div className="min-h-screen bg-white">
+          <div className="p-4">
+            <button
+              onClick={() => setCurrentView("categories")}
+              className="mb-4 px-4 py-2 bg-gray-200 rounded-lg shadow hover:bg-gray-300"
+            >
+              ← Back
+            </button>
+          </div>
+          <PracticeQuiz words={allWords} />
+        </div>
+      )}
     </div>
   );
 }
