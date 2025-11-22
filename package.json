@@ -1,5 +1,6 @@
 {
       "name": "finnish-vocabulary-learning-app",
+      "homepage": "https://Janphan.github.io/Finnish-Vocabulary-Learning-App",
       "version": "0.1.0",
       "private": true,
       "type": "module",
@@ -63,6 +64,8 @@
             "build": "vite build",
             "setup:data": "bash scripts/setup-wiktextract-data.sh",
             "setup:data:windows": "cmd /c scripts\\setup-wiktextract-data.bat",
-            "upload:firestore": "node scripts/upload-to-firestore.js"
+            "upload:firestore": "node scripts/upload-to-firestore.js",
+            "predeploy": "npm run build",
+            "deploy": "gh-pages -d build"
       }
 }
