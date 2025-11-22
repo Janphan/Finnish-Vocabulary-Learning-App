@@ -4,14 +4,17 @@ A modern, interactive vocabulary learning application for Finnish language learn
 
 ## ✨ Features
 
+- **🌐 Bilingual Interface** - Complete English/Finnish language switching with intuitive Globe icon
 - **4,400+ High-Quality Finnish vocabulary words** with authentic translations
 - **16 Semantic categories** (Family & People, Nature & Weather, Food & Drink, etc.)
-- **Interactive flashcards** with swipe gestures
+- **📝 Part of Speech Display** - Grammar context shown next to pronunciation
+- **🔄 Smart Random Navigation** - No more repetitive back-and-forth through vocabulary
+- **Interactive flashcards** with swipe gestures and keyboard navigation
 - **Pronunciation guide** with IPA notation
 - **Real Finnish examples** showing words in context
 - **3 Difficulty levels** based on CEFR standards (A1-A2: Beginner, B1-B2: Intermediate, C1: Advanced)
 - **Clean translations** - No grammatical descriptions or inflections
-- **Responsive design** works on desktop and mobile
+- **📱 Responsive design** works on desktop and mobile
 
 ## 🏗️ Architecture
 
@@ -87,27 +90,29 @@ scripts/
 
 ## 📚 Categories
 
+**🌐 Available in English and Finnish!**
+
 **Semantic Categories:**
 
-- 👨‍👩‍👧‍👦 Family & People (81 words)
-- ⏰ Time & Numbers (80 words)
-- 🏃 Basic Actions (101 words)
-- 🌦️ Nature & Weather (100 words)
-- 🎨 Colors & Appearance (92 words)
-- 👤 Body (59 words)
-- 🍽️ Food & Drink (58 words)
-- 🐾 Animals (52 words)
-- 🎓 Work & Education (51 words)
-- 🚗 Transportation (43 words)
-- 😊 Emotions & Mental States (35 words)
-- 🏠 Home & Living (31 words)
+- 👨‍👩‍👧‍👦 Family & People / Perhe & Ihmiset (81 words)
+- ⏰ Time & Numbers / Aika & Numerot (80 words)
+- 🏃 Basic Actions / Perustoiminnot (101 words)
+- 🌦️ Nature & Weather / Luonto & Sää (100 words)
+- 🎨 Colors & Appearance / Värit & Ulkonäkö (92 words)
+- 👤 Body / Keho (59 words)
+- 🍽️ Food & Drink / Ruoka & Juoma (58 words)
+- 🐾 Animals / Eläimet (52 words)
+- 🎓 Work & Education / Työ & Koulutus (51 words)
+- 🚗 Transportation / Liikenne (43 words)
+- 😊 Emotions & Mental States / Tunteet & Mielentilat (35 words)
+- 🏠 Home & Living / Koti & Asuminen (31 words)
 
 **Grammar Categories:**
 
-- 📦 noun (3,394 words)
-- 🎨 adjective (726 words)
-- 🏃 verb (548 words)
-- 🔗 preposition (11 words)
+- 📦 Noun / Substantiivi (3,394 words)
+- 🎨 Adjective / Adjektiivi (726 words)
+- 🏃 Verb / Verbi (548 words)
+- 🔗 Preposition / Prepositio (11 words)
 
 **Difficulty Distribution:**
 
@@ -145,6 +150,29 @@ scripts/
 - ✅ **Fewer dependencies** - No Express.js needed
 - ✅ **Better reliability** - No server crashes or port conflicts
 - ✅ **Easier deployment** - Static site deployment
+
+## 🎮 User Experience
+
+**Bilingual Learning Interface:**
+
+- 🌐 **Language Toggle** - Switch between English and Finnish with Globe icon
+- 📱 **Adaptive UI** - All interface elements translate automatically
+- 🏷️ **Category Names** - Both semantic and grammar categories show in selected language
+
+**Enhanced Vocabulary Cards:**
+
+- 🔊 **Pronunciation Guide** - IPA notation with audio icon
+- 📝 **Part of Speech** - Grammar context in parentheses (noun, verb, adjective, etc.)
+- 🔄 **Smart Navigation** - Random vocabulary selection prevents repetition
+- ⌨️ **Keyboard Support** - Arrow keys for navigation
+- 👆 **Touch Gestures** - Swipe left/right on mobile
+
+**Learning Features:**
+
+- ⭐ **Favorites System** - Save important words
+- 📁 **Folder Organization** - Create custom collections
+- 📊 **Progress Tracking** - Word count indicators
+- 🎯 **Contextual Examples** - Real Finnish sentences
 
 ## 🛠️ Development
 
@@ -184,6 +212,9 @@ npm run build
 
 ## 🧹 Recent Improvements
 
+- ✅ **🌐 Full Bilingual Support** - Complete English/Finnish UI with category name translations
+- ✅ **📝 Part of Speech Display** - Grammar context (noun, verb, adjective, etc.) shown on vocabulary cards
+- ✅ **🔄 Random Navigation** - Smart random vocabulary selection instead of sequential browsing
 - ✅ **Semantic categorization** - 12 meaningful learning topics instead of random categories
 - ✅ **Translation cleaning** - Removed 6.4% of poor/inflected entries
 - ✅ **Proper difficulty levels** - CEFR-based beginner/intermediate/advanced with correct counts
