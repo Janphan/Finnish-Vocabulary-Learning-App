@@ -512,7 +512,14 @@ export default function App() {
               ← Back
             </button>
           </div>
-          <PracticeQuiz words={allWords} />
+          {/* Pick 20 random words for the quiz */}
+          <PracticeQuiz
+            words={
+              allWords.length >= 20
+                ? [...allWords].sort(() => Math.random() - 0.5).slice(0, 20)
+                : allWords
+            }
+          />
         </div>
       )}
     </div>
