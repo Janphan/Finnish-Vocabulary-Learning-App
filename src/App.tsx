@@ -388,7 +388,10 @@ export default function App() {
                   {/* Donation Coffee Icon */}
                   <button
                     onClick={() =>
-                      window.open("https://www.buymeacoffee.com/", "_blank")
+                      window.open(
+                        "https://buymeacoffee.com/hong_phan",
+                        "_blank"
+                      )
                     }
                     className="p-2.5 hover:bg-yellow-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-yellow-200 hover:border-yellow-300"
                     title="Donate - Buy Me a Coffee"
