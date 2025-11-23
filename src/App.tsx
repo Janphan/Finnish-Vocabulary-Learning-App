@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { CategoryList } from "./components/CategoryList";
 import { VocabularySwiper } from "./components/VocabularySwiper";
 import { FolderManager } from "./components/FolderManager";
-import { Folder, ArrowLeft, Globe, Brain, Coffee, LogOut } from "lucide-react";
+import {
+  Folder,
+  ArrowLeft,
+  Globe,
+  Brain,
+  Coffee,
+  LogOut,
+  LogIn,
+} from "lucide-react";
 import { useFirestoreVocabulary } from "./hooks/useFirestoreVocabulary";
 import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
 import { useAuth } from "./contexts/AuthContext";
@@ -164,7 +172,7 @@ export interface VocabularyWord {
   example?: string;
   aiGenerated?: boolean;
   generatedAt?: string;
-aiService?: string | null;
+  aiService?: string | null;
   categoryId?: string;
   difficulty?: "beginner" | "intermediate" | "advanced";
   fallbackUsed?: boolean;
@@ -359,7 +367,10 @@ export default function App() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() =>
-                      window.open("https://buymeacoffee.com/hong_phan", "_blank")
+                      window.open(
+                        "https://buymeacoffee.com/hong_phan",
+                        "_blank"
+                      )
                     }
                     className="p-2.5 hover:bg-yellow-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-yellow-200 hover:border-yellow-300"
                     title="Donate - Buy Me a Coffee"
@@ -392,16 +403,18 @@ export default function App() {
                   {!currentUser ? (
                     <button
                       onClick={() => authService.signInWithGoogle()}
-                      className="px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                      className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-xl transition-all hover:bg-blue-600 hover:scale-105 active:scale-95 border-2 border-blue-500 hover:border-blue-600"
+                      title={t.signIn}
                     >
-                      {t.signIn}
+                      <LogIn className="w-4 h-4" />
+                      <span className="text-xs font-semibold">{t.signIn}</span>
                     </button>
                   ) : (
                     <div className="flex items-center gap-2">
                       <img
                         src={currentUser.photoURL || undefined}
                         alt="User"
-                        className="w-8 h-8 rounded-full"
+                        className="w-4 h-4 rounded-full text-gray-600 hover:text-gray-700 transition-colors"
                       />
                       <button
                         onClick={() => authService.signOut()}
