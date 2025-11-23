@@ -9,7 +9,7 @@ import {
   onSnapshot,
   Unsubscribe 
 } from 'firebase/firestore';
-import { db } from '../services/firebaseVocabulary';
+import { db } from '../firebase';
 
 // Use the updated VocabularyWord interface from App.tsx  
 export interface VocabularyWord {
