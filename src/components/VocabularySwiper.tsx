@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import { VocabularyWord, UserFolder } from '../App';
-import { Star, FolderPlus, ArrowLeft } from 'lucide-react';
-import { AddToFolderModal } from './AddToFolderModal';
+import { useState, useRef, useEffect } from "react";
+import { VocabularyWord, UserFolder } from "../App";
+import { Star, FolderPlus, ArrowLeft } from "lucide-react";
+import { AddToFolderModal } from "./AddToFolderModal";
 
 interface VocabularySwiperProps {
   words: VocabularyWord[];
@@ -10,7 +10,7 @@ interface VocabularySwiperProps {
   onToggleFavorite: (wordId: string) => void;
   onAddToFolder: (wordId: string, folderId: string) => void;
   onBack: () => void;
-  language?: 'en' | 'fi';
+  language?: "en" | "fi";
 }
 
 export function VocabularySwiper({
@@ -20,7 +20,7 @@ export function VocabularySwiper({
   onToggleFavorite,
   onAddToFolder,
   onBack,
-  language = 'en',
+  language = "en",
 }: VocabularySwiperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFolderModal, setShowFolderModal] = useState(false);
@@ -29,22 +29,24 @@ export function VocabularySwiper({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentWord = words[currentIndex];
-  
+
   // Language labels
   const labels = {
-    en: { finnish: 'Finnish', english: 'English', example: 'Example' },
-    fi: { finnish: 'Suomi', english: 'Englanti', example: 'Esimerkki' }
+    en: { finnish: "Finnish", english: "English", example: "Example" },
+    fi: { finnish: "Suomi", english: "Englanti", example: "Esimerkki" },
   };
-  
+
   // Calculate if current word is favorite
-  const isFavorite = favorites.has(currentWord?.id || '');
-  
+  const isFavorite = favorites.has(currentWord?.id || "");
+
   // Safety check - if no current word, don't render
   if (!currentWord) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">No vocabulary words available for this category</p>
+          <p className="text-gray-500 mb-4">
+            No vocabulary words available for this category
+          </p>
           <button
             onClick={onBack}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -99,16 +101,16 @@ export function VocabularySwiper({
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowUp') {
+    if (e.key === "ArrowUp") {
       handleNext();
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === "ArrowDown") {
       handlePrevious();
     }
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex, words.length]);
 
   return (
@@ -122,7 +124,7 @@ export function VocabularySwiper({
           >
             <ArrowLeft className="w-5 h-5 text-gray-700" />
           </button>
-          
+
           <div className="text-gray-400 text-sm bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm">
             {currentIndex + 1} / {words.length}
           </div>
@@ -139,11 +141,17 @@ export function VocabularySwiper({
           <div className="w-full max-w-md space-y-8">
             {/* Finnish Word */}
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-3">{labels[language].finnish}</div>
-              <div className="text-gray-900 text-6xl mb-4">{currentWord.finnish}</div>
+              <div className="text-gray-400 text-sm mb-3">
+                {labels[language].finnish}
+              </div>
+              <div className="text-gray-900 text-3xl sm:text-5xl mb-4 break-words overflow-x-auto max-w-full">
+                {currentWord.finnish}
+              </div>
               <div className="flex items-center justify-center gap-3 text-gray-500">
                 <span>{currentWord.pronunciation}</span>
-                <span className="text-gray-400">({currentWord.partOfSpeech})</span>
+                <span className="text-gray-400">
+                  ({currentWord.partOfSpeech})
+                </span>
               </div>
             </div>
 
@@ -152,27 +160,39 @@ export function VocabularySwiper({
 
             {/* English Translation */}
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">{labels[language].english}</div>
-              <div className="text-gray-900 text-3xl">{currentWord.english}</div>
+              <div className="text-gray-400 text-sm mb-2">
+                {labels[language].english}
+              </div>
+              <div className="text-gray-900 text-2xl">
+                {currentWord.english}
+              </div>
             </div>
 
             {/* Example Sentence */}
             <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">{labels[language].example}</div>
-                {/* Show examples array if present, else fallback to example field */}
-                {Array.isArray(currentWord.examples) && currentWord.examples.length > 0 ? (
-                  <div className="space-y-2">
-                    {currentWord.examples.map((ex, idx) => (
-                      <div key={idx} className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
-                        {typeof ex === 'string' ? ex : (ex as { text?: string }).text || JSON.stringify(ex)}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
-                    {currentWord.example}
-                  </div>
-                )}
+              <div className="text-gray-400 text-sm mb-2">
+                {labels[language].example}
+              </div>
+              {/* Show examples array if present, else fallback to example field */}
+              {Array.isArray(currentWord.examples) &&
+              currentWord.examples.length > 0 ? (
+                <div className="space-y-2">
+                  {currentWord.examples.map((ex, idx) => (
+                    <div
+                      key={idx}
+                      className="text-gray-600 italic max-w-sm mx-auto leading-relaxed"
+                    >
+                      {typeof ex === "string"
+                        ? ex
+                        : (ex as { text?: string }).text || JSON.stringify(ex)}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
+                  {currentWord.example}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -183,13 +203,13 @@ export function VocabularySwiper({
             onClick={() => onToggleFavorite(currentWord.id)}
             className={`p-3 rounded-full transition-all active:scale-90 shadow-sm backdrop-blur-sm ${
               isFavorite
-                ? 'bg-yellow-400/90 text-white'
-                : 'bg-white/80 text-gray-600 hover:bg-white'
+                ? "bg-yellow-400/90 text-white"
+                : "bg-white/80 text-gray-600 hover:bg-white"
             }`}
           >
             <Star
               className="w-5 h-5"
-              fill={isFavorite ? 'currentColor' : 'none'}
+              fill={isFavorite ? "currentColor" : "none"}
             />
           </button>
 
