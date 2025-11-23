@@ -5,7 +5,7 @@ import { FolderManager } from "./components/FolderManager";
 import { Folder, ArrowLeft, Globe } from "lucide-react";
 // Use Firestore for vocabulary data instead of JSON files
 import { useFirestoreVocabulary } from "./hooks/useFirestoreVocabulary";
-import { Brain } from "lucide-react";
+import { Brain, Coffee } from "lucide-react";
 import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
 
 // Language translations
@@ -385,6 +385,16 @@ export default function App() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  {/* Donation Coffee Icon */}
+                  <button
+                    onClick={() =>
+                      window.open("https://www.buymeacoffee.com/", "_blank")
+                    }
+                    className="p-2.5 hover:bg-yellow-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-yellow-200 hover:border-yellow-300"
+                    title="Donate - Buy Me a Coffee"
+                  >
+                    <Coffee className="w-4 h-4 text-yellow-700 hover:text-yellow-900 transition-colors" />
+                  </button>
                   {/* Language Switcher */}
                   <button
                     onClick={() => setLanguage(language === "en" ? "fi" : "en")}
