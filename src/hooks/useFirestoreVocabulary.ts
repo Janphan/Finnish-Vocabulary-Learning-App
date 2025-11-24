@@ -69,6 +69,24 @@ export function useFirestoreVocabulary(options: {
       setLoading(true);
       setError(null);
 
+      // Check cache first
+      const cacheKey = 'vocabularyCache';
+      const cachedData = localStorage.getItem(cacheKey);
+      const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (cachedData) {
+        const { words: cachedWords, categories: cachedCategories, timestamp } = JSON.parse(cachedData);
+        const now = Date.now();
+        
+        if (now - timestamp < CACHE_DURATION) {
+          console.log('📚 Using cached vocabulary data');
+          setWords(cachedWords);
+          setCategories(cachedCategories);
+          setLoading(false);
+          return;
+        }
+      }
+
       console.log('🔥 Loading vocabulary from Firestore...');
 
       // Build vocabulary query
@@ -110,6 +128,14 @@ export function useFirestoreVocabulary(options: {
 
       console.log(`🏷️ Loaded ${categoriesData.length} categories from Firestore`);
 
+      // Cache the data
+      const cacheData = {
+        words: vocabularyData,
+        categories: categoriesData,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+
       setWords(vocabularyData);
       setCategories(categoriesData);
 
@@ -150,7 +176,11 @@ export function useFirestoreVocabulary(options: {
     }
   }, []);
 
-  const refresh = useCallback(() => loadVocabulary(), [loadVocabulary]);
+  const refresh = useCallback(async () => {
+    // Clear cache to force fresh data
+    localStorage.removeItem('vocabularyCache');
+    await loadVocabulary();
+  }, [loadVocabulary]);
 
   // Setup real-time listeners if requested
   useEffect(() => {
