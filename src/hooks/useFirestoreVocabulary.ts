@@ -75,15 +75,23 @@ export function useFirestoreVocabulary(options: {
       const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
       if (cachedData) {
-        const { words: cachedWords, categories: cachedCategories, timestamp } = JSON.parse(cachedData);
-        const now = Date.now();
-        
-        if (now - timestamp < CACHE_DURATION) {
-          console.log('📚 Using cached vocabulary data');
-          setWords(cachedWords);
-          setCategories(cachedCategories);
-          setLoading(false);
-          return;
+        try {
+          const { words: cachedWords, categories: cachedCategories, timestamp } = JSON.parse(cachedData);
+          const now = Date.now();
+          
+          if (now - timestamp < CACHE_DURATION) {
+            console.log('📚 Using cached vocabulary data');
+            setWords(cachedWords);
+            setCategories(cachedCategories);
+            setLoading(false);
+            return;
+          } else {
+            console.log('📚 Cache expired, fetching fresh data');
+            localStorage.removeItem(cacheKey);
+          }
+        } catch (parseError) {
+          console.warn('📚 Invalid cache data, clearing and fetching fresh');
+          localStorage.removeItem(cacheKey);
         }
       }
 
@@ -129,12 +137,17 @@ export function useFirestoreVocabulary(options: {
       console.log(`🏷️ Loaded ${categoriesData.length} categories from Firestore`);
 
       // Cache the data
-      const cacheData = {
-        words: vocabularyData,
-        categories: categoriesData,
-        timestamp: Date.now()
-      };
-      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+      try {
+        const cacheData = {
+          words: vocabularyData,
+          categories: categoriesData,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+        console.log('📚 Data cached successfully');
+      } catch (storageError) {
+        console.warn('📚 Failed to cache data:', storageError);
+      }
 
       setWords(vocabularyData);
       setCategories(categoriesData);
@@ -177,7 +190,7 @@ export function useFirestoreVocabulary(options: {
   }, []);
 
   const refresh = useCallback(async () => {
-    // Clear cache to force fresh data
+    console.log('🔄 Clearing cache and refreshing data');
     localStorage.removeItem('vocabularyCache');
     await loadVocabulary();
   }, [loadVocabulary]);
