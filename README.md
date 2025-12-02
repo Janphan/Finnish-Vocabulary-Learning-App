@@ -16,6 +16,10 @@ A modern, interactive vocabulary learning application for Finnish language learn
 - **Clean translations** - No grammatical descriptions or inflections
 - **📱 Responsive design** works on desktop and mobile
 
+## 🎥 Demo
+
+Check out the app in action: [Finnish Vocabulary Learning App Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+
 ## 🏗️ Architecture
 
 **Simple and Clean:**
