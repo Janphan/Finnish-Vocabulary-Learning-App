@@ -8,6 +8,9 @@ import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
 import { useAuth } from "./contexts/AuthContext";
 import { authService } from "./services/firebaseAuth";
 import { FirebaseVocabularyService } from "./services/firebaseVocabulary";
+import { calculateReview } from "./utils/srsLogic";
+import { ReviewSession } from "./components/ReviewSession";
+import { AlarmClock } from "lucide-react";
 
 // Language translations
 const translations = {
@@ -168,6 +171,10 @@ export interface VocabularyWord {
   categoryId?: string;
   difficulty?: "beginner" | "intermediate" | "advanced";
   fallbackUsed?: boolean;
+  interval?: number; // Current interval in days (optional for existing data)
+  repetitions?: number; // Streak of correct answers (optional for existing data)
+  easinessFactor?: number; // The multiplier (starts at 2.5) (optional for existing data)
+  nextReviewDate?: string; // ISO date string (e.g., "2025-12-25") (optional for existing data)
 }
 
 export interface Category {
@@ -184,7 +191,13 @@ export interface UserFolder {
   wordIds: string[];
 }
 
-type View = "categories" | "vocabulary" | "folders" | "loading" | "practice";
+type View =
+  | "categories"
+  | "vocabulary"
+  | "folders"
+  | "loading"
+  | "practice"
+  | "review";
 
 export default function App() {
   const { currentUser, loading: authLoading } = useAuth();
@@ -206,6 +219,18 @@ export default function App() {
     categories,
     loading: vocabLoading,
   } = useFirestoreVocabulary({});
+
+  const getDueWords = () => {
+    const now = new Date();
+    return allWords.filter((word) => {
+      // If it has no date, it's new -> It's Due
+      if (!word.nextReviewDate) return true;
+      // If date is in the past -> It's Due
+      return new Date(word.nextReviewDate) <= now;
+    });
+  };
+
+  const dueWords = getDueWords();
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -319,6 +344,20 @@ export default function App() {
     (c: Category) => c.id === selectedCategoryId
   );
 
+  const handleSmartReview = async (word: VocabularyWord, grade: number) => {
+    if (!currentUser) return;
+
+    // 1. Calculate new stats
+    const updates = calculateReview(word, grade);
+
+    // 2. Update Firestore (and local state will update via listener)
+    await FirebaseVocabularyService.updateWord(
+      currentUser.uid,
+      word.id,
+      updates
+    );
+  };
+
   if (authLoading || (vocabLoading && currentView === "loading")) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -391,6 +430,21 @@ export default function App() {
                   >
                     <Brain className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
                   </button>
+                  {/* Add the Review Due button here */}
+                  {currentUser && (
+                    <button
+                      onClick={() => setCurrentView("review")}
+                      className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
+                      title="Review Due Words"
+                    >
+                      <AlarmClock className="w-4 h-4 text-gray-600" />
+                      {dueWords.length > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                          {dueWords.length}
+                        </span>
+                      )}
+                    </button>
+                  )}
                   {!currentUser ? (
                     <button
                       onClick={() => authService.signInWithGoogle()}
@@ -545,6 +599,14 @@ export default function App() {
             }
           />
         </div>
+      )}
+
+      {currentView === "review" && (
+        <ReviewSession
+          words={dueWords}
+          onGrade={handleSmartReview}
+          onBack={() => setCurrentView("categories")}
+        />
       )}
     </div>
   );
