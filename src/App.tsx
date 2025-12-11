@@ -199,6 +199,8 @@ type View =
   | "practice"
   | "review";
 
+const MAX_REVIEW_WORDS = 20;
+
 export default function App() {
   const { currentUser, loading: authLoading } = useAuth();
   const [currentView, setCurrentView] = useState<View>("loading");
@@ -211,6 +213,9 @@ export default function App() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [folders, setFolders] = useState<UserFolder[]>([]);
   const [language, setLanguage] = useState<Language>("en");
+  const [reviewedWordIds, setReviewedWordIds] = useState<Set<string>>(
+    new Set()
+  );
 
   const t = translations[language];
 
@@ -230,7 +235,17 @@ export default function App() {
     });
   };
 
-  const dueWords = getDueWords();
+  const dueWords = getDueWords()
+    .filter((word) => !reviewedWordIds.has(word.id))
+    .sort((a, b) => {
+      // Sort: beginner < intermediate < advanced
+      const diffOrder = { beginner: 0, intermediate: 1, advanced: 2 };
+      return (
+        diffOrder[a.difficulty || "beginner"] -
+        diffOrder[b.difficulty || "beginner"]
+      );
+    })
+    .slice(0, MAX_REVIEW_WORDS);
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -346,16 +361,18 @@ export default function App() {
 
   const handleSmartReview = async (word: VocabularyWord, grade: number) => {
     if (!currentUser) return;
-
-    // 1. Calculate new stats
     const updates = calculateReview(word, grade);
-
-    // 2. Update Firestore (and local state will update via listener)
     await FirebaseVocabularyService.updateWord(
       currentUser.uid,
       word.id,
       updates
     );
+    setReviewedWordIds((prev) => new Set(prev).add(word.id));
+  };
+
+  const resetReviewSession = () => {
+    setReviewedWordIds(new Set());
+    setCurrentView("review");
   };
 
   if (authLoading || (vocabLoading && currentView === "loading")) {
@@ -433,7 +450,7 @@ export default function App() {
                   {/* Add the Review Due button here */}
                   {currentUser && (
                     <button
-                      onClick={() => setCurrentView("review")}
+                      onClick={resetReviewSession}
                       className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
                       title="Review Due Words"
                     >

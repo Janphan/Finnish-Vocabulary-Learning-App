@@ -45,7 +45,7 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
         </h2>
         <button
           onClick={onBack}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium"
+          className="px-6 py-3 bg-blue-600 text-black rounded-xl font-medium"
         >
           Finish
         </button>
