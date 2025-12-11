@@ -1,77 +1,64 @@
 # Finnish Vocabulary Learning App
 
-A modern, interactive vocabulary learning application for Finnish language learners built with React, TypeScript, and Vite.
-
-## ✨ Features
-
-- **🌐 Bilingual Interface** - Complete English/Finnish language switching with intuitive Globe icon
-- **4,400+ High-Quality Finnish vocabulary words** with authentic translations
-- **16 Semantic categories** (Family & People, Nature & Weather, Food & Drink, etc.)
-- **📝 Part of Speech Display** - Grammar context shown next to pronunciation
-- **🔄 Smart Random Navigation** - No more repetitive back-and-forth through vocabulary
-- **Interactive flashcards** with swipe gestures and keyboard navigation
-- **Pronunciation guide** with IPA notation
-- **Real Finnish examples** showing words in context
-- **3 Difficulty levels** based on CEFR standards (A1-A2: Beginner, B1-B2: Intermediate, C1: Advanced)
-- **Clean translations** - No grammatical descriptions or inflections
-- **📱 Responsive design** works on desktop and mobile
+A modern React-based app for learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
 
 ## 🎥 Demo
 
-Check out the app in action: [Finnish Vocabulary Learning App Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+
+## ✨ Features
+
+- **Bilingual Learning**: Finnish ↔ English vocabulary with pronunciation guides
+- **Category-Based Organization**: Learn by topics (Family, Food, Travel, etc.)
+- **Spaced Repetition System (SRS)**: SM-2 algorithm for optimal review scheduling
+- **Practice Quiz**: Multiple-choice questions with random word selection
+- **User Authentication**: Google Sign-In for personalized learning
+- **Favorites & Folders**: Save and organize personal vocabulary
+- **Responsive Design**: Works on desktop and mobile
+- **Offline Caching**: Vocabulary cached locally to reduce Firebase reads
 
 ## 🏗️ Architecture
 
-**Simple and Clean:**
-
-- **React frontend** - Single-page application
-- **Direct JSON loading** - No API server needed
-- **Static data** - Vocabulary loaded from curated JSON files
-- **Client-side filtering** - Fast category and difficulty filtering
-
-## 🚀 Quick Start
-
-1. **Clone and install:**
-
-```bash
-git clone <repository-url>
-cd finnish-vocabulary-learning-app
-npm install
-```
-
-2. **Start development server:**
-
-```bash
-npm run dev
-```
-
-3. **Open your browser:**
-
-- App will be available at `http://localhost:3000`
-- That's it! No API server setup needed.
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS for responsive UI
+- **Backend**: Firebase Firestore for data storage
+- **Authentication**: Firebase Auth with Google Sign-In
+- **Caching**: LocalStorage for vocabulary and user data
+- **SRS Algorithm**: SM-2 spaced repetition for adaptive learning intervals
+- **Testing**: Vitest for unit tests (SRS logic, components)
 
 ## 📁 Project Structure
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── VocabularySwiper.tsx   # Flashcard interface
-│   ├── CategoryList.tsx       # Category navigation
-│   └── ui/                    # Shadcn/ui components
+├── components/
+│ ├── VocabularySwiper.tsx # Main vocabulary display with SRS
+│ ├── ReviewSession.tsx # SRS review interface
+│ ├── CategoryList.tsx # Category navigation
+│ └── ui/ # UI components
 ├── hooks/
-│   └── useApiVocabulary.ts    # Vocabulary data loading
-├── App.tsx              # Main application
-└── main.tsx            # Entry point
+│ ├── useFirestoreVocabulary.ts # Firebase data fetching with caching
+├── services/
+│ ├── firebaseVocabulary.ts # Firebase operations
+│ ├── srsService.ts # SRS algorithm logic
+├── utils/
+│ ├── srsLogic.test.ts # SRS logic unit tests
+├── pages/
+│ ├── Login.tsx # Authentication
+│ ├── Register.tsx # User registration
+│ ├── ResetPassword.tsx # Password reset
+├── PracticeGame/
+│ ├── PracticeQuiz.tsx # Random practice quiz
+├── App.tsx # Main app component
+├── main.tsx # Entry point
+└── ...
 
 public/
-├── finnish-vocab-cleaned.json    # 4,700 high-quality vocabulary words
-├── finnish-vocab-full.json       # 5,000 raw extracted words
-└── kaikki.org-dictionary-Finnish.jsonl  # Source dictionary data
+├── (empty - data stored in Firebase)
 
 scripts/
-├── extract-vocabulary.js         # Extract & categorize vocabulary
-├── clean-translations.js         # Remove poor translations
-└── fetch-wiktextract.js          # Download source data
+├── upload-to-firestore.js # Upload vocabulary to Firebase
+├── ai-cli.js # AI processing scripts
 ```
 
 ## 📊 Data Quality & Processing
@@ -226,6 +213,14 @@ npm run build
 - ✅ **Authentic Finnish data** - Sourced from kaikki.org linguistic database
 - ✅ **Removed API server complexity** - Direct JSON loading
 - ✅ **Fixed category counts** - All 16 categories now display properly
+
+## 🧪 Testing
+
+Run tests with:
+
+```bash
+npm test
+```
 
 ## 📝 License
 
