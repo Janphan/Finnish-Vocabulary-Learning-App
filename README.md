@@ -129,18 +129,18 @@ scripts/
 
 **Result:** Removed 321 poor entries (6.4%), keeping 4,679 high-quality vocabulary words.
 
-## 🎯 Why No API Server?
+## 🎯 Why Firebase?
 
-**Before:** React ↔ Express API ↔ JSON files
-**Now:** React → JSON files directly
+**Evolution:** JSON files → Firebase Firestore
 
 **Benefits:**
 
-- ✅ **Simpler setup** - Just `npm run dev` and go
-- ✅ **Faster loading** - No network requests to localhost
-- ✅ **Fewer dependencies** - No Express.js needed
-- ✅ **Better reliability** - No server crashes or port conflicts
-- ✅ **Easier deployment** - Static site deployment
+- ✅ **User accounts** - Google authentication and personalized learning
+- ✅ **Cross-device sync** - Favorites and folders sync across devices
+- ✅ **Real-time updates** - Live data synchronization
+- ✅ **Scalable** - Handles thousands of users without performance issues
+- ✅ **Offline-ready** - localStorage caching for offline vocabulary access
+- ✅ **Admin-friendly** - Easy data updates without redeploying the app
 
 ## 🎮 User Experience
 
@@ -167,18 +167,30 @@ scripts/
 
 ## 🛠️ Development
 
+**Set up Firebase:**
+
+```bash
+# 1. Create Firebase project
+# 2. Enable Firestore and Authentication
+# 3. Copy config to .env file
+
+# 4. Upload vocabulary data
+npm run upload:firestore
+```
+
 **Regenerate vocabulary:**
 
 ```bash
 cd scripts
 node extract-vocabulary.js    # Extract & categorize from source
 node clean-translations.js    # Remove poor translations
+node upload-to-firestore.js   # Upload to Firebase
 ```
 
 **Modify categories:**
 
 1. Update semantic patterns in `scripts/extract-vocabulary.js`
-2. Update emoji mappings in `src/hooks/useApiVocabulary.ts` and `CategoryList.tsx`
+2. Update emoji mappings in `src/hooks/useFirestoreVocabulary.ts` and `CategoryList.tsx`
 
 **Custom examples:**
 
@@ -187,22 +199,38 @@ node clean-translations.js    # Remove poor translations
 
 ## 🚀 Deployment
 
-Since this is now a pure static site:
+**For Vercel/GitHub Pages:**
 
-1. **Build for production:**
+1. **Set environment variables:**
+
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+   - `VITE_FIREBASE_MEASUREMENT_ID`
+
+2. **Build and deploy:**
 
 ```bash
 npm run build
+npm run deploy  # For GitHub Pages
 ```
 
-2. **Deploy anywhere:**
+**For other platforms:**
 
-- Netlify, Vercel, GitHub Pages
-- Any static hosting service
-- No server configuration needed!
+- Copy `.env` variables to your hosting platform's environment settings
+- Deploy the `build/` folder as static files
 
 ## 🧹 Recent Improvements
 
+- ✅ **🔥 Firebase Integration** - Migrated from static JSON to Firestore with authentication
+- ✅ **👤 User Accounts** - Google sign-in with personalized favorites and folders
+- ✅ **📱 Cross-Device Sync** - Learning progress syncs across all devices
+- ✅ **⚡ Smart Caching** - 24-hour localStorage caching reduces Firebase reads
+- ✅ **🔄 Real-Time Updates** - Live data synchronization
+- ✅ **🛡️ Error Recovery** - Robust cache handling with automatic recovery
 - ✅ **🌐 Full Bilingual Support** - Complete English/Finnish UI with category name translations
 - ✅ **📝 Part of Speech Display** - Grammar context (noun, verb, adjective, etc.) shown on vocabulary cards
 - ✅ **🔄 Random Navigation** - Smart random vocabulary selection instead of sequential browsing
@@ -211,8 +239,6 @@ npm run build
 - ✅ **Proper difficulty levels** - CEFR-based beginner/intermediate/advanced with correct counts
 - ✅ **Quality filtering** - Only categories with 10+ words shown
 - ✅ **Authentic Finnish data** - Sourced from kaikki.org linguistic database
-- ✅ **Removed API server complexity** - Direct JSON loading
-- ✅ **Fixed category counts** - All 16 categories now display properly
 
 ## 🧪 Testing
 
