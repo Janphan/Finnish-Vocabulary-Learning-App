@@ -10,29 +10,7 @@ import {
   Unsubscribe 
 } from 'firebase/firestore';
 import { db } from '../firebase';
-
-// Use the updated VocabularyWord interface from App.tsx  
-export interface VocabularyWord {
-  id: string;
-  finnish: string;
-  english: string;
-  partOfSpeech?: string;
-  categories: string[];
-  cefr?: string;
-  pronunciation?: string;
-  audio?: string | null;
-  examples?: string[];
-  difficultyScore?: number;
-  frequency?: number;
-  example?: string;
-  aiGenerated?: boolean;
-  generatedAt?: string;
-  aiService?: string | null;
-  // Computed fields
-  categoryId?: string;
-  difficulty?: 'beginner' | 'intermediate' | 'advanced';
-  fallbackUsed?: boolean;
-}
+import { VocabularyWord } from '../App'; // Import the interface from App.tsx
 
 export interface Category {
   id: string;

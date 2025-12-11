@@ -1,103 +1,64 @@
 # Finnish Vocabulary Learning App
 
-A modern, interactive vocabulary learning application for Finnish language learners built with React, TypeScript, and Vite.
-
-## ✨ Features
-
-- **🌐 Bilingual Interface** - Complete English/Finnish language switching with intuitive Globe icon
-- **4,400+ High-Quality Finnish vocabulary words** with authentic translations
-- **16 Semantic categories** (Family & People, Nature & Weather, Food & Drink, etc.)
-- **📝 Part of Speech Display** - Grammar context shown next to pronunciation
-- **🔄 Smart Random Navigation** - No more repetitive back-and-forth through vocabulary
-- **Interactive flashcards** with swipe gestures and keyboard navigation
-- **Pronunciation guide** with IPA notation
-- **Real Finnish examples** showing words in context
-- **3 Difficulty levels** based on CEFR standards (A1-A2: Beginner, B1-B2: Intermediate, C1: Advanced)
-- **Clean translations** - No grammatical descriptions or inflections
-- **📱 Responsive design** works on desktop and mobile
+A modern React-based app for learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
 
 ## 🎥 Demo
 
-Check out the app in action: [Finnish Vocabulary Learning App Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+
+## ✨ Features
+
+- **Bilingual Learning**: Finnish ↔ English vocabulary with pronunciation guides
+- **Category-Based Organization**: Learn by topics (Family, Food, Travel, etc.)
+- **Spaced Repetition System (SRS)**: SM-2 algorithm for optimal review scheduling
+- **Practice Quiz**: Multiple-choice questions with random word selection
+- **User Authentication**: Google Sign-In for personalized learning
+- **Favorites & Folders**: Save and organize personal vocabulary
+- **Responsive Design**: Works on desktop and mobile
+- **Offline Caching**: Vocabulary cached locally to reduce Firebase reads
 
 ## 🏗️ Architecture
 
-**Modern Cloud-Native Stack:**
-
-- **React frontend** - Single-page application with TypeScript
-- **Firebase Firestore** - NoSQL database for vocabulary and user data
-- **Firebase Auth** - Google authentication for user accounts
-- **localStorage caching** - Client-side caching with 24-hour expiry
-- **Real-time updates** - Live data synchronization
-
-**Performance Optimized:**
-
-- **Smart caching** - Reduces Firebase reads by serving cached vocabulary
-- **Lazy loading** - Efficient data fetching with error recovery
-- **Responsive design** - Works seamlessly on desktop and mobile
-
-## 🚀 Quick Start
-
-1. **Clone and install:**
-
-```bash
-git clone <repository-url>
-cd finnish-vocabulary-learning-app
-npm install
-```
-
-2. **Set up Firebase:**
-
-- Create a Firebase project at https://console.firebase.google.com/
-- Enable Firestore Database and Authentication
-- Copy your Firebase config to `.env` file (see `.env.example`)
-- Upload vocabulary data using the provided scripts
-
-3. **Start development server:**
-
-```bash
-npm run dev
-```
-
-4. **Open your browser:**
-
-- App will be available at `http://localhost:3000`
-- Sign in with Google to access all features
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS for responsive UI
+- **Backend**: Firebase Firestore for data storage
+- **Authentication**: Firebase Auth with Google Sign-In
+- **Caching**: LocalStorage for vocabulary and user data
+- **SRS Algorithm**: SM-2 spaced repetition for adaptive learning intervals
+- **Testing**: Vitest for unit tests (SRS logic, components)
 
 ## 📁 Project Structure
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── VocabularySwiper.tsx   # Flashcard interface
-│   ├── CategoryList.tsx       # Category navigation
-│   ├── FolderManager.tsx      # User folder organization
-│   ├── AddToFolderModal.tsx   # Folder selection modal
-│   └── figma/                 # Figma design components
-├── contexts/
-│   └── AuthContext.tsx        # Authentication context provider
+├── components/
+│ ├── VocabularySwiper.tsx # Main vocabulary display with SRS
+│ ├── ReviewSession.tsx # SRS review interface
+│ ├── CategoryList.tsx # Category navigation
+│ └── ui/ # UI components
 ├── hooks/
-│   ├── useFirestoreVocabulary.ts  # Firebase vocabulary data with caching
-│   ├── useAIVocabulary.ts      # AI-powered vocabulary features
-│   └── useApiVocabulary.ts     # Legacy JSON loading (deprecated)
+│ ├── useFirestoreVocabulary.ts # Firebase data fetching with caching
 ├── services/
-│   ├── firebaseAuth.ts         # Authentication service
-│   ├── firebaseVocabulary.ts   # User data operations (favorites/folders)
-│   └── firestore.ts            # Firestore utilities
-├── PracticeGame/        # Quiz and practice components
-├── firebase.ts          # Firebase configuration
-├── App.tsx              # Main application
-├── main.tsx             # Entry point
-├── index.css            # Global styles
-└── vite-env.d.ts        # Vite type definitions
+│ ├── firebaseVocabulary.ts # Firebase operations
+│ ├── srsService.ts # SRS algorithm logic
+├── utils/
+│ ├── srsLogic.test.ts # SRS logic unit tests
+├── pages/
+│ ├── Login.tsx # Authentication
+│ ├── Register.tsx # User registration
+│ ├── ResetPassword.tsx # Password reset
+├── PracticeGame/
+│ ├── PracticeQuiz.tsx # Random practice quiz
+├── App.tsx # Main app component
+├── main.tsx # Entry point
+└── ...
 
-public/                  # Static assets (currently empty - data moved to Firebase)
+public/
+├── (empty - data stored in Firebase)
 
 scripts/
-├── upload-to-firestore.js       # Upload vocabulary data to Firebase
-├── ai-cli.js                   # AI processing command line interface
-├── ai-config.js                # AI service configuration
-└── ai-example-generator.js     # Generate AI examples
+├── upload-to-firestore.js # Upload vocabulary to Firebase
+├── ai-cli.js # AI processing scripts
 ```
 
 ## 📊 Data Quality & Processing
@@ -278,6 +239,14 @@ npm run deploy  # For GitHub Pages
 - ✅ **Proper difficulty levels** - CEFR-based beginner/intermediate/advanced with correct counts
 - ✅ **Quality filtering** - Only categories with 10+ words shown
 - ✅ **Authentic Finnish data** - Sourced from kaikki.org linguistic database
+
+## 🧪 Testing
+
+Run tests with:
+
+```bash
+npm test
+```
 
 ## 📝 License
 

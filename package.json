@@ -58,7 +58,8 @@
             "@vitejs/plugin-react-swc": "^3.10.2",
             "gh-pages": "^6.3.0",
             "typescript": "^5.2.2",
-            "vite": "6.3.5"
+            "vite": "6.3.5",
+            "vitest": "^4.0.15"
       },
       "scripts": {
             "dev": "vite",
@@ -67,6 +68,7 @@
             "setup:data:windows": "cmd /c scripts\\setup-wiktextract-data.bat",
             "upload:firestore": "node scripts/upload-to-firestore.js",
             "predeploy": "npm run build",
-            "deploy": "gh-pages -d build"
+            "deploy": "gh-pages -d build",
+            "test": "vitest"
       }
 }

@@ -12,7 +12,7 @@ import {
   writeBatch,
   onSnapshot,
   setDoc,
-} from "firebase/firestore";
+} from 'firebase/firestore';
 import { UserFolder } from "../App";
 
 // Firebase config from your .env
@@ -282,5 +282,9 @@ export class FirebaseVocabularyService {
     await batch2.commit();
 
     console.log("✅ All Firestore data cleared!");
+  }
+  static async updateWord(userId: string, wordId: string, data: Partial<VocabularyWord>) {
+    const wordRef = doc(db, "users", userId, "srsWords", wordId);
+    await setDoc(wordRef, data, { merge: true });
   }
 }

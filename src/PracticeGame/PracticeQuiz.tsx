@@ -1,21 +1,26 @@
-import React, { useState, useMemo } from 'react';
-import { VocabularyWord } from '../App';
+import React, { useState, useMemo } from "react";
+import { VocabularyWord } from "../App";
 
 interface PracticeQuizProps {
   words: VocabularyWord[];
-  language?: 'en' | 'fi';
+  language?: "en" | "fi";
 }
 
-function getRandomChoices(words: VocabularyWord[], correct: VocabularyWord, count = 4): VocabularyWord[] {
-  const others = words.filter(w => w.id !== correct.id);
+function getRandomChoices(
+  words: VocabularyWord[],
+  correct: VocabularyWord,
+  count = 4
+): VocabularyWord[] {
+  const others = words.filter((w) => w.id !== correct.id);
   const shuffled = [...others].sort(() => Math.random() - 0.5);
   const choices = [correct, ...shuffled.slice(0, count - 1)];
   return choices.sort(() => Math.random() - 0.5);
 }
 
 export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
-  console.log('PracticeQuiz rendered with words:', words);
-  console.log('Words length:', words?.length);
+  console.log("PracticeQuiz rendered with words:", words);
+  console.log("Words length:", words?.length);
+  console.log("Words received in PracticeQuiz:", words.length, words); // Add this line
 
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
@@ -23,8 +28,13 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
   const [showResult, setShowResult] = useState(false);
 
   if (!words || words.length < 4) {
-    console.log('Not enough words for practice. Words:', words);
-    return <div>Not enough words for practice. Need at least 4 words, but got {words?.length || 0}.</div>;
+    console.log("Not enough words for practice. Words:", words);
+    return (
+      <div>
+        Not enough words for practice. Need at least 4 words, but got{" "}
+        {words?.length || 0}.
+      </div>
+    );
   }
 
   const correctWord = words[current];
@@ -38,19 +48,28 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
     setSelected(id);
     setShowResult(true);
     if (id === correctWord.id) {
-      setScore(prev => prev + 1);
+      setScore((prev) => prev + 1);
     }
   };
 
   const handleNext = () => {
-    console.log('handleNext called, current before:', current);
+    console.log("handleNext called, current before:", current);
     setSelected(null);
     setShowResult(false);
-    setCurrent(prev => {
+    setCurrent((prev) => {
       const next = (prev + 1) % words.length;
-      console.log('Setting current to:', next);
+      console.log("Setting current to:", next);
       return next;
     });
+  };
+
+  const nextQuestion = () => {
+    if (current < words.length - 1) {
+      setCurrent((prev) => prev + 1);
+    } else {
+      // End the quiz, e.g., show a completion message
+      console.log("Quiz finished");
+    }
   };
 
   return (
@@ -59,15 +78,18 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
 
       <div className="mb-6 text-center">
         <span className="text-gray-600">What is the English meaning of:</span>
-        <div className="text-3xl font-semibold mt-2 mb-2">{correctWord.finnish}</div>
+        <div className="text-3xl font-semibold mt-2 mb-2">
+          {correctWord.finnish}
+        </div>
       </div>
 
       <div className="space-y-3 mb-6">
-        {choices.map(choice => {
+        {choices.map((choice) => {
           let highlight = "";
 
           if (!selected) {
-            highlight = "bg-gray-50 border-gray-300 hover:bg-blue-50 text-gray-800";
+            highlight =
+              "bg-gray-50 border-gray-300 hover:bg-blue-50 text-gray-800";
           } else if (choice.id === correctWord.id) {
             highlight = "bg-green-100 border-green-500 text-green-800";
           } else if (choice.id === selected) {
@@ -103,7 +125,9 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
 
       {selected && (
         <div className="flex justify-between items-center mt-6">
-          <span>Score: {score} / {words.length}</span>
+          <span>
+            Score: {score} / {words.length}
+          </span>
           <button
             className="py-2 px-4 bg-blue-600 text-black rounded-lg hover:bg-blue-700 cursor-pointer"
             onClick={handleNext}
