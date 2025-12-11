@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { VocabularyWord } from "../App";
 import { ArrowLeft, Check, Brain } from "lucide-react";
+import { HardDrive, ThumbsUp, Star } from "lucide-react"; // Add these imports
 
 interface Props {
   words: VocabularyWord[];
@@ -85,40 +86,57 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
         <span className="text-sm uppercase tracking-wider text-gray-400 font-semibold mb-4">
           {isFlipped ? "English" : "Finnish"}
         </span>
-        <h2 className="text-4xl font-bold text-gray-900">
+        <h2 className="text-4xl font-bold text-gray-900 mb-4">
           {isFlipped ? currentWord.english : currentWord.finnish}
         </h2>
-        {!isFlipped && (
+        {/* --- TEMPORARY DEBUGGER START --- */}
+        {/* <div className="text-xs text-gray-400 font-mono mt-4 bg-gray-100 p-2 rounded text-left">
+          <p>ID: {currentWord.id}</p>
+          <p>Interval: {currentWord.interval || 0}</p>
+          <p>
+            Next Due:{" "}
+            {currentWord.nextReviewDate
+              ? new Date(currentWord.nextReviewDate).toLocaleString()
+              : "Now"}
+          </p>
+        </div> */}
+        {/* --- TEMPORARY DEBUGGER END --- */}
+        {/* {!isFlipped && (
           <p className="text-sm text-gray-400 mt-8">(Tap to flip)</p>
-        )}
+        )} */}
       </div>
 
       {/* Grading Buttons */}
       {isFlipped ? (
-        <div className="grid grid-cols-3 gap-3">
-          <button
-            onClick={() => handleGrade(1)}
-            className="p-4 bg-red-100 text-red-700 rounded-2xl font-bold"
-          >
-            Hard
-          </button>
-          <button
-            onClick={() => handleGrade(3)}
-            className="p-4 bg-blue-100 text-blue-700 rounded-2xl font-bold"
-          >
-            Good
-          </button>
-          <button
-            onClick={() => handleGrade(5)}
-            className="p-4 bg-green-100 text-green-700 rounded-2xl font-bold"
-          >
-            Easy
-          </button>
+        <div className="space-y-3">
+          <p className="text-center text-sm text-gray-600 mb-4">
+            How well did you know this word?
+          </p>
+          <div className="flex justify-center gap-3">
+            <button
+              onClick={() => handleGrade(1)}
+              className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-gray-900 rounded-full font-semibold shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-200"
+            >
+              Hard
+            </button>
+            <button
+              onClick={() => handleGrade(3)}
+              className="px-6 py-3 bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-gray-900 rounded-full font-semibold shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-200"
+            >
+              Good
+            </button>
+            <button
+              onClick={() => handleGrade(5)}
+              className="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-gray-900 rounded-full font-semibold shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-200"
+            >
+              Easy
+            </button>
+          </div>
         </div>
       ) : (
         <button
           onClick={() => setIsFlipped(true)}
-          className="w-full p-4 bg-gray-900 text-white rounded-2xl font-bold"
+          className="w-full py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
         >
           Show Answer
         </button>
