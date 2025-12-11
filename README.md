@@ -22,12 +22,19 @@ Check out the app in action: [Finnish Vocabulary Learning App Demo](https://www.
 
 ## 🏗️ Architecture
 
-**Simple and Clean:**
+**Modern Cloud-Native Stack:**
 
-- **React frontend** - Single-page application
-- **Direct JSON loading** - No API server needed
-- **Static data** - Vocabulary loaded from curated JSON files
-- **Client-side filtering** - Fast category and difficulty filtering
+- **React frontend** - Single-page application with TypeScript
+- **Firebase Firestore** - NoSQL database for vocabulary and user data
+- **Firebase Auth** - Google authentication for user accounts
+- **localStorage caching** - Client-side caching with 24-hour expiry
+- **Real-time updates** - Live data synchronization
+
+**Performance Optimized:**
+
+- **Smart caching** - Reduces Firebase reads by serving cached vocabulary
+- **Lazy loading** - Efficient data fetching with error recovery
+- **Responsive design** - Works seamlessly on desktop and mobile
 
 ## 🚀 Quick Start
 
@@ -39,16 +46,23 @@ cd finnish-vocabulary-learning-app
 npm install
 ```
 
-2. **Start development server:**
+2. **Set up Firebase:**
+
+- Create a Firebase project at https://console.firebase.google.com/
+- Enable Firestore Database and Authentication
+- Copy your Firebase config to `.env` file (see `.env.example`)
+- Upload vocabulary data using the provided scripts
+
+3. **Start development server:**
 
 ```bash
 npm run dev
 ```
 
-3. **Open your browser:**
+4. **Open your browser:**
 
 - App will be available at `http://localhost:3000`
-- That's it! No API server setup needed.
+- Sign in with Google to access all features
 
 ## 📁 Project Structure
 
@@ -57,21 +71,33 @@ src/
 ├── components/          # Reusable UI components
 │   ├── VocabularySwiper.tsx   # Flashcard interface
 │   ├── CategoryList.tsx       # Category navigation
-│   └── ui/                    # Shadcn/ui components
+│   ├── FolderManager.tsx      # User folder organization
+│   ├── AddToFolderModal.tsx   # Folder selection modal
+│   └── figma/                 # Figma design components
+├── contexts/
+│   └── AuthContext.tsx        # Authentication context provider
 ├── hooks/
-│   └── useApiVocabulary.ts    # Vocabulary data loading
+│   ├── useFirestoreVocabulary.ts  # Firebase vocabulary data with caching
+│   ├── useAIVocabulary.ts      # AI-powered vocabulary features
+│   └── useApiVocabulary.ts     # Legacy JSON loading (deprecated)
+├── services/
+│   ├── firebaseAuth.ts         # Authentication service
+│   ├── firebaseVocabulary.ts   # User data operations (favorites/folders)
+│   └── firestore.ts            # Firestore utilities
+├── PracticeGame/        # Quiz and practice components
+├── firebase.ts          # Firebase configuration
 ├── App.tsx              # Main application
-└── main.tsx            # Entry point
+├── main.tsx             # Entry point
+├── index.css            # Global styles
+└── vite-env.d.ts        # Vite type definitions
 
-public/
-├── finnish-vocab-cleaned.json    # 4,700 high-quality vocabulary words
-├── finnish-vocab-full.json       # 5,000 raw extracted words
-└── kaikki.org-dictionary-Finnish.jsonl  # Source dictionary data
+public/                  # Static assets (currently empty - data moved to Firebase)
 
 scripts/
-├── extract-vocabulary.js         # Extract & categorize vocabulary
-├── clean-translations.js         # Remove poor translations
-└── fetch-wiktextract.js          # Download source data
+├── upload-to-firestore.js       # Upload vocabulary data to Firebase
+├── ai-cli.js                   # AI processing command line interface
+├── ai-config.js                # AI service configuration
+└── ai-example-generator.js     # Generate AI examples
 ```
 
 ## 📊 Data Quality & Processing
@@ -142,18 +168,18 @@ scripts/
 
 **Result:** Removed 321 poor entries (6.4%), keeping 4,679 high-quality vocabulary words.
 
-## 🎯 Why No API Server?
+## 🎯 Why Firebase?
 
-**Before:** React ↔ Express API ↔ JSON files
-**Now:** React → JSON files directly
+**Evolution:** JSON files → Firebase Firestore
 
 **Benefits:**
 
-- ✅ **Simpler setup** - Just `npm run dev` and go
-- ✅ **Faster loading** - No network requests to localhost
-- ✅ **Fewer dependencies** - No Express.js needed
-- ✅ **Better reliability** - No server crashes or port conflicts
-- ✅ **Easier deployment** - Static site deployment
+- ✅ **User accounts** - Google authentication and personalized learning
+- ✅ **Cross-device sync** - Favorites and folders sync across devices
+- ✅ **Real-time updates** - Live data synchronization
+- ✅ **Scalable** - Handles thousands of users without performance issues
+- ✅ **Offline-ready** - localStorage caching for offline vocabulary access
+- ✅ **Admin-friendly** - Easy data updates without redeploying the app
 
 ## 🎮 User Experience
 
@@ -180,18 +206,30 @@ scripts/
 
 ## 🛠️ Development
 
+**Set up Firebase:**
+
+```bash
+# 1. Create Firebase project
+# 2. Enable Firestore and Authentication
+# 3. Copy config to .env file
+
+# 4. Upload vocabulary data
+npm run upload:firestore
+```
+
 **Regenerate vocabulary:**
 
 ```bash
 cd scripts
 node extract-vocabulary.js    # Extract & categorize from source
 node clean-translations.js    # Remove poor translations
+node upload-to-firestore.js   # Upload to Firebase
 ```
 
 **Modify categories:**
 
 1. Update semantic patterns in `scripts/extract-vocabulary.js`
-2. Update emoji mappings in `src/hooks/useApiVocabulary.ts` and `CategoryList.tsx`
+2. Update emoji mappings in `src/hooks/useFirestoreVocabulary.ts` and `CategoryList.tsx`
 
 **Custom examples:**
 
@@ -200,22 +238,38 @@ node clean-translations.js    # Remove poor translations
 
 ## 🚀 Deployment
 
-Since this is now a pure static site:
+**For Vercel/GitHub Pages:**
 
-1. **Build for production:**
+1. **Set environment variables:**
+
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+   - `VITE_FIREBASE_MEASUREMENT_ID`
+
+2. **Build and deploy:**
 
 ```bash
 npm run build
+npm run deploy  # For GitHub Pages
 ```
 
-2. **Deploy anywhere:**
+**For other platforms:**
 
-- Netlify, Vercel, GitHub Pages
-- Any static hosting service
-- No server configuration needed!
+- Copy `.env` variables to your hosting platform's environment settings
+- Deploy the `build/` folder as static files
 
 ## 🧹 Recent Improvements
 
+- ✅ **🔥 Firebase Integration** - Migrated from static JSON to Firestore with authentication
+- ✅ **👤 User Accounts** - Google sign-in with personalized favorites and folders
+- ✅ **📱 Cross-Device Sync** - Learning progress syncs across all devices
+- ✅ **⚡ Smart Caching** - 24-hour localStorage caching reduces Firebase reads
+- ✅ **🔄 Real-Time Updates** - Live data synchronization
+- ✅ **🛡️ Error Recovery** - Robust cache handling with automatic recovery
 - ✅ **🌐 Full Bilingual Support** - Complete English/Finnish UI with category name translations
 - ✅ **📝 Part of Speech Display** - Grammar context (noun, verb, adjective, etc.) shown on vocabulary cards
 - ✅ **🔄 Random Navigation** - Smart random vocabulary selection instead of sequential browsing
@@ -224,8 +278,6 @@ npm run build
 - ✅ **Proper difficulty levels** - CEFR-based beginner/intermediate/advanced with correct counts
 - ✅ **Quality filtering** - Only categories with 10+ words shown
 - ✅ **Authentic Finnish data** - Sourced from kaikki.org linguistic database
-- ✅ **Removed API server complexity** - Direct JSON loading
-- ✅ **Fixed category counts** - All 16 categories now display properly
 
 ## 📝 License
 
