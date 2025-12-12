@@ -1,5 +1,5 @@
 export interface VocabularyWord {
-  exampleSentence: boolean;
+  exampleSentence: string;
   id: string;
   finnish: string;
   english: string;

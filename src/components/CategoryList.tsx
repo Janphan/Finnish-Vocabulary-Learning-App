@@ -1,5 +1,5 @@
-import { Category, VocabularyWord } from "../App";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Category, VocabularyWord } from "../types";
 
 interface CategoryListProps {
   categories: Category[];
@@ -106,8 +106,17 @@ export function CategoryList({
         intermediate: ["B1", "B2"],
         advanced: ["C1", "C2"],
       }[selectedDifficulty];
+      const difficultyMap = {
+        beginner: ["beginner"],
+        intermediate: ["intermediate"],
+        advanced: ["advanced"],
+      };
       words = words.filter(
-        (word) => word.cefr && cefrRange?.includes(word.cefr)
+        (word) =>
+          (word.cefr && cefrRange?.includes(word.cefr)) ||
+          (!word.cefr &&
+            word.difficulty &&
+            difficultyMap[selectedDifficulty]?.includes(word.difficulty))
       );
     }
 

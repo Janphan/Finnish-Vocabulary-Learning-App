@@ -1,7 +1,6 @@
 // Simplified hook to load vocabulary directly from JSON files (no API server needed!)
 import { useState, useEffect } from 'react';
-import { VocabularyWord } from '../App';
-
+import { VocabularyWord } from '../types';
 export interface Category {
   id: string;
   name: string;
@@ -500,7 +499,7 @@ export function useApiVocabulary(options: {
       processedWords.forEach(word => {
         // Count each category the word belongs to
         if (word.categories && Array.isArray(word.categories)) {
-          word.categories.forEach(category => {
+          word.categories.forEach((category: string) => {
             categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
           });
         } else if (word.categoryId) {
