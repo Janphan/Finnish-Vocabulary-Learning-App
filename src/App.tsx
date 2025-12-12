@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { CategoryList } from "./components/CategoryList";
 import { VocabularySwiper } from "./components/VocabularySwiper";
 import { FolderManager } from "./components/FolderManager";
@@ -18,6 +18,7 @@ import { authService } from "./services/firebaseAuth";
 import { FirebaseVocabularyService } from "./services/firebaseVocabulary";
 import { calculateReview } from "./utils/srsLogic";
 import { ReviewSession } from "./components/ReviewSession";
+import { getSmartSession } from "./utils/session"; // Add this import
 
 // Language translations
 const translations = {
@@ -235,15 +236,21 @@ export default function App() {
   );
   const [quizWords, setQuizWords] = useState<VocabularyWord[]>([]);
   const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
+  const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
+  const [isReviewing, setIsReviewing] = useState(false);
 
   const t = translations[language];
 
   const {
-    words: allWords,
+    words: fetchedWords,
     categories,
     loading: vocabLoading,
     refresh,
   } = useFirestoreVocabulary({});
+
+  useEffect(() => {
+    setAllWords(fetchedWords);
+  }, [fetchedWords]);
 
   const getDueWords = () => {
     const now = new Date();
@@ -434,6 +441,15 @@ export default function App() {
     await refresh(); // Fetch updated words from Firestore
     setReviewedWordIds(new Set());
     setCurrentView("review");
+  };
+
+  const startReview = () => {
+    setIsReviewing(true);
+  };
+
+  const handleGrade = (word: VocabularyWord, grade: number) => {
+    // Update word intervals, due dates, etc. based on grade
+    // ...existing logic...
   };
 
   if (authLoading || (vocabLoading && currentView === "loading")) {
@@ -741,6 +757,16 @@ export default function App() {
             </div>
           </div>
         </>
+      )}
+      {isReviewing ? (
+        <ReviewSession
+          words={sessionWords} // Pass the smart session words
+          onGrade={handleGrade}
+          onBack={() => setIsReviewing(false)}
+        />
+      ) : (
+        // Your home screen or other components
+        <button onClick={startReview}>Start Review</button>
       )}
     </div>
   );
