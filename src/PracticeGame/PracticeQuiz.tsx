@@ -4,6 +4,7 @@ import { VocabularyWord } from "../App";
 interface PracticeQuizProps {
   words: VocabularyWord[];
   language?: "en" | "fi";
+  onQuizComplete?: () => void; // Add this
 }
 
 function getRandomChoices(
@@ -17,15 +18,19 @@ function getRandomChoices(
   return choices.sort(() => Math.random() - 0.5);
 }
 
-export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
-  console.log("PracticeQuiz rendered with words:", words);
-  console.log("Words length:", words?.length);
-  console.log("Words received in PracticeQuiz:", words.length, words); // Add this line
+export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
+  words,
+  onQuizComplete,
+}) => {
+  // console.log("PracticeQuiz rendered with words:", words);
+  // console.log("Words length:", words?.length);
+  // console.log("Words received in PracticeQuiz:", words.length, words); // Add this line
 
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [finished, setFinished] = useState(false); // Add this
 
   if (!words || words.length < 4) {
     console.log("Not enough words for practice. Words:", words);
@@ -53,24 +58,32 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
   };
 
   const handleNext = () => {
-    console.log("handleNext called, current before:", current);
     setSelected(null);
     setShowResult(false);
-    setCurrent((prev) => {
-      const next = (prev + 1) % words.length;
-      console.log("Setting current to:", next);
-      return next;
-    });
-  };
-
-  const nextQuestion = () => {
     if (current < words.length - 1) {
       setCurrent((prev) => prev + 1);
     } else {
-      // End the quiz, e.g., show a completion message
-      console.log("Quiz finished");
+      setFinished(true);
+      onQuizComplete?.(); // Call only when truly finished
     }
   };
+
+  if (finished) {
+    return (
+      <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow text-center">
+        <h2 className="text-xl font-bold mb-4">Quiz Complete!</h2>
+        <p className="mb-4">
+          Final Score: {score} / {words.length}
+        </p>
+        <button
+          className="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          onClick={() => window.location.reload()} // Or navigate back
+        >
+          Restart
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow">
@@ -132,7 +145,7 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({ words }) => {
             className="py-2 px-4 bg-blue-600 text-black rounded-lg hover:bg-blue-700 cursor-pointer"
             onClick={handleNext}
           >
-            Next
+            {current < words.length - 1 ? "Next" : "Finish"}
           </button>
         </div>
       )}
