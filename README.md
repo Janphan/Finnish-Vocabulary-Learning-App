@@ -6,6 +6,57 @@ A modern React-based app for learning Finnish vocabulary with spaced repetition,
 
 Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
 
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (version 18 or higher)
+- npm or yarn
+- Firebase project with Firestore and Authentication enabled
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Janphan/Finnish-Vocabulary-Learning-App.git
+   cd finnish-vocabulary-learning-app
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set up Firebase:
+
+   - Create a Firebase project at https://console.firebase.google.com/
+   - Enable Firestore and Authentication (Google Sign-In)
+   - Copy your Firebase config to a `.env` file in the root directory:
+     ```
+     VITE_FIREBASE_API_KEY=your_api_key
+     VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+     VITE_FIREBASE_PROJECT_ID=your_project_id
+     VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+     VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+     VITE_FIREBASE_APP_ID=your_app_id
+     VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+     ```
+
+4. Upload vocabulary data (optional, if not already done):
+
+   ```bash
+   npm run upload:firestore
+   ```
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+The app will be available at `http://localhost:5173`.
+
 ## ✨ Features
 
 - **Bilingual Learning**: Finnish ↔ English vocabulary with pronunciation guides
@@ -32,33 +83,62 @@ Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf
 ```
 src/
 ├── components/
-│ ├── VocabularySwiper.tsx # Main vocabulary display with SRS
-│ ├── ReviewSession.tsx # SRS review interface
-│ ├── CategoryList.tsx # Category navigation
-│ └── ui/ # UI components
+│   ├── VocabularySwiper.tsx      # Main vocabulary display with SRS
+│   ├── ReviewSession.tsx         # SRS review interface
+│   ├── CategoryList.tsx          # Category navigation
+│   ├── CategoriesView.tsx        # Categories overview
+│   ├── FoldersView.tsx           # Folder management
+│   ├── FolderView.tsx            # Individual folder view
+│   ├── LearningView.tsx          # Learning interface
+│   ├── PracticeView.tsx          # Practice interface
+│   ├── ReviewView.tsx            # Review interface
+│   ├── AddToFolderModal.tsx      # Add word to folder modal
+│   ├── EditWordModal.tsx         # Edit word modal
+│   ├── FolderManager.tsx         # Folder management component
+│   └── figma/
+│       └── ImageWithFallback.tsx # Image component with fallback
+├── contexts/
+│   └── AuthContext.tsx           # Authentication context
 ├── hooks/
-│ ├── useFirestoreVocabulary.ts # Firebase data fetching with caching
-├── services/
-│ ├── firebaseVocabulary.ts # Firebase operations
-│ ├── srsService.ts # SRS algorithm logic
-├── utils/
-│ ├── srsLogic.test.ts # SRS logic unit tests
-├── pages/
-│ ├── Login.tsx # Authentication
-│ ├── Register.tsx # User registration
-│ ├── ResetPassword.tsx # Password reset
+│   ├── useAIVocabulary.ts        # AI-powered vocabulary generation
+│   ├── useApiVocabulary.ts       # API vocabulary hook
+│   ├── useApiVocabulary.test.ts  # Tests for API vocabulary hook
+│   └── useFirestoreVocabulary.ts # Firebase data fetching with caching
 ├── PracticeGame/
-│ ├── PracticeQuiz.tsx # Random practice quiz
-├── App.tsx # Main app component
-├── main.tsx # Entry point
-└── ...
+│   └── PracticeQuiz.tsx          # Random practice quiz
+├── services/
+│   ├── aiService.ts              # AI processing service
+│   ├── categoryService.ts        # Category management
+│   ├── firebaseAuth.ts           # Firebase authentication
+│   ├── firebaseConfig.ts         # Firebase configuration
+│   ├── firebaseVocabulary.ts     # Firebase vocabulary operations
+│   ├── firestore.ts              # Firestore utilities
+│   ├── userService.ts            # User management
+│   └── vocabularyService.ts      # Vocabulary service
+├── types/
+│   └── index.ts                  # TypeScript type definitions
+├── utils/
+│   ├── fallbackExamples.ts       # Fallback examples utility
+│   ├── promptUtils.ts            # Prompt utilities
+│   ├── session.ts                # Session management
+│   ├── srsLogic.test.ts          # SRS logic unit tests
+│   ├── srsLogic.ts               # SRS algorithm logic
+│   └── translations.ts           # Translation utilities
+├── App.tsx                       # Main app component
+├── firebase.ts                   # Firebase initialization
+├── index.css                     # Global styles
+├── main.tsx                      # Entry point
+└── vite-env.d.ts                 # Vite environment types
 
 public/
 ├── (empty - data stored in Firebase)
 
 scripts/
-├── upload-to-firestore.js # Upload vocabulary to Firebase
-├── ai-cli.js # AI processing scripts
+├── upload-to-firestore.js        # Upload vocabulary to Firebase
+├── ai-cli.js                     # AI processing scripts
+├── ai-config.js                  # AI configuration
+├── ai-example-generator.js       # AI example generation
+└── (other scripts)
 ```
 
 ## 📊 Data Quality & Processing
@@ -100,16 +180,16 @@ scripts/
 
 **Grammar Categories:**
 
-- 📦 Noun / Substantiivi (3,394 words)
-- 🎨 Adjective / Adjektiivi (726 words)
-- 🏃 Verb / Verbi (548 words)
-- 🔗 Preposition / Prepositio (11 words)
+- 📦 Noun / Substantiivi
+- 🎨 Adjective / Adjektiivi
+- 🏃 Verb / Verbi
+- 🔗 Preposition / Prepositio
 
 **Difficulty Distribution:**
 
-- 🟢 **Beginner** (A1-A2): 2,648 words
-- 🟡 **Intermediate** (B1-B2): 1,275 words
-- 🔴 **Advanced** (C1): 756 words
+- 🟢 Beginner (A1-A2)
+- 🟡 Intermediate (B1-B2)
+- 🔴 Advanced (C1)
 
 ## 🧹 Data Cleaning Process
 
