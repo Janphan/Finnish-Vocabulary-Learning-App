@@ -233,6 +233,8 @@ export default function App() {
   const [reviewedWordIds, setReviewedWordIds] = useState<Set<string>>(
     new Set()
   );
+  const [quizWords, setQuizWords] = useState<VocabularyWord[]>([]);
+  const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
 
   const t = translations[language];
 
@@ -265,14 +267,15 @@ export default function App() {
     })
     .slice(0, MAX_REVIEW_WORDS);
 
-  const getSessionWords = () => {
+  const getSessionWords = (updatedSessionWords?: VocabularyWord[]) => {
+    const wordsToUse = updatedSessionWords || allWords;
     const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
 
     // Prioritize hard words (grade <= 2)
-    const hardWords = allWords.filter((word) => history[word.id]?.grade <= 2);
+    const hardWords = wordsToUse.filter((word) => history[word.id]?.grade <= 2);
 
     // Add new words not yet reviewed
-    const newWords = allWords.filter((word) => !history[word.id]);
+    const newWords = wordsToUse.filter((word) => !history[word.id]);
 
     // Fill up to MAX_REVIEW_WORDS
     const sessionWords = [...hardWords, ...newWords].slice(0, MAX_REVIEW_WORDS);
@@ -280,7 +283,22 @@ export default function App() {
     return sessionWords;
   };
 
-  const sessionWords = getSessionWords();
+  useEffect(() => {
+    const words = getSessionWords();
+    setSessionWords(words);
+  }, [allWords, reviewedWordIds]); // Update when dependencies change
+
+  const addQuizWordsToReview = () => {
+    console.log("Adding quiz words to review session:", quizWords);
+    const updatedSessionWords = [...sessionWords, ...quizWords].slice(
+      0,
+      MAX_REVIEW_WORDS
+    );
+    setSessionWords(updatedSessionWords); // Now it updates the state
+    alert(`${quizWords.length} words added to review session!`);
+  };
+
+  const sessionWordsComputed = getSessionWords();
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -643,7 +661,9 @@ export default function App() {
           </div>
           <PracticeQuiz
             words={
-              allWords.length >= 20
+              quizWords.length > 0
+                ? quizWords
+                : allWords.length >= 20
                 ? [...allWords].sort(() => Math.random() - 0.5).slice(0, 20)
                 : allWords
             }
@@ -681,7 +701,7 @@ export default function App() {
             <div className="flex-1 flex flex-col gap-6">
               {/* Review Session Option */}
               <div
-                onClick={() => setCurrentView("review")}
+                onClick={resetReviewSession}
                 className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
               >
                 <div className="flex items-center gap-4">
