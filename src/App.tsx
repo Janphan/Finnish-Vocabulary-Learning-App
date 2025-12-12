@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { CategoryList } from "./components/CategoryList";
 import { VocabularySwiper } from "./components/VocabularySwiper";
 import { FolderManager } from "./components/FolderManager";
-import { Folder, ArrowLeft, Globe, Brain, Coffee, LogOut } from "lucide-react";
+import {
+  Folder,
+  ArrowLeft,
+  Globe,
+  Brain,
+  Coffee,
+  LogOut,
+  Check,
+} from "lucide-react";
 import { useFirestoreVocabulary } from "./hooks/useFirestoreVocabulary";
 import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
 import { useAuth } from "./contexts/AuthContext";
@@ -10,7 +18,6 @@ import { authService } from "./services/firebaseAuth";
 import { FirebaseVocabularyService } from "./services/firebaseVocabulary";
 import { calculateReview } from "./utils/srsLogic";
 import { ReviewSession } from "./components/ReviewSession";
-import { AlarmClock } from "lucide-react";
 
 // Language translations
 const translations = {
@@ -153,6 +160,7 @@ const categoryTranslations = {
 type Language = "en" | "fi";
 
 export interface VocabularyWord {
+  exampleSentence: boolean;
   id: string;
   finnish: string;
   english: string;
@@ -197,13 +205,22 @@ type View =
   | "folders"
   | "loading"
   | "practice"
-  | "review";
+  | "review"
+  | "learning";
 
 const MAX_REVIEW_WORDS = 20;
 
 export default function App() {
   const { currentUser, loading: authLoading } = useAuth();
-  const [currentView, setCurrentView] = useState<View>("loading");
+  const [currentView, setCurrentView] = useState<
+    | "categories"
+    | "vocabulary"
+    | "folders"
+    | "practice"
+    | "review"
+    | "learning"
+    | "loading"
+  >("categories");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
@@ -467,27 +484,17 @@ export default function App() {
                     </button>
                   )}
                   <button
-                    onClick={() => setCurrentView("practice")}
-                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                    title="Practice Quiz"
+                    onClick={() => setCurrentView("learning")}
+                    className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
+                    title="Learning Activities"
                   >
-                    <Brain className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
+                    <Brain className="w-4 h-4 text-gray-600" />
+                    {dueWords.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                        {dueWords.length}
+                      </span>
+                    )}
                   </button>
-                  {/* Add the Review Due button here */}
-                  {currentUser && (
-                    <button
-                      onClick={resetReviewSession}
-                      className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
-                      title="Review Due Words"
-                    >
-                      <AlarmClock className="w-4 h-4 text-gray-600" />
-                      {dueWords.length > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                          {dueWords.length}
-                        </span>
-                      )}
-                    </button>
-                  )}
                   {!currentUser ? (
                     <button
                       onClick={() => authService.signInWithGoogle()}
@@ -650,6 +657,70 @@ export default function App() {
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
         />
+      )}
+
+      {currentView === "learning" && (
+        <>
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-md mx-auto px-4 py-4">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setCurrentView("categories")}
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <ArrowLeft className="w-6 h-6 text-gray-600" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Learning Activities
+                </h1>
+                <div></div> {/* Spacer for centering */}
+              </div>
+            </div>
+          </div>
+          <div className="min-h-screen bg-gray-50 p-4 flex flex-col max-w-md mx-auto">
+            <div className="flex-1 flex flex-col gap-6">
+              {/* Review Session Option */}
+              <div
+                onClick={() => setCurrentView("review")}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-100 p-3 rounded-xl">
+                    <Brain className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Review Session
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Practice words due for review ({dueWords.length} due)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quiz Option */}
+              <div
+                onClick={() => setCurrentView("practice")}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-green-100 p-3 rounded-xl">
+                    <Check className="w-8 h-8 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Quick Quiz
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Test your knowledge with random words
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
