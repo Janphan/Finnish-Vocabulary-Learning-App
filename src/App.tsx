@@ -223,6 +223,7 @@ export default function App() {
     words: allWords,
     categories,
     loading: vocabLoading,
+    refresh,
   } = useFirestoreVocabulary({});
 
   const getDueWords = () => {
@@ -246,6 +247,23 @@ export default function App() {
       );
     })
     .slice(0, MAX_REVIEW_WORDS);
+
+  const getSessionWords = () => {
+    const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
+
+    // Prioritize hard words (grade <= 2)
+    const hardWords = allWords.filter((word) => history[word.id]?.grade <= 2);
+
+    // Add new words not yet reviewed
+    const newWords = allWords.filter((word) => !history[word.id]);
+
+    // Fill up to MAX_REVIEW_WORDS
+    const sessionWords = [...hardWords, ...newWords].slice(0, MAX_REVIEW_WORDS);
+
+    return sessionWords;
+  };
+
+  const sessionWords = getSessionWords();
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -359,6 +377,7 @@ export default function App() {
     (c: Category) => c.id === selectedCategoryId
   );
 
+  // Save review results in localStorage or Firestore
   const handleSmartReview = async (word: VocabularyWord, grade: number) => {
     if (!currentUser) return;
     const updates = calculateReview(word, grade);
@@ -367,10 +386,17 @@ export default function App() {
       word.id,
       updates
     );
+
+    // Save review history locally
+    const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
+    history[word.id] = { grade, reviewedAt: new Date().toISOString() };
+    localStorage.setItem("reviewHistory", JSON.stringify(history));
+
     setReviewedWordIds((prev) => new Set(prev).add(word.id));
   };
 
-  const resetReviewSession = () => {
+  const resetReviewSession = async () => {
+    await refresh(); // Fetch updated words from Firestore
     setReviewedWordIds(new Set());
     setCurrentView("review");
   };
@@ -620,7 +646,7 @@ export default function App() {
 
       {currentView === "review" && (
         <ReviewSession
-          words={dueWords}
+          words={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
         />

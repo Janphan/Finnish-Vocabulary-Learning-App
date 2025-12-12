@@ -485,6 +485,14 @@ export function useApiVocabulary(options: {
         filteredWords = filteredWords.slice(0, options.pageSize);
       }
 
+      // Sort by CEFR levels for better learning progression
+      const cefrOrder = { 'A1': 1, 'A2': 2, 'B1': 3, 'B2': 4, 'C1': 5, 'C2': 6 };
+      filteredWords.sort((a, b) => {
+        const aLevel = cefrOrder[a.cefr as keyof typeof cefrOrder] || 99;
+        const bLevel = cefrOrder[b.cefr as keyof typeof cefrOrder] || 99;
+        return aLevel - bLevel;
+      });
+
       setWords(filteredWords);
       
       // Generate categories with counts - count ALL categories that appear in vocabulary

@@ -288,3 +288,4 @@ export class FirebaseVocabularyService {
     await setDoc(wordRef, data, { merge: true });
   }
 }
+
