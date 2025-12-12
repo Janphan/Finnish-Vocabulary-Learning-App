@@ -3,7 +3,6 @@
 // Handles AI API calls for vocabulary generation
 // ==============================================
 
-import { VocabularyWord } from '../types';
 
 export interface AIServiceConfig {
   service: 'openai' | 'claude' | 'azure' | 'mock';
