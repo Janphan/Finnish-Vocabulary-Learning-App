@@ -81,18 +81,14 @@ export class FirebaseVocabularyService {
     return getCategories();
   }
 
-  static listenToVocabulary(callback: (words: any[]) => void) {
-    // For listeners, use direct import since dynamic import in sync function is problematic
-    import('./vocabularyService').then(({ listenToVocabulary }) => {
-      return listenToVocabulary(callback);
-    });
+  static async listenToVocabulary(callback: (words: any[]) => void) {
+    const { listenToVocabulary } = await import('./vocabularyService');
+    return listenToVocabulary(callback);
   }
 
-  static listenToCategories(callback: (categories: any[]) => void) {
-    // For listeners, use direct import since dynamic import in sync function is problematic
-    import('./categoryService').then(({ listenToCategories }) => {
-      return listenToCategories(callback);
-    });
+  static async listenToCategories(callback: (categories: any[]) => void) {
+    const { listenToCategories } = await import('./categoryService');
+    return listenToCategories(callback);
   }
 
   static async clearAllData() {
