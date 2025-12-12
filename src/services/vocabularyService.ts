@@ -104,8 +104,12 @@ export const getRandomWordsByCategory = async (
     ...doc.data(),
   })) as VocabularyWord[];
 
-  // Shuffle and return requested count
-  const shuffled = words.sort(() => Math.random() - 0.5);
+  // Fisher-Yates shuffle algorithm for uniform distribution
+  const shuffled = [...words];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
   return shuffled.slice(0, count);
 };
 
