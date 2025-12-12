@@ -1,8 +1,16 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { CategoryList } from "./components/CategoryList";
 import { VocabularySwiper } from "./components/VocabularySwiper";
 import { FolderManager } from "./components/FolderManager";
-import { Folder, ArrowLeft, Globe, Brain, Coffee, LogOut } from "lucide-react";
+import {
+  Folder,
+  ArrowLeft,
+  Globe,
+  Brain,
+  Coffee,
+  LogOut,
+  Check,
+} from "lucide-react";
 import { useFirestoreVocabulary } from "./hooks/useFirestoreVocabulary";
 import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
 import { useAuth } from "./contexts/AuthContext";
@@ -10,7 +18,7 @@ import { authService } from "./services/firebaseAuth";
 import { FirebaseVocabularyService } from "./services/firebaseVocabulary";
 import { calculateReview } from "./utils/srsLogic";
 import { ReviewSession } from "./components/ReviewSession";
-import { AlarmClock } from "lucide-react";
+import { getSmartSession } from "./utils/session"; // Add this import
 
 // Language translations
 const translations = {
@@ -153,6 +161,7 @@ const categoryTranslations = {
 type Language = "en" | "fi";
 
 export interface VocabularyWord {
+  exampleSentence: boolean;
   id: string;
   finnish: string;
   english: string;
@@ -197,11 +206,22 @@ type View =
   | "folders"
   | "loading"
   | "practice"
-  | "review";
+  | "review"
+  | "learning";
+
+const MAX_REVIEW_WORDS = 20;
 
 export default function App() {
   const { currentUser, loading: authLoading } = useAuth();
-  const [currentView, setCurrentView] = useState<View>("loading");
+  const [currentView, setCurrentView] = useState<
+    | "categories"
+    | "vocabulary"
+    | "folders"
+    | "practice"
+    | "review"
+    | "learning"
+    | "loading"
+  >("categories");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
@@ -211,14 +231,26 @@ export default function App() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [folders, setFolders] = useState<UserFolder[]>([]);
   const [language, setLanguage] = useState<Language>("en");
+  const [reviewedWordIds, setReviewedWordIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [quizWords, setQuizWords] = useState<VocabularyWord[]>([]);
+  const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
+  const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
+  const [isReviewing, setIsReviewing] = useState(false);
 
   const t = translations[language];
 
   const {
-    words: allWords,
+    words: fetchedWords,
     categories,
     loading: vocabLoading,
+    refresh,
   } = useFirestoreVocabulary({});
+
+  useEffect(() => {
+    setAllWords(fetchedWords);
+  }, [fetchedWords]);
 
   const getDueWords = () => {
     const now = new Date();
@@ -230,7 +262,50 @@ export default function App() {
     });
   };
 
-  const dueWords = getDueWords();
+  const dueWords = getDueWords()
+    .filter((word) => !reviewedWordIds.has(word.id))
+    .sort((a, b) => {
+      // Sort: beginner < intermediate < advanced
+      const diffOrder = { beginner: 0, intermediate: 1, advanced: 2 };
+      return (
+        diffOrder[a.difficulty || "beginner"] -
+        diffOrder[b.difficulty || "beginner"]
+      );
+    })
+    .slice(0, MAX_REVIEW_WORDS);
+
+  const getSessionWords = (updatedSessionWords?: VocabularyWord[]) => {
+    const wordsToUse = updatedSessionWords || allWords;
+    const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
+
+    // Prioritize hard words (grade <= 2)
+    const hardWords = wordsToUse.filter((word) => history[word.id]?.grade <= 2);
+
+    // Add new words not yet reviewed
+    const newWords = wordsToUse.filter((word) => !history[word.id]);
+
+    // Fill up to MAX_REVIEW_WORDS
+    const sessionWords = [...hardWords, ...newWords].slice(0, MAX_REVIEW_WORDS);
+
+    return sessionWords;
+  };
+
+  useEffect(() => {
+    const words = getSessionWords();
+    setSessionWords(words);
+  }, [allWords, reviewedWordIds]); // Update when dependencies change
+
+  const addQuizWordsToReview = () => {
+    console.log("Adding quiz words to review session:", quizWords);
+    const updatedSessionWords = [...sessionWords, ...quizWords].slice(
+      0,
+      MAX_REVIEW_WORDS
+    );
+    setSessionWords(updatedSessionWords); // Now it updates the state
+    alert(`${quizWords.length} words added to review session!`);
+  };
+
+  const sessionWordsComputed = getSessionWords();
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -344,18 +419,37 @@ export default function App() {
     (c: Category) => c.id === selectedCategoryId
   );
 
+  // Save review results in localStorage or Firestore
   const handleSmartReview = async (word: VocabularyWord, grade: number) => {
     if (!currentUser) return;
-
-    // 1. Calculate new stats
     const updates = calculateReview(word, grade);
-
-    // 2. Update Firestore (and local state will update via listener)
     await FirebaseVocabularyService.updateWord(
       currentUser.uid,
       word.id,
       updates
     );
+
+    // Save review history locally
+    const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
+    history[word.id] = { grade, reviewedAt: new Date().toISOString() };
+    localStorage.setItem("reviewHistory", JSON.stringify(history));
+
+    setReviewedWordIds((prev) => new Set(prev).add(word.id));
+  };
+
+  const resetReviewSession = async () => {
+    await refresh(); // Fetch updated words from Firestore
+    setReviewedWordIds(new Set());
+    setCurrentView("review");
+  };
+
+  const startReview = () => {
+    setIsReviewing(true);
+  };
+
+  const handleGrade = (word: VocabularyWord, grade: number) => {
+    // Update word intervals, due dates, etc. based on grade
+    // ...existing logic...
   };
 
   if (authLoading || (vocabLoading && currentView === "loading")) {
@@ -424,27 +518,17 @@ export default function App() {
                     </button>
                   )}
                   <button
-                    onClick={() => setCurrentView("practice")}
-                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                    title="Practice Quiz"
+                    onClick={() => setCurrentView("learning")}
+                    className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
+                    title="Learning Activities"
                   >
-                    <Brain className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
+                    <Brain className="w-4 h-4 text-gray-600" />
+                    {dueWords.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                        {dueWords.length}
+                      </span>
+                    )}
                   </button>
-                  {/* Add the Review Due button here */}
-                  {currentUser && (
-                    <button
-                      onClick={() => setCurrentView("review")}
-                      className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
-                      title="Review Due Words"
-                    >
-                      <AlarmClock className="w-4 h-4 text-gray-600" />
-                      {dueWords.length > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                          {dueWords.length}
-                        </span>
-                      )}
-                    </button>
-                  )}
                   {!currentUser ? (
                     <button
                       onClick={() => authService.signInWithGoogle()}
@@ -593,7 +677,9 @@ export default function App() {
           </div>
           <PracticeQuiz
             words={
-              allWords.length >= 20
+              quizWords.length > 0
+                ? quizWords
+                : allWords.length >= 20
                 ? [...allWords].sort(() => Math.random() - 0.5).slice(0, 20)
                 : allWords
             }
@@ -603,10 +689,84 @@ export default function App() {
 
       {currentView === "review" && (
         <ReviewSession
-          words={dueWords}
+          words={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
         />
+      )}
+
+      {currentView === "learning" && (
+        <>
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-md mx-auto px-4 py-4">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setCurrentView("categories")}
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <ArrowLeft className="w-6 h-6 text-gray-600" />
+                </button>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Learning Activities
+                </h1>
+                <div></div> {/* Spacer for centering */}
+              </div>
+            </div>
+          </div>
+          <div className="min-h-screen bg-gray-50 p-4 flex flex-col max-w-md mx-auto">
+            <div className="flex-1 flex flex-col gap-6">
+              {/* Review Session Option */}
+              <div
+                onClick={resetReviewSession}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-100 p-3 rounded-xl">
+                    <Brain className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Review Session
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Practice words due for review ({dueWords.length} due)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quiz Option */}
+              <div
+                onClick={() => setCurrentView("practice")}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-green-100 p-3 rounded-xl">
+                    <Check className="w-8 h-8 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900">
+                      Quick Quiz
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Test your knowledge with random words
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {isReviewing ? (
+        <ReviewSession
+          words={sessionWords} // Pass the smart session words
+          onGrade={handleGrade}
+          onBack={() => setIsReviewing(false)}
+        />
+      ) : (
+        // Your home screen or other components
+        <button onClick={startReview}>Start Review</button>
       )}
     </div>
   );
