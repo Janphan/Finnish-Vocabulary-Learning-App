@@ -1,5 +1,4 @@
-import { VocabularyWord } from "../App";
-
+import { VocabularyWord } from "../types";
 export const getSmartSession = (
   allWords: VocabularyWord[], 
   limit: number = 20

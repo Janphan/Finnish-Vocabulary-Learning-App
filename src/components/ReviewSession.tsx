@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { VocabularyWord } from "../App";
 import { ArrowLeft, Check, Brain, HelpCircle } from "lucide-react";
+import { VocabularyWord } from "../types";
 
 interface Props {
   words: VocabularyWord[];
