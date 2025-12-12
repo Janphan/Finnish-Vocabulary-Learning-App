@@ -46,3 +46,10 @@ export type View =
   | "practice"
   | "review"
   | "learning";
+
+export interface AIGenerationOptions {
+  batchSize?: number;
+  service?: 'openai' | 'claude' | 'azure' | 'mock';
+  autoGenerate?: boolean;
+  preferAI?: boolean;
+}

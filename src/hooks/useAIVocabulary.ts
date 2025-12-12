@@ -4,26 +4,10 @@
 // ==============================================
 
 import { useState, useEffect, useRef } from 'react';
-
-interface VocabularyWord {
-  id: string;
-  finnish: string;
-  english: string;
-  partOfSpeech: string;
-  categories?: string[];
-  example?: string;
-  aiGenerated?: boolean;
-  fallbackUsed?: boolean;
-  generatedAt?: string;
-  aiService?: string;
-}
-
-interface AIGenerationOptions {
-  batchSize?: number;
-  service?: 'openai' | 'claude' | 'azure' | 'mock';
-  autoGenerate?: boolean;
-  preferAI?: boolean;
-}
+import { VocabularyWord, AIGenerationOptions } from '../types';
+import { callAIService } from '../services/aiService';
+import { generateFallbackExample } from '../utils/fallbackExamples';
+import { createBatchPrompt } from '../utils/promptUtils';
 
 // Custom hook for AI-enhanced vocabulary
 export function useAIVocabulary(options: AIGenerationOptions = {}) {
@@ -178,11 +162,11 @@ export function useAIVocabulary(options: AIGenerationOptions = {}) {
   // Generate examples for a batch using AI service
   const generateExamplesForBatch = async (batch: VocabularyWord[]): Promise<VocabularyWord[]> => {
     const prompt = createBatchPrompt(batch);
-    
-    // Mock AI call - replace with actual service
-    const response = await callAIService(prompt);
+
+    // Call AI service
+    const response = await callAIService(prompt, { service });
     const examples = response.trim().split('\n').filter(line => line.length > 0);
-    
+
     return batch.map((word, index) => ({
       ...word,
       example: examples[index] || generateFallbackExample(word),
@@ -191,84 +175,6 @@ export function useAIVocabulary(options: AIGenerationOptions = {}) {
       generatedAt: new Date().toISOString(),
       aiService: service
     }));
-  };
-
-  // Create AI prompt for batch
-  const createBatchPrompt = (batch: VocabularyWord[]): string => {
-    const wordsData = batch.map(word => ({
-      finnish: word.finnish,
-      english: word.english,
-      partOfSpeech: word.partOfSpeech,
-      categories: word.categories || []
-    }));
-
-    return `You are a Finnish language expert. Generate natural, educational example sentences in Finnish for these vocabulary words. Each example should:
-1. Use proper Finnish grammar and natural sentence structure
-2. Be appropriate for language learners (A1-C2 levels)
-3. Show the word in meaningful context
-4. Be 3-8 words long
-5. Help learners understand word usage
-
-For each word, provide ONLY the Finnish example sentence, nothing else.
-
-Words to process:
-${wordsData.map((word, i) => 
-  `${i + 1}. ${word.finnish} (${word.english}) - ${word.partOfSpeech}${word.categories.length > 0 ? `, categories: ${word.categories.join(', ')}` : ''}`
-).join('\n')}
-
-Respond with exactly ${batch.length} lines, each containing only the Finnish example sentence for the corresponding word:`;
-  };
-
-  // Mock AI service call - replace with actual implementation
-  const callAIService = async (prompt: string): Promise<string> => {
-    // This is where you'd call your chosen AI service
-    // For now, returning mock responses
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const lines = prompt.split('\n').filter(line => /^\d+\./.test(line.trim()));
-    const count = lines.length;
-    
-    const mockExamples = [
-      'Minä olen opiskelija.',
-      'Hän menee kouluun.',
-      'Me asumme Helsingissä.',
-      'Tämä on hyvä kirja.',
-      'He puhuvat suomea.',
-      'Sää on kaunis tänään.',
-      'Ruoka on valmis nyt.',
-      'Kissa nukkuu sohvalla.',
-      'Auto on pysäköity pihalle.',
-      'Lapset leikkivät puistossa.'
-    ];
-    
-    return mockExamples.slice(0, count).join('\n');
-  };
-
-  // Generate fallback example
-  const generateFallbackExample = (word: VocabularyWord): string => {
-    const { finnish, partOfSpeech, categories } = word;
-    
-    if (categories && categories.length > 0) {
-      const category = categories[0].toLowerCase();
-      
-      switch (category) {
-        case 'family': return `${finnish} on perheenjäsen.`;
-        case 'animals': return `${finnish} on eläin.`;
-        case 'food': return `${finnish} on ruokaa.`;
-        case 'nature': return `${finnish} on luonnossa.`;
-        case 'body': return `${finnish} on kehon osa.`;
-        case 'clothing': return `${finnish} on vaate.`;
-        default: return `${finnish} on tärkeä sana.`;
-      }
-    }
-    
-    switch (partOfSpeech.toLowerCase()) {
-      case 'noun': return `${finnish} on hyödyllinen asia.`;
-      case 'verb': return `Minä ${finnish}.`;
-      case 'adjective': return `Se on ${finnish}.`;
-      case 'adverb': return `Hän tekee sen ${finnish}.`;
-      default: return `${finnish} on tärkeä sana.`;
-    }
   };
 
   // Stop generation
