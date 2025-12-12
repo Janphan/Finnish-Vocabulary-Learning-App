@@ -23,7 +23,7 @@ export const generateFallbackExample = (word: VocabularyWord): string => {
     }
   }
 
-  switch (partOfSpeech?.toLowerCase()) {
+  switch (typeof partOfSpeech === 'string' ? partOfSpeech.toLowerCase() : undefined) {
     case 'noun': return `${finnish} on hyödyllinen asia.`;
     case 'verb': return `Minä ${finnish}.`;
     case 'adjective': return `Se on ${finnish}.`;
