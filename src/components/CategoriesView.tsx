@@ -21,6 +21,7 @@ interface Props {
     difficulty: "beginner" | "intermediate" | "advanced" | "all"
   ) => void; // Add this
   onManageDatabase: () => void; // Add this prop
+  isAdmin: boolean; // Add this prop
 }
 
 export function CategoriesView({
@@ -40,6 +41,7 @@ export function CategoriesView({
   onSignOut,
   onSelectDifficulty, // Add this
   onManageDatabase, // Add this prop
+  isAdmin, // Add this
 }: Props) {
   const t = translations[language];
 
@@ -179,15 +181,17 @@ export function CategoriesView({
         language={language}
         categoryTranslations={categoryTranslations}
       />
-      <div className="mt-8 pt-8 border-t px-8 pb-8">
-        <p className="text-gray-500 mb-2 text-sm">Admin Tools</p>
-        <button
-          onClick={onManageDatabase}
-          className="px-6 py-3 bg-gray-800 text-black rounded-xl font-medium shadow-lg hover:bg-gray-900 transition-all"
-        >
-          Manage Database
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="mt-8 pt-8 border-t px-8 pb-8">
+          <p className="text-gray-500 mb-2 text-sm">Admin Tools</p>
+          <button
+            onClick={onManageDatabase}
+            className="px-6 py-3 bg-gray-800 text-black rounded-xl font-medium shadow-lg hover:bg-gray-900 transition-all"
+          >
+            Manage Database
+          </button>
+        </div>
+      )}
     </div>
   );
 }

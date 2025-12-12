@@ -258,6 +258,8 @@ export default function App() {
     setAllWords((prev) => prev.filter((w) => w.id !== id));
   };
 
+  const isAdmin = currentUser && currentUser.uid === "your-user-uid"; // Replace with your actual Firebase UID
+
   if (authLoading || (vocabLoading && currentView === "loading")) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -301,6 +303,7 @@ export default function App() {
           onSignOut={() => authService.signOut()}
           onSelectDifficulty={setSelectedDifficulty} // Fix: Pass the setter function
           onManageDatabase={() => setMode("manager")} // Add this
+          isAdmin={false}
         />
       )}
 

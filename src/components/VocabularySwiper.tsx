@@ -141,61 +141,67 @@ export function VocabularySwiper({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="w-full max-w-md space-y-8">
-            {/* Finnish Word */}
-            <div className="text-center">
-              <div className="text-gray-400 text-sm mb-3">
-                {labels[language].finnish}
-              </div>
-              <div className="text-gray-900 text-3xl sm:text-5xl mb-4 break-words overflow-x-auto max-w-full">
-                {currentWord.finnish}
-              </div>
-              <div className="flex items-center justify-center gap-3 text-gray-500">
-                <span>{currentWord.pronunciation}</span>
-                <span className="text-gray-400">
-                  ({currentWord.partOfSpeech})
-                </span>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-gray-200 max-w-xs mx-auto"></div>
-
-            {/* English Translation */}
-            <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">
-                {labels[language].english}
-              </div>
-              <div className="text-gray-900 text-2xl">
-                {currentWord.english}
-              </div>
-            </div>
-
-            {/* Example Sentence */}
-            <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">
-                {labels[language].example}
-              </div>
-              {/* Show examples array if present, else fallback to example field */}
-              {Array.isArray(currentWord.examples) &&
-              currentWord.examples.length > 0 ? (
-                <div className="space-y-2">
-                  {currentWord.examples.map((ex, idx) => (
-                    <div
-                      key={idx}
-                      className="text-gray-600 italic max-w-sm mx-auto leading-relaxed"
-                    >
-                      {typeof ex === "string"
-                        ? ex
-                        : (ex as { text?: string }).text || JSON.stringify(ex)}
-                    </div>
-                  ))}
+          <div
+            className="bg-white rounded-3xl shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] p-8 max-w-sm mx-auto"
+            style={{ overflow: "hidden" }}
+          >
+            <div className="w-full max-w-md space-y-8">
+              {/* Finnish Word */}
+              <div className="text-center">
+                <div className="text-gray-400 text-sm mb-3">
+                  {labels[language].finnish}
                 </div>
-              ) : (
-                <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
-                  {currentWord.example}
+                <div className="text-gray-900 text-3xl sm:text-5xl mb-4 break-words overflow-x-auto max-w-full">
+                  {currentWord.finnish}
                 </div>
-              )}
+                <div className="flex items-center justify-center gap-3 text-gray-500">
+                  <span>{currentWord.pronunciation}</span>
+                  <span className="text-gray-400">
+                    ({currentWord.partOfSpeech})
+                  </span>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 max-w-xs mx-auto"></div>
+
+              {/* English Translation */}
+              <div className="text-center">
+                <div className="text-gray-400 text-sm mb-2">
+                  {labels[language].english}
+                </div>
+                <div className="text-gray-900 text-2xl">
+                  {currentWord.english}
+                </div>
+              </div>
+
+              {/* Example Sentence */}
+              <div className="text-center">
+                <div className="text-gray-400 text-sm mb-2">
+                  {labels[language].example}
+                </div>
+                {/* Show examples array if present, else fallback to example field */}
+                {Array.isArray(currentWord.examples) &&
+                currentWord.examples.length > 0 ? (
+                  <div className="space-y-2">
+                    {currentWord.examples.map((ex, idx) => (
+                      <div
+                        key={idx}
+                        className="text-gray-600 italic max-w-sm mx-auto leading-relaxed"
+                      >
+                        {typeof ex === "string"
+                          ? ex
+                          : (ex as { text?: string }).text ||
+                            JSON.stringify(ex)}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-600 italic max-w-sm mx-auto leading-relaxed">
+                    {currentWord.example}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
