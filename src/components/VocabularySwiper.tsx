@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { VocabularyWord, UserFolder } from "../App";
-import { Star, FolderPlus, ArrowLeft } from "lucide-react";
 import { AddToFolderModal } from "./AddToFolderModal";
-
+import { Star, FolderPlus, ArrowLeft, Edit } from "lucide-react";
+import { VocabularyWord, UserFolder } from "../types";
+import { EditWordModal } from "./EditWordModal";
 interface VocabularySwiperProps {
   words: VocabularyWord[];
   favorites: Set<string>;
@@ -11,6 +11,7 @@ interface VocabularySwiperProps {
   onAddToFolder: (wordId: string, folderId: string) => void;
   onBack: () => void;
   language?: "en" | "fi";
+  onWordUpdate?: (word: VocabularyWord) => void; // Add this prop
 }
 
 export function VocabularySwiper({
@@ -21,10 +22,12 @@ export function VocabularySwiper({
   onAddToFolder,
   onBack,
   language = "en",
+  onWordUpdate, // Add this
 }: VocabularySwiperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [touchEnd, setTouchEnd] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -214,6 +217,13 @@ export function VocabularySwiper({
           </button>
 
           <button
+            onClick={() => setShowEditModal(true)}
+            className="p-3 rounded-full bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-white transition-all active:scale-90 shadow-sm"
+          >
+            <Edit className="w-5 h-5" />
+          </button>
+
+          <button
             onClick={() => setShowFolderModal(true)}
             className="p-3 rounded-full bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-white transition-all active:scale-90 shadow-sm"
           >
@@ -228,6 +238,16 @@ export function VocabularySwiper({
           folders={folders}
           onAddToFolder={onAddToFolder}
           onClose={() => setShowFolderModal(false)}
+        />
+      )}
+      {showEditModal && onWordUpdate && (
+        <EditWordModal
+          word={currentWord}
+          onClose={() => setShowEditModal(false)}
+          onSave={(updatedWord: any) => {
+            onWordUpdate(updatedWord);
+            setShowEditModal(false);
+          }}
         />
       )}
     </>

@@ -231,6 +231,20 @@ export default function App() {
     setReviewedWordIds((prev) => new Set(prev).add(word.id));
   };
 
+  // Handle word updates from review session
+  const handleWordUpdate = (updatedWord: VocabularyWord) => {
+    setAllWords((prevWords) =>
+      prevWords.map((w) => (w.id === updatedWord.id ? updatedWord : w))
+    );
+
+    // Update session words if in review mode
+    if (currentView === "review") {
+      setSessionWords((prevWords) =>
+        prevWords.map((w) => (w.id === updatedWord.id ? updatedWord : w))
+      );
+    }
+  };
+
   const resetReviewSession = async () => {
     await refresh(); // Fetch updated words from Firestore
     setReviewedWordIds(new Set());
@@ -291,6 +305,7 @@ export default function App() {
           onAddToFolder={handleAddToFolder}
           onBack={handleBack}
           language={language}
+          onWordUpdate={handleWordUpdate}
         />
       )}
 
@@ -319,6 +334,7 @@ export default function App() {
           sessionWords={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
+          onWordUpdate={handleWordUpdate}
         />
       )}
 
