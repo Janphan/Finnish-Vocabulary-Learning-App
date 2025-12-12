@@ -15,7 +15,7 @@ import {
   categoryTranslations,
   Language,
 } from "./utils/translations"; // Add this import
-import { VocabularyWord, Category, UserFolder, View } from "./types"; // Add this import
+import { VocabularyWord, Category, UserFolder } from "./types"; // Add this import
 
 const MAX_REVIEW_WORDS = 20;
 
