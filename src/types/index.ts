@@ -60,3 +60,10 @@ export type CollectionsType = {
   METADATA: "metadata";
   USERS: "users";
 };
+
+export const COLLECTIONS: CollectionsType = {
+  VOCABULARY: "vocabulary",
+  CATEGORIES: "categories",
+  METADATA: "metadata",
+  USERS: "users",
+};
