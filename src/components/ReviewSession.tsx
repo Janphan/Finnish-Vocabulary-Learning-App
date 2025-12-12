@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { VocabularyWord } from "../App";
-import { ArrowLeft, Check, Brain } from "lucide-react";
-import { HardDrive, ThumbsUp, Star } from "lucide-react"; // Add these imports
+import { ArrowLeft, Check, Brain, HelpCircle } from "lucide-react";
 
 interface Props {
   words: VocabularyWord[];
@@ -13,6 +12,7 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [complete, setComplete] = useState(false);
+  const [showHelp, setShowHelp] = useState(false); // Help modal state
 
   // Scenario: No words due
   if (words.length === 0) {
@@ -76,6 +76,12 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
         <span className="text-sm font-semibold text-gray-500">
           {currentIndex + 1} / {words.length}
         </span>
+        <button
+          onClick={() => setShowHelp(true)}
+          className="p-2 text-gray-400 hover:text-gray-600"
+        >
+          <HelpCircle className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Flashcard Area */}
@@ -89,21 +95,11 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
         <h2 className="text-4xl font-bold text-gray-900 mb-4">
           {isFlipped ? currentWord.english : currentWord.finnish}
         </h2>
-        {/* --- TEMPORARY DEBUGGER START --- */}
-        {/* <div className="text-xs text-gray-400 font-mono mt-4 bg-gray-100 p-2 rounded text-left">
-          <p>ID: {currentWord.id}</p>
-          <p>Interval: {currentWord.interval || 0}</p>
-          <p>
-            Next Due:{" "}
-            {currentWord.nextReviewDate
-              ? new Date(currentWord.nextReviewDate).toLocaleString()
-              : "Now"}
+        {isFlipped && currentWord.exampleSentence && (
+          <p className="text-gray-500 italic mt-4">
+            "{currentWord.exampleSentence}"
           </p>
-        </div> */}
-        {/* --- TEMPORARY DEBUGGER END --- */}
-        {/* {!isFlipped && (
-          <p className="text-sm text-gray-400 mt-8">(Tap to flip)</p>
-        )} */}
+        )}
       </div>
 
       {/* Grading Buttons */}
@@ -136,10 +132,40 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
       ) : (
         <button
           onClick={() => setIsFlipped(true)}
-          className="w-full py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
+          className="w-full py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-black rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
         >
           Show Answer
         </button>
+      )}
+
+      {/* Help Modal */}
+      {showHelp && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md">
+            <h3 className="font-bold mb-4">How Grading Works</h3>
+            <p className="text-sm mb-4">
+              Rate each word based on difficulty. Lower ratings mean you'll see
+              it sooner for practice.
+            </p>
+            <ul className="text-sm space-y-1">
+              <li>
+                <strong>1-2:</strong> Hard - Review soon
+              </li>
+              <li>
+                <strong>3:</strong> Good - Standard interval
+              </li>
+              <li>
+                <strong>4-5:</strong> Easy - Longer intervals
+              </li>
+            </ul>
+            <button
+              onClick={() => setShowHelp(false)}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
