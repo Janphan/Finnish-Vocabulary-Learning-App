@@ -81,12 +81,12 @@ export class FirebaseVocabularyService {
     return getCategories();
   }
 
-  static async listenToVocabulary(callback: (words: any[]) => void) {
+  static async listenToVocabulary(callback: (words: any[]) => void): Promise<() => void> {
     const { listenToVocabulary } = await import('./vocabularyService');
     return listenToVocabulary(callback);
   }
 
-  static async listenToCategories(callback: (categories: any[]) => void) {
+  static async listenToCategories(callback: (categories: any[]) => void): Promise<() => void> {
     const { listenToCategories } = await import('./categoryService');
     return listenToCategories(callback);
   }
