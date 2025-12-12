@@ -1,213 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { CategoryList } from "./components/CategoryList";
-import { VocabularySwiper } from "./components/VocabularySwiper";
-import { FolderManager } from "./components/FolderManager";
-import {
-  Folder,
-  ArrowLeft,
-  Globe,
-  Brain,
-  Coffee,
-  LogOut,
-  Check,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { CategoriesView } from "./components/CategoriesView";
+import { FoldersView } from "./components/FoldersView";
+import { PracticeView } from "./components/PracticeView";
+import { ReviewView } from "./components/ReviewView";
+import { LearningView } from "./components/LearningView";
 import { useFirestoreVocabulary } from "./hooks/useFirestoreVocabulary";
-import { PracticeQuiz } from "./PracticeGame/PracticeQuiz";
-import { useAuth } from "./contexts/AuthContext";
 import { authService } from "./services/firebaseAuth";
 import { FirebaseVocabularyService } from "./services/firebaseVocabulary";
 import { calculateReview } from "./utils/srsLogic";
-import { ReviewSession } from "./components/ReviewSession";
-import { getSmartSession } from "./utils/session"; // Add this import
-
-// Language translations
-const translations = {
-  en: {
-    title: "Finnish Vocabulary",
-    words: "words",
-    chooseLevel: "Choose level:",
-    allLevels: "All Levels",
-    basicLevel: "Basic Level",
-    intermediateLevel: "Intermediate Level",
-    advancedLevel: "Advanced Level",
-    myFolders: "My Folders",
-    organizeVocabulary: "Organize your vocabulary",
-    loading: "Loading Finnish",
-    gettingVocabulary: "Getting vocabulary...",
-    almostReady: "Almost ready...",
-    wordsLoaded: "words loaded!",
-    connectionError: "Connection error",
-    signIn: "Sign in with Google",
-    signOut: "Sign Out",
-  },
-  fi: {
-    title: "Suomen sanasto",
-    words: "sanaa",
-    chooseLevel: "Valitse taso:",
-    allLevels: "Kaikki tasot",
-    basicLevel: "Alkeistaso",
-    intermediateLevel: "Keskitaso",
-    advancedLevel: "Edistynyt taso",
-    myFolders: "Omat kansiot",
-    organizeVocabulary: "Järjestä sanastosi",
-    loading: "Ladataan suomea",
-    gettingVocabulary: "Haetaan sanastoa...",
-    almostReady: "Melkein valmis...",
-    wordsLoaded: "sanaa ladattu!",
-    connectionError: "Yhteysvirhe",
-    signIn: "Kirjaudu sisään Googlella",
-    signOut: "Kirjaudu ulos",
-  },
-};
-
-// Category name translations
-const categoryTranslations = {
-  en: {
-    "Family & People": "Family & People",
-    "Time & Numbers": "Time & Numbers",
-    "Basic Actions": "Basic Actions",
-    "Nature & Weather": "Nature & Weather",
-    "Colors & Appearance": "Colors & Appearance",
-    Body: "Body",
-    "Food & Drink": "Food & Drink",
-    Animals: "Animals",
-    "Work & Education": "Work & Education",
-    Transportation: "Transportation",
-    "Emotions & Mental States": "Emotions & Mental States",
-    "Home & Living": "Home & Living",
-    noun: "Noun",
-    verb: "Verb",
-    adjective: "Adjective",
-    adverb: "Adverb",
-    pronoun: "Pronoun",
-    proper_noun: "Proper Noun",
-    preposition: "Preposition",
-    interjection: "Interjection",
-    Noun: "Noun",
-    Verb: "Verb",
-    Adjective: "Adjective",
-    Adverb: "Adverb",
-    Pronoun: "Pronoun",
-    Proper_noun: "Proper Noun",
-    Preposition: "Preposition",
-    Interjection: "Interjection",
-    greetings: "Greetings",
-    numbers: "Numbers",
-    food: "Food",
-    colors: "Colors",
-    family: "Family",
-    weather: "Weather",
-    body: "Body",
-    animals: "Animals",
-    clothing: "Clothing",
-    transportation: "Transportation",
-    time: "Time",
-    home: "Home",
-    work: "Work",
-    emotions: "Emotions",
-    actions: "Actions",
-    adjectives: "Adjectives",
-    general: "General",
-  },
-  fi: {
-    "Family & People": "Perhe & Ihmiset",
-    "Time & Numbers": "Aika & Numerot",
-    "Basic Actions": "Perustoiminnot",
-    "Nature & Weather": "Luonto & Sää",
-    "Colors & Appearance": "Värit & Ulkonäkö",
-    Body: "Keho",
-    "Food & Drink": "Ruoka & Juoma",
-    Animals: "Eläimet",
-    "Work & Education": "Työ & Koulutus",
-    Transportation: "Liikenne",
-    "Emotions & Mental States": "Tunteet & Mielentilat",
-    "Home & Living": "Koti & Asuminen",
-    noun: "Substantiivi",
-    verb: "Verbi",
-    adjective: "Adjektiivi",
-    adverb: "Adverbi",
-    pronoun: "Pronomini",
-    proper_noun: "Erisnimi",
-    preposition: "Prepositio",
-    interjection: "Huudahdus",
-    Noun: "Substantiivi",
-    Verb: "Verbi",
-    Adjective: "Adjektiivi",
-    Adverb: "Adverbi",
-    Pronoun: "Pronomini",
-    Proper_noun: "Erisnimi",
-    Preposition: "Prepositio",
-    Interjection: "Huudahdus",
-    greetings: "Tervehdykset",
-    numbers: "Numerot",
-    food: "Ruoka",
-    colors: "Värit",
-    family: "Perhe",
-    weather: "Sää",
-    body: "Keho",
-    animals: "Eläimet",
-    clothing: "Vaatteet",
-    transportation: "Liikenne",
-    time: "Aika",
-    home: "Koti",
-    work: "Työ",
-    emotions: "Tunteet",
-    actions: "Toiminnot",
-    adjectives: "Adjektiivit",
-    general: "Yleinen",
-  },
-};
-
-type Language = "en" | "fi";
-
-export interface VocabularyWord {
-  exampleSentence: boolean;
-  id: string;
-  finnish: string;
-  english: string;
-  partOfSpeech?: string;
-  categories: string[];
-  cefr?: string;
-  pronunciation?: string;
-  audio?: string | null;
-  examples?: string[];
-  difficultyScore?: number;
-  frequency?: number;
-  example?: string;
-  aiGenerated?: boolean;
-  generatedAt?: string;
-  aiService?: string | null;
-  categoryId?: string;
-  difficulty?: "beginner" | "intermediate" | "advanced";
-  fallbackUsed?: boolean;
-  interval?: number; // Current interval in days (optional for existing data)
-  repetitions?: number; // Streak of correct answers (optional for existing data)
-  easinessFactor?: number; // The multiplier (starts at 2.5) (optional for existing data)
-  nextReviewDate?: string; // ISO date string (e.g., "2025-12-25") (optional for existing data)
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  count: number;
-  emoji?: string;
-  description?: string;
-}
-
-export interface UserFolder {
-  id: string;
-  name: string;
-  wordIds: string[];
-}
-
-type View =
-  | "categories"
-  | "vocabulary"
-  | "folders"
-  | "loading"
-  | "practice"
-  | "review"
-  | "learning";
+import { VocabularySwiper } from "./components/VocabularySwiper";
+import { useAuth } from "./contexts/AuthContext";
+import {
+  translations,
+  categoryTranslations,
+  Language,
+} from "./utils/translations"; // Add this import
+import { VocabularyWord, Category, UserFolder, View } from "./types"; // Add this import
 
 const MAX_REVIEW_WORDS = 20;
 
@@ -234,10 +42,8 @@ export default function App() {
   const [reviewedWordIds, setReviewedWordIds] = useState<Set<string>>(
     new Set()
   );
-  const [quizWords, setQuizWords] = useState<VocabularyWord[]>([]);
   const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
   const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
-  const [isReviewing, setIsReviewing] = useState(false);
 
   const t = translations[language];
 
@@ -294,18 +100,6 @@ export default function App() {
     const words = getSessionWords();
     setSessionWords(words);
   }, [allWords, reviewedWordIds]); // Update when dependencies change
-
-  const addQuizWordsToReview = () => {
-    console.log("Adding quiz words to review session:", quizWords);
-    const updatedSessionWords = [...sessionWords, ...quizWords].slice(
-      0,
-      MAX_REVIEW_WORDS
-    );
-    setSessionWords(updatedSessionWords); // Now it updates the state
-    alert(`${quizWords.length} words added to review session!`);
-  };
-
-  const sessionWordsComputed = getSessionWords();
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -443,15 +237,6 @@ export default function App() {
     setCurrentView("review");
   };
 
-  const startReview = () => {
-    setIsReviewing(true);
-  };
-
-  const handleGrade = (word: VocabularyWord, grade: number) => {
-    // Update word intervals, due dates, etc. based on grade
-    // ...existing logic...
-  };
-
   if (authLoading || (vocabLoading && currentView === "loading")) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -476,151 +261,25 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       {currentView === "categories" && (
-        <>
-          <div className="bg-white border-b border-gray-200">
-            <div className="max-w-md mx-auto px-4 py-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-xl font-semibold text-gray-900">
-                    {t.title}
-                  </h1>
-                  <p className="text-xs text-gray-600">
-                    {allWords.length} {t.words}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      window.open(
-                        "https://buymeacoffee.com/hong_phan",
-                        "_blank"
-                      )
-                    }
-                    className="p-2.5 hover:bg-yellow-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-yellow-200 hover:border-yellow-300"
-                    title="Donate - Buy Me a Coffee"
-                  >
-                    <Coffee className="w-4 h-4 text-yellow-700 hover:text-yellow-900 transition-colors" />
-                  </button>
-                  <button
-                    onClick={() => setLanguage(language === "en" ? "fi" : "en")}
-                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                    title={language === "en" ? "Suomeksi" : "In English"}
-                  >
-                    <Globe className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
-                  </button>
-                  {currentUser && (
-                    <button
-                      onClick={() => setCurrentView("folders")}
-                      className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                      title="My Folders"
-                    >
-                      <Folder className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setCurrentView("learning")}
-                    className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
-                    title="Learning Activities"
-                  >
-                    <Brain className="w-4 h-4 text-gray-600" />
-                    {dueWords.length > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                        {dueWords.length}
-                      </span>
-                    )}
-                  </button>
-                  {!currentUser ? (
-                    <button
-                      onClick={() => authService.signInWithGoogle()}
-                      className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                      title={t.signIn}
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        className="w-4 h-4"
-                      >
-                        <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                        />
-                        <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                        />
-                      </svg>
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={currentUser.photoURL || undefined}
-                        alt="User"
-                        className="w-4 h-4 rounded-full text-gray-600 hover:text-gray-700 transition-colors"
-                      />
-                      <button
-                        onClick={() => authService.signOut()}
-                        className="p-2.5 hover:bg-gray-100 rounded-xl transition-all hover:scale-105 active:scale-95 border border-gray-200 hover:border-gray-300"
-                        title={t.signOut}
-                      >
-                        <LogOut className="w-4 h-4 text-gray-600 hover:text-gray-700 transition-colors" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="mt-4">
-                <p className="text-xs font-medium text-gray-600 mb-2">
-                  {t.chooseLevel}
-                </p>
-                <div className="relative">
-                  <select
-                    value={selectedDifficulty}
-                    onChange={(e) =>
-                      setSelectedDifficulty(
-                        e.target.value as
-                          | "beginner"
-                          | "intermediate"
-                          | "advanced"
-                          | "all"
-                      )
-                    }
-                    className="w-full px-4 py-3 rounded-xl text-sm font-semibold bg-white text-gray-800 border-2 border-gray-300 focus:border-green-500 focus:bg-green-50 focus:text-green-800 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                    style={{
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      MozAppearance: "none",
-                      backgroundImage: "none",
-                    }}
-                  >
-                    <option value="all">🌟 {t.allLevels}</option>
-                    <option value="beginner">🌱 {t.basicLevel}</option>
-                    <option value="intermediate">
-                      ⭐ {t.intermediateLevel}
-                    </option>
-                    <option value="advanced">🚀 {t.advancedLevel}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <CategoryList
-            categories={categories}
-            vocabularyWords={allWords}
-            onSelectCategory={handleCategorySelect}
-            selectedDifficulty={selectedDifficulty}
-            language={language}
-            categoryTranslations={categoryTranslations}
-          />
-        </>
+        <CategoriesView
+          categories={categories}
+          vocabularyWords={allWords}
+          selectedDifficulty={selectedDifficulty}
+          language={language}
+          categoryTranslations={categoryTranslations}
+          onSelectCategory={handleCategorySelect}
+          onToggleLanguage={() => setLanguage(language === "en" ? "fi" : "en")}
+          onOpenFolders={() => setCurrentView("folders")}
+          onOpenLearning={() => setCurrentView("learning")}
+          onDonate={() =>
+            window.open("https://buymeacoffee.com/hong_phan", "_blank")
+          }
+          dueWordsCount={dueWords.length}
+          currentUser={currentUser}
+          onSignIn={() => authService.signInWithGoogle()}
+          onSignOut={() => authService.signOut()}
+          onSelectDifficulty={setSelectedDifficulty} // Fix: Pass the setter function
+        />
       )}
 
       {currentView === "vocabulary" && selectedCategory && (
@@ -636,137 +295,40 @@ export default function App() {
       )}
 
       {currentView === "folders" && (
-        <>
-          <div className="bg-white border-b border-gray-200">
-            <div className="max-w-4xl mx-auto px-4 py-6">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleBack}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <div>
-                  <h1 className="text-gray-900">{t.myFolders}</h1>
-                  <p className="text-gray-500 text-sm">
-                    {t.organizeVocabulary}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <FolderManager
-            folders={folders}
-            favorites={favorites}
-            vocabularyWords={allWords}
-            onCreateFolder={handleCreateFolder}
-            onDeleteFolder={handleDeleteFolder}
-          />
-        </>
+        <FoldersView
+          folders={folders}
+          favorites={favorites}
+          vocabularyWords={allWords}
+          language={language}
+          onBack={handleBack}
+          onCreateFolder={handleCreateFolder}
+          onDeleteFolder={handleDeleteFolder}
+        />
       )}
 
       {currentView === "practice" && (
-        <div className="min-h-screen bg-white">
-          <div className="p-4">
-            <button
-              onClick={() => setCurrentView("categories")}
-              className="mb-4 px-4 py-2 bg-gray-200 rounded-lg shadow hover:bg-gray-300"
-            >
-              ← Back
-            </button>
-          </div>
-          <PracticeQuiz
-            words={
-              quizWords.length > 0
-                ? quizWords
-                : allWords.length >= 20
-                ? [...allWords].sort(() => Math.random() - 0.5).slice(0, 20)
-                : allWords
-            }
-          />
-        </div>
+        <PracticeView
+          quizWords={[]} // Placeholder for now, will be populated by quick quiz logic
+          allWords={allWords}
+          onBack={() => setCurrentView("categories")}
+        />
       )}
 
       {currentView === "review" && (
-        <ReviewSession
-          words={sessionWords}
+        <ReviewView
+          sessionWords={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
         />
       )}
 
       {currentView === "learning" && (
-        <>
-          <div className="bg-white border-b border-gray-200">
-            <div className="max-w-md mx-auto px-4 py-4">
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => setCurrentView("categories")}
-                  className="p-2 hover:bg-gray-100 rounded-lg"
-                >
-                  <ArrowLeft className="w-6 h-6 text-gray-600" />
-                </button>
-                <h1 className="text-xl font-bold text-gray-900">
-                  Learning Activities
-                </h1>
-                <div></div> {/* Spacer for centering */}
-              </div>
-            </div>
-          </div>
-          <div className="min-h-screen bg-gray-50 p-4 flex flex-col max-w-md mx-auto">
-            <div className="flex-1 flex flex-col gap-6">
-              {/* Review Session Option */}
-              <div
-                onClick={resetReviewSession}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="bg-blue-100 p-3 rounded-xl">
-                    <Brain className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-gray-900">
-                      Review Session
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Practice words due for review ({dueWords.length} due)
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quiz Option */}
-              <div
-                onClick={() => setCurrentView("practice")}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="bg-green-100 p-3 rounded-xl">
-                    <Check className="w-8 h-8 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-gray-900">
-                      Quick Quiz
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Test your knowledge with random words
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      {isReviewing ? (
-        <ReviewSession
-          words={sessionWords} // Pass the smart session words
-          onGrade={handleGrade}
-          onBack={() => setIsReviewing(false)}
+        <LearningView
+          onBack={() => setCurrentView("categories")}
+          onReviewSession={resetReviewSession}
+          onQuickQuiz={() => setCurrentView("practice")}
+          dueWordsCount={dueWords.length}
         />
-      ) : (
-        // Your home screen or other components
-        <button onClick={startReview}>Start Review</button>
       )}
     </div>
   );
