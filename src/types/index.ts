@@ -53,3 +53,10 @@ export interface AIGenerationOptions {
   autoGenerate?: boolean;
   preferAI?: boolean;
 }
+
+export type CollectionsType = {
+  VOCABULARY: "vocabulary";
+  CATEGORIES: "categories";
+  METADATA: "metadata";
+  USERS: "users";
+};
