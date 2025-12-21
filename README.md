@@ -2,11 +2,38 @@
 
 A modern React-based app for learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
 
-## 🎥 Demo
+## Demo
 
 Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
 
-## 🚀 Getting Started
+## Screenshots
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; justify-items: center; align-items: start;">
+  <div style="text-align: center;">
+    <img src="src/assets/home.jpg" width="200" alt="Home Screen">
+    <p><strong>Home Screen</strong></p>
+  </div>
+  <div style="text-align: center;">
+    <img src="src/assets/catagories.jpg" width="200" alt="Categories View">
+    <p><strong>Categories View</strong></p>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    <div style="text-align: center;">
+      <img src="src/assets/activities.jpg" width="200" alt="Learning Activities">
+      <p><strong>Learning Activities</strong></p>
+    </div>
+    <div style="text-align: center;">
+      <img src="src/assets/activities-2.jpg" width="200" alt="Learning Activities 2">
+      <p><strong>Learning Activities 2</strong></p>
+    </div>
+  </div>
+  <div style="text-align: center;">
+    <img src="src/assets/sample-vocabulary.jpg" width="200" alt="Sample Vocabulary Card">
+    <p><strong>Sample Vocabulary Card</strong></p>
+  </div>
+</div>
+
+## Getting Started
 
 ### Prerequisites
 
@@ -57,7 +84,7 @@ Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf
 
 The app will be available at `http://localhost:5173`.
 
-## ✨ Features
+## Features
 
 - **Bilingual Learning**: Finnish ↔ English vocabulary with contextual examples
 - **Category-Based Organization**: Learn by semantic topics (Family, Food, Travel) and grammar categories (Nouns, Verbs, etc.)
@@ -69,7 +96,7 @@ The app will be available at `http://localhost:5173`.
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Firebase Integration**: Real-time data sync and user authentication
 
-## 🏗️ Architecture
+## Architecture
 
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS with custom animations and Montserrat font
@@ -79,7 +106,7 @@ The app will be available at `http://localhost:5173`.
 - **Admin Features**: Role-based access for vocabulary management
 - **Testing**: Vitest for unit tests and component testing
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -142,7 +169,7 @@ scripts/
 └── (other scripts)
 ```
 
-## �️ The Data Pipeline
+## The Data Pipeline
 
 ```
 Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → Clean Firestore DB
@@ -166,9 +193,9 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 - **Difficulty levels** based on CEFR standards and usage frequency
 - **Contextual examples** for better understanding and usage
 
-## 📚 Categories
+## Categories
 
-**🌐 Available in English and Finnish!**
+**Available in English and Finnish!**
 
 **Semantic Categories:**
 
@@ -198,61 +225,61 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 - 🟡 Intermediate (B1-B2)
 - 🔴 Advanced (C1)
 
-## 🧹 Data Cleaning Process
+## Data Cleaning Process
 
 **Removed problematic entries:**
 
-- ❌ "alas → second-person singular present imperative of alkaa"
-- ❌ "sienna → alternative form of siena"
-- ❌ "YT → initialism of yhteistoiminta"
-- ❌ "pellet → nominative plural of pelle"
+- "alas → second-person singular present imperative of alkaa"
+- "sienna → alternative form of siena"
+- "YT → initialism of yhteistoiminta"
+- "pellet → nominative plural of pelle"
 
 **Kept quality translations:**
 
-- ✅ "luu → bone"
-- ✅ "nainen → woman"
-- ✅ "kärpänen → fly"
-- ✅ "basis → basis, base"
+- "luu → bone"
+- "nainen → woman"
+- "kärpänen → fly"
+- "basis → basis, base"
 
 **Result:** Removed 321 poor entries (6.4%), keeping 4,679 high-quality vocabulary words.
 
-## 🎯 Why Firebase?
+## Why Firebase?
 
 **Evolution:** JSON files → Firebase Firestore
 
 **Benefits:**
 
-- ✅ **User accounts** - Google authentication and personalized learning
-- ✅ **Cross-device sync** - Favorites and folders sync across devices
-- ✅ **Real-time updates** - Live data synchronization
-- ✅ **Scalable** - Handles thousands of users without performance issues
-- ✅ **Offline-ready** - localStorage caching for offline vocabulary access
-- ✅ **Admin-friendly** - Easy data updates without redeploying the app
+- **User accounts** - Google authentication and personalized learning
+- **Cross-device sync** - Favorites and folders sync across devices
+- **Real-time updates** - Live data synchronization
+- **Scalable** - Handles thousands of users without performance issues
+- **Offline-ready** - localStorage caching for offline vocabulary access
+- **Admin-friendly** - Easy data updates without redeploying the app
 
-## 🎮 User Experience
+## User Experience
 
 **Bilingual Learning Interface:**
 
-- 🌐 **Language Toggle** - Switch between English and Finnish with Globe icon
-- 📱 **Adaptive UI** - All interface elements translate automatically
-- 🏷️ **Category Names** - Both semantic and grammar categories show in selected language
+- **Language Toggle** - Switch between English and Finnish with Globe icon
+- **Adaptive UI** - All interface elements translate automatically
+- **Category Names** - Both semantic and grammar categories show in selected language
 
 **Enhanced Vocabulary Cards:**
 
-- 🔊 **Pronunciation Guide** - IPA notation with audio icon
-- 📝 **Part of Speech** - Grammar context in parentheses (noun, verb, adjective, etc.)
-- 🔄 **Smart Navigation** - Random vocabulary selection prevents repetition
-- ⌨️ **Keyboard Support** - Arrow keys for navigation
-- 👆 **Touch Gestures** - Swipe left/right on mobile
+- **Pronunciation Guide** - IPA notation with audio icon
+- **Part of Speech** - Grammar context in parentheses (noun, verb, adjective, etc.)
+- **Smart Navigation** - Random vocabulary selection prevents repetition
+- **Keyboard Support** - Arrow keys for navigation
+- **Touch Gestures** - Swipe left/right on mobile
 
 **Learning Features:**
 
-- ⭐ **Favorites System** - Save important words
-- 📁 **Folder Organization** - Create custom collections
-- 📊 **Progress Tracking** - Word count indicators
-- 🎯 **Contextual Examples** - Real Finnish sentences
+- **Favorites System** - Save important words
+- **Folder Organization** - Create custom collections
+- **Progress Tracking** - Word count indicators
+- **Contextual Examples** - Real Finnish sentences
 
-## 🛠️ Development
+## Development
 
 **Set up Firebase:**
 
@@ -284,7 +311,7 @@ node upload-to-firestore.js   # Upload to Firebase
 - The app auto-generates Finnish examples
 - Edit `generateFinnishExample()` function to customize
 
-## 🚀 Deployment
+## Deployment
 
 **For Vercel/GitHub Pages:**
 
@@ -310,54 +337,54 @@ npm run deploy  # For GitHub Pages
 - Copy `.env` variables to your hosting platform's environment settings
 - Deploy the `build/` folder as static files
 
-## 🧹 Recent Improvements
+## Recent Improvements
 
-- ✅ **🔥 Firebase Integration** - Migrated from static JSON to Firestore with authentication
-- ✅ **👤 User Accounts** - Google sign-in with personalized favorites and folders
-- ✅ **📱 Cross-Device Sync** - User data syncs across all devices
-- ✅ **🌐 Full Bilingual Support** - Complete English/Finnish UI with category name translations
-- ✅ **📝 Part of Speech Display** - Grammar context (noun, verb, adjective, etc.) shown on vocabulary cards
-- ✅ **🔄 Smart Navigation** - Swipeable vocabulary cards with smooth transitions
-- ✅ **👨‍💼 Admin Tools** - Vocabulary management interface for database editing
-- ✅ **🎨 Modern UI** - Clean, responsive design with Tailwind CSS and Montserrat font
-- ✅ **📂 Folder System** - Create custom vocabulary collections
-- ✅ **Semantic categorization** - Meaningful learning topics and grammar categories
-- ✅ **Quality filtering** - Curated vocabulary from kaikki.org linguistic database
-- ✅ **Context Examples** - Finnish sentence examples for better learning
+- **Firebase Integration** - Migrated from static JSON to Firestore with authentication
+- **User Accounts** - Google sign-in with personalized favorites and folders
+- **Cross-Device Sync** - User data syncs across all devices
+- **Full Bilingual Support** - Complete English/Finnish UI with category name translations
+- **Part of Speech Display** - Grammar context (noun, verb, adjective, etc.) shown on vocabulary cards
+- **Smart Navigation** - Swipeable vocabulary cards with smooth transitions
+- **Admin Tools** - Vocabulary management interface for database editing
+- **Modern UI** - Clean, responsive design with Tailwind CSS and Montserrat font
+- **Folder System** - Create custom vocabulary collections
+- **Semantic categorization** - Meaningful learning topics and grammar categories
+- **Quality filtering** - Curated vocabulary from kaikki.org linguistic database
+- **Context Examples** - Finnish sentence examples for better learning
 
-## 🛣️ Future Improvements
+## Future Improvements
 
-**🎯 Learning Experience:**
+**Learning Experience:**
 
-- 🔊 **Audio Pronunciation** - Native Finnish speaker recordings for all vocabulary
-- 🎮 **Gamification** - Points, streaks, achievements, and leaderboards
-- 📈 **Advanced Analytics** - Learning curves, retention rates, and weak points identification
-- 🧠 **AI-Powered Recommendations** - Personalized word suggestions based on learning patterns
-- 📚 **Conjugation Practice** - Interactive verb and noun inflection exercises
+- **Audio Pronunciation** - Native Finnish speaker recordings for all vocabulary
+- **Gamification** - Points, streaks, achievements, and leaderboards
+- **Advanced Analytics** - Learning curves, retention rates, and weak points identification
+- **AI-Powered Recommendations** - Personalized word suggestions based on learning patterns
+- **Conjugation Practice** - Interactive verb and noun inflection exercises
 
-**📱 Mobile & Accessibility:**
+**Mobile & Accessibility:**
 
-- 📲 **Progressive Web App** - Installable mobile app with offline functionality
-- 🌙 **Dark Mode** - Eye-friendly interface for evening study sessions
-- ♿ **Accessibility** - Screen reader support and keyboard navigation improvements
-- 📱 **Native Mobile App** - iOS and Android apps with push notifications
+- **Progressive Web App** - Installable mobile app with offline functionality
+- **Dark Mode** - Eye-friendly interface for evening study sessions
+- **Accessibility** - Screen reader support and keyboard navigation improvements
+- **Native Mobile App** - iOS and Android apps with push notifications
 
-**🌐 Content & Features:**
+**Content & Features:**
 
-- 🗣️ **Conversational Finnish** - Common phrases and dialogue practice
-- 🏛️ **Cultural Context** - Finnish customs, history, and cultural notes
-- 📖 **Reading Comprehension** - Short Finnish stories and articles
-- 🎭 **Multiple Languages** - Expand beyond English to support other native languages
-- 👥 **Community Features** - User-generated content and shared learning paths
+- **Conversational Finnish** - Common phrases and dialogue practice
+- **Cultural Context** - Finnish customs, history, and cultural notes
+- **Reading Comprehension** - Short Finnish stories and articles
+- **Multiple Languages** - Expand beyond English to support other native languages
+- **Community Features** - User-generated content and shared learning paths
 
-**🔧 Technical Enhancements:**
+**Technical Enhancements:**
 
-- ⚡ **Performance Optimization** - Faster loading and smoother animations
-- 🔍 **Advanced Search** - Full-text search across all vocabulary and examples
-- 📊 **Export/Import** - Personal vocabulary lists and progress backup
-- 🔄 **Sync with Language Tools** - Integration with Anki, Quizlet, or language learning platforms
+- **Performance Optimization** - Faster loading and smoother animations
+- **Advanced Search** - Full-text search across all vocabulary and examples
+- **Export/Import** - Personal vocabulary lists and progress backup
+- **Sync with Language Tools** - Integration with Anki, Quizlet, or language learning platforms
 
-## 🧪 Testing
+## Testing
 
 Run tests with:
 
@@ -365,6 +392,6 @@ Run tests with:
 npm test
 ```
 
-## 📝 License
+## License
 
-MIT License - Feel free to use for learning Finnish! 🇫🇮
+MIT License - Feel free to use for learning Finnish!
