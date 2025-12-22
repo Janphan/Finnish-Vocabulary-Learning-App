@@ -16,6 +16,7 @@ import {
   Language,
 } from "./utils/translations"; // Add this import
 import { VocabularyWord, Category, UserFolder } from "./types"; // Add this import
+import { VocabularyManager } from "./components/VocabularyManager";
 
 const MAX_REVIEW_WORDS = 20;
 
@@ -44,6 +45,7 @@ export default function App() {
   );
   const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
   const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
+  const [mode, setMode] = useState<"home" | "review" | "manager">("home");
 
   const t = translations[language];
 
@@ -251,6 +253,14 @@ export default function App() {
     setCurrentView("review");
   };
 
+  // Handle deletions locally
+  const handleWordDelete = (id: string) => {
+    setAllWords((prev) => prev.filter((w) => w.id !== id));
+  };
+
+  const isAdmin =
+    currentUser && currentUser.uid === import.meta.env.VITE_ADMIN_UID;
+
   if (authLoading || (vocabLoading && currentView === "loading")) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -274,7 +284,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {currentView === "categories" && (
+      {mode === "home" && currentView === "categories" && (
         <CategoriesView
           categories={categories}
           vocabularyWords={allWords}
@@ -293,6 +303,8 @@ export default function App() {
           onSignIn={() => authService.signInWithGoogle()}
           onSignOut={() => authService.signOut()}
           onSelectDifficulty={setSelectedDifficulty} // Fix: Pass the setter function
+          onManageDatabase={() => setMode("manager")} // Add this
+          isAdmin={false}
         />
       )}
 
@@ -344,6 +356,16 @@ export default function App() {
           onReviewSession={resetReviewSession}
           onQuickQuiz={() => setCurrentView("practice")}
           dueWordsCount={dueWords.length}
+        />
+      )}
+
+      {/* MANAGER SCREEN */}
+      {mode === "manager" && (
+        <VocabularyManager
+          words={allWords}
+          onBack={() => setMode("home")}
+          onWordUpdate={handleWordUpdate} // The same update function we wrote before
+          onWordDelete={handleWordDelete}
         />
       )}
     </div>
