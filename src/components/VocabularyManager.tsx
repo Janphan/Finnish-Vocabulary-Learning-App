@@ -1,15 +1,17 @@
 import { useState, useMemo } from "react";
 import { EditWordModal } from "./EditWordModal";
+import { DeleteConfirmModal } from "./DeleteConfirmModal";
 import { Search, Edit2, Trash2 } from "lucide-react";
-import { doc, deleteDoc } from "firebase/firestore"; // Import delete if you want that too
+import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { VocabularyWord } from "../types";
 
 interface Props {
   words: VocabularyWord[];
   onWordUpdate: (updatedWord: VocabularyWord) => void;
-  onWordDelete: (deletedId: string) => void; // Optional: Handle deletions
+  onWordDelete: (deletedId: string) => void;
   onBack: () => void;
+  currentUser: any; // Add currentUser prop
 }
 
 export const VocabularyManager = ({
@@ -17,9 +19,11 @@ export const VocabularyManager = ({
   onWordUpdate,
   onWordDelete,
   onBack,
+  currentUser,
 }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
+  const [deletingWord, setDeletingWord] = useState<VocabularyWord | null>(null);
 
   // Filter the list based on search (Finnish or English)
   const filteredWords = useMemo(() => {
@@ -32,15 +36,26 @@ export const VocabularyManager = ({
     );
   }, [words, searchTerm]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this word?")) {
-      try {
-        await deleteDoc(doc(db, "vocabulary", id));
-        onWordDelete(id);
-      } catch (error) {
-        console.error("Error deleting:", error);
-        alert("Failed to delete.");
-      }
+  const handleDeleteClick = (word: VocabularyWord) => {
+    setDeletingWord(word);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingWord) return;
+    if (!currentUser) {
+      alert("You must be logged in to delete words.");
+      return;
+    }
+    try {
+      await deleteDoc(doc(db, "vocabulary", deletingWord.id));
+      onWordDelete(deletingWord.id);
+    } catch (error) {
+      console.error("Error deleting:", error);
+      alert(
+        "Failed to delete. You may not have permission or the word may not exist."
+      );
+    } finally {
+      setDeletingWord(null);
     }
   };
 
@@ -62,7 +77,7 @@ export const VocabularyManager = ({
 
         {/* Search Bar */}
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+          {/* <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" /> */}
           <input
             type="text"
             placeholder="Search Finnish or English..."
@@ -128,7 +143,7 @@ export const VocabularyManager = ({
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(word.id)}
+                        onClick={() => handleDeleteClick(word)}
                         className="p-2 text-red-500 hover:bg-red-100 rounded-lg"
                         title="Delete"
                       >
@@ -161,8 +176,17 @@ export const VocabularyManager = ({
           word={editingWord}
           onClose={() => setEditingWord(null)}
           onSave={onWordUpdate}
+          currentUser={currentUser}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={!!deletingWord}
+        word={deletingWord}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeletingWord(null)}
+      />
     </div>
   );
 };

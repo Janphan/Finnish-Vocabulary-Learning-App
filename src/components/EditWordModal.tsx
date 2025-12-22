@@ -8,9 +8,15 @@ interface Props {
   word: VocabularyWord;
   onClose: () => void;
   onSave: (updatedWord: VocabularyWord) => void;
+  currentUser: any; // Add currentUser prop
 }
 
-export const EditWordModal = ({ word, onClose, onSave }: Props) => {
+export const EditWordModal = ({
+  word,
+  onClose,
+  onSave,
+  currentUser,
+}: Props) => {
   const [formData, setFormData] = useState({
     finnish: word.finnish,
     english: word.english,
@@ -21,6 +27,10 @@ export const EditWordModal = ({ word, onClose, onSave }: Props) => {
 
   const handleSave = async () => {
     if (!formData.finnish || !formData.english) return;
+    if (!currentUser) {
+      alert("You must be logged in to edit words.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -131,14 +141,14 @@ export const EditWordModal = ({ word, onClose, onSave }: Props) => {
           <button
             onClick={handleSave}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100"
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-black font-medium rounded-xl hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Save className="w-4 h-4" />
             )}
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       </div>

@@ -188,8 +188,8 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 
 **Current Dataset:**
 
-- **High-quality vocabulary words** with authentic Finnish-English translations
-- **Multiple categories** including semantic topics and grammatical parts of speech
+- **4,400 high-quality vocabulary words** with authentic Finnish-English translations
+- **16 categories** including semantic topics and grammatical parts of speech
 - **Difficulty levels** based on CEFR standards and usage frequency
 - **Contextual examples** for better understanding and usage
 
@@ -197,27 +197,29 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 
 **Available in English and Finnish!**
 
+> **Note:** Categories overlap - words belong to both grammar categories (noun/verb/adjective) AND semantic topics (Family/Food/etc). For example, "äiti" (mother) is counted as both a noun and in Family & People.
+
+**Grammar Categories:**
+
+- 📖 Noun / Substantiivi (3,121 words)
+- 📘 Adjective / Adjektiivi (721 words)
+- ⚡ Verb / Verbi (548 words)
+- 📗 Preposition / Prepositio (10 words)
+
 **Semantic Categories:**
 
-- 👨‍👩‍👧‍👦 Family & People / Perhe & Ihmiset (81 words)
-- ⏰ Time & Numbers / Aika & Numerot (80 words)
 - 🏃 Basic Actions / Perustoiminnot (101 words)
 - 🌦️ Nature & Weather / Luonto & Sää (100 words)
 - 🎨 Colors & Appearance / Värit & Ulkonäkö (92 words)
-- 👤 Body / Keho (59 words)
-- 🍽️ Food & Drink / Ruoka & Juoma (58 words)
+- 👨‍👩‍👧‍👦 Family & People / Perhe & Ihmiset (81 words)
+- ⏰ Time & Numbers / Aika & Numerot (79 words)
+- 👤 Body / Keho (58 words)
+- 🍽️ Food & Drink / Ruoka & Juoma (57 words)
 - 🐾 Animals / Eläimet (52 words)
 - 🎓 Work & Education / Työ & Koulutus (51 words)
 - 🚗 Transportation / Liikenne (43 words)
 - 😊 Emotions & Mental States / Tunteet & Mielentilat (35 words)
 - 🏠 Home & Living / Koti & Asuminen (31 words)
-
-**Grammar Categories:**
-
-- 📦 Noun / Substantiivi
-- 🎨 Adjective / Adjektiivi
-- 🏃 Verb / Verbi
-- 🔗 Preposition / Prepositio
 
 **Difficulty Distribution:**
 
@@ -241,7 +243,7 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 - "kärpänen → fly"
 - "basis → basis, base"
 
-**Result:** Removed 321 poor entries (6.4%), keeping 4,679 high-quality vocabulary words.
+**Result:** Removed 321 poor entries (6.4%), keeping 4,400 high-quality vocabulary words.
 
 ## Why Firebase?
 

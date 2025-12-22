@@ -182,11 +182,13 @@ export function CategoriesView({
         categoryTranslations={categoryTranslations}
       />
       {isAdmin && (
-        <div className="mt-8 pt-8 border-t px-8 pb-8">
-          <p className="text-gray-500 mb-2 text-sm">Admin Tools</p>
+        <div className="mt-8 pt-8 border-t border-red-200 px-8 pb-8 bg-red-50/30">
+          <p className="text-red-600 mb-3 text-sm font-medium">
+            🔧 Admin Tools
+          </p>
           <button
             onClick={onManageDatabase}
-            className="px-6 py-3 bg-gray-800 text-black rounded-xl font-medium shadow-lg hover:bg-gray-900 transition-all"
+            className="px-6 py-3 bg-red-600 text-black rounded-xl font-medium shadow-lg hover:bg-red-700 hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
           >
             Manage Database
           </button>

@@ -304,7 +304,7 @@ export default function App() {
           onSignOut={() => authService.signOut()}
           onSelectDifficulty={setSelectedDifficulty} // Fix: Pass the setter function
           onManageDatabase={() => setMode("manager")} // Add this
-          isAdmin={false}
+          isAdmin={isAdmin || false}
         />
       )}
 
@@ -366,6 +366,7 @@ export default function App() {
           onBack={() => setMode("home")}
           onWordUpdate={handleWordUpdate} // The same update function we wrote before
           onWordDelete={handleWordDelete}
+          currentUser={currentUser}
         />
       )}
     </div>
