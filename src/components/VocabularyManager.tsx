@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { EditWordModal } from "./EditWordModal";
+import { DeleteConfirmModal } from "./DeleteConfirmModal";
 import { Search, Edit2, Trash2 } from "lucide-react";
 import { doc, deleteDoc } from "firebase/firestore"; // Import delete if you want that too
 import { db } from "../firebase";
@@ -20,6 +21,7 @@ export const VocabularyManager = ({
 }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingWord, setEditingWord] = useState<VocabularyWord | null>(null);
+  const [deletingWord, setDeletingWord] = useState<VocabularyWord | null>(null);
 
   // Filter the list based on search (Finnish or English)
   const filteredWords = useMemo(() => {
@@ -32,15 +34,21 @@ export const VocabularyManager = ({
     );
   }, [words, searchTerm]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this word?")) {
-      try {
-        await deleteDoc(doc(db, "vocabulary", id));
-        onWordDelete(id);
-      } catch (error) {
-        console.error("Error deleting:", error);
-        alert("Failed to delete.");
-      }
+  const handleDeleteClick = (word: VocabularyWord) => {
+    setDeletingWord(word);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingWord) return;
+
+    try {
+      await deleteDoc(doc(db, "vocabulary", deletingWord.id));
+      onWordDelete(deletingWord.id);
+      setDeletingWord(null);
+    } catch (error) {
+      console.error("Error deleting:", error);
+      alert("Failed to delete.");
+      setDeletingWord(null);
     }
   };
 
@@ -128,7 +136,7 @@ export const VocabularyManager = ({
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(word.id)}
+                        onClick={() => handleDeleteClick(word)}
                         className="p-2 text-red-500 hover:bg-red-100 rounded-lg"
                         title="Delete"
                       >
@@ -161,6 +169,15 @@ export const VocabularyManager = ({
           word={editingWord}
           onClose={() => setEditingWord(null)}
           onSave={onWordUpdate}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingWord && (
+        <DeleteConfirmModal
+          wordName={deletingWord.finnish}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeletingWord(null)}
         />
       )}
     </div>
