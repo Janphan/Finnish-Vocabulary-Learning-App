@@ -258,7 +258,8 @@ export default function App() {
     setAllWords((prev) => prev.filter((w) => w.id !== id));
   };
 
-  const isAdmin = currentUser && currentUser.uid === "your-user-uid"; // Replace with your actual Firebase UID
+  const isAdmin =
+    currentUser && currentUser.uid === import.meta.env.VITE_ADMIN_UID;
 
   if (authLoading || (vocabLoading && currentView === "loading")) {
     return (
