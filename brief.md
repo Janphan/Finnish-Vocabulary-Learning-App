@@ -1,40 +1,37 @@
 # Finnish Vocabulary Learning App - Brief
 
-A modern, interactive Finnish language learning application built with React and TypeScript, featuring **4,400+ vocabulary words** with AI-enhanced examples and Firebase Cloud integration.
+A modern, interactive Finnish language learning application built with React and TypeScript, featuring **79 vocabulary words** with clean translations and Firebase Cloud integration.
 
 ## 📊 Dataset Overview
 
-### Updated Vocabulary Database
+### Current Vocabulary Database
 
-- **Source**: Kaikki.org Finnish Dictionary (Wiktextract)
-- **Size**: 4,400+ Finnish vocabulary words
-- **Enhancement**: AI-generated examples and translations using OpenAI and Claude
-- **Categories**: 50+ semantic and grammatical categories
-- **Difficulty Levels**: CEFR-aligned (A1-C2) mapped to beginner/intermediate/advanced
+- **Source**: Processed backup translations with grammatical fixes
+- **Size**: 79 Finnish vocabulary words
+- **Processing**: Manual translation fixes to convert grammatical descriptions to proper English
+- **Categories**: 1 category (general vocabulary)
+- **Difficulty Levels**: All set to beginner level
 
 ### Data Structure
 
 ```json
 {
-  "id": "vocab-1",
-  "finnish": "kissa",
-  "english": "cat",
-  "partOfSpeech": "noun",
-  "categories": ["animals", "noun"],
-  "cefr": "A1",
-  "pronunciation": "/ˈkis.sa/",
-  "audio": null,
-  "examples": [],
-  "difficultyScore": 75,
-  "frequency": 850,
-  "example": "Kissa nukkuu sohvalla.",
-  "aiGenerated": true,
-  "generatedAt": "2025-11-21T22:04:25.843Z",
-  "aiService": "gemini"
+  "id": "vocab-1117",
+  "finnish": "sienne",
+  "english": "would sit",
+  "partOfSpeech": "verb",
+  "difficulty": "beginner",
+  "categoryId": "general",
+  "examples": []
 }
 ```
 
 ### Categories Include
+
+- **Current**: General vocabulary (all words in one category)
+- **Difficulty-based**: Beginner level (all words)
+
+**Previous Categories (from original dataset):**
 
 - **Semantic**: Family & People, Nature & Weather, Food & Drink, Animals, Transportation, etc.
 - **Grammatical**: Noun, Verb, Adjective, Adverb, Pronoun, Preposition, etc.

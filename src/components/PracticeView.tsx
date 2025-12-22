@@ -2,8 +2,8 @@ import React from "react";
 import { PracticeQuiz } from "../PracticeGame/PracticeQuiz";
 
 interface Props {
-  quizWords: any[]; // Replace with VocabularyWord[]
-  allWords: any[]; // Replace with VocabularyWord[]
+  quizWords: any[];
+  allWords: any[];
   onBack: () => void;
 }
 

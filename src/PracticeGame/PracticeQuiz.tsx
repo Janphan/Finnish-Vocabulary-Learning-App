@@ -4,7 +4,7 @@ import { VocabularyWord } from "../App";
 interface PracticeQuizProps {
   words: VocabularyWord[];
   language?: "en" | "fi";
-  onQuizComplete?: () => void; // Add this
+  onQuizComplete?: () => void;
 }
 
 function getRandomChoices(
@@ -24,13 +24,13 @@ export const PracticeQuiz: React.FC<PracticeQuizProps> = ({
 }) => {
   // console.log("PracticeQuiz rendered with words:", words);
   // console.log("Words length:", words?.length);
-  // console.log("Words received in PracticeQuiz:", words.length, words); // Add this line
+  // console.log("Words received in PracticeQuiz:", words.length, words);
 
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [finished, setFinished] = useState(false); // Add this
+  const [finished, setFinished] = useState(false);
 
   if (!words || words.length < 4) {
     console.log("Not enough words for practice. Words:", words);

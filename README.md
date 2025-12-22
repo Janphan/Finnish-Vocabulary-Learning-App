@@ -71,13 +71,7 @@ Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf
      VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
      ```
 
-4. Upload vocabulary data (optional, if not already done):
-
-   ```bash
-   npm run upload:firestore
-   ```
-
-5. Start the development server:
+4. Start the development server:
    ```bash
    npm run dev
    ```
@@ -162,51 +156,53 @@ public/
 ├── (empty - data stored in Firebase)
 
 scripts/
-├── upload-to-firestore.js        # Upload vocabulary to Firebase
-├── ai-cli.js                     # AI processing scripts
-├── ai-config.js                  # AI configuration
-├── ai-example-generator.js       # AI example generation
-└── (other scripts)
+├── (empty - one-time setup scripts removed after use)
 ```
 
-## The Data Pipeline
+## Data Pipeline
+
+**Status: ✅ Complete** - All vocabulary data has been processed and uploaded to Firebase Firestore.
 
 ```
-Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → Clean Firestore DB
+Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Translation Fix → Clean Firestore DB
 ```
 
 **Source Data:** 264,000+ entries from kaikki.org Finnish dictionary (3.6GB original file)
 
-**Processing Pipeline:**
+**Processing Pipeline (Completed):**
 
-1. **Extract vocabulary** - Filter Finnish words with good translations from the raw JSON data
-2. **Clean translations** - Remove grammatical descriptions, inflections, and poor entries
-3. **Add examples** - Generate contextual Finnish sentence examples using AI services
-4. **Assign CEFR levels** - Map vocabulary to beginner/intermediate/advanced difficulty levels
-5. **Semantic categorization** - Assign meaningful learning categories (Family, Food, Travel, etc.)
-6. **Quality filtering** - Keep only high-quality vocabulary suitable for language learning
+1. **Extract vocabulary** - Filter Finnish words with good translations from the raw JSON data ✅
+2. **Clean translations** - Remove grammatical descriptions, inflections, and poor entries ✅
+3. **Fix translations** - Convert grammatical forms to proper English translations ✅
+4. **Upload to Firebase** - Store cleaned data in Firestore database ✅
 
 **Current Dataset:**
 
-- **4,400 high-quality vocabulary words** with authentic Finnish-English translations
-- **16 categories** including semantic topics and grammatical parts of speech
-- **Difficulty levels** based on CEFR standards and usage frequency
-- **Contextual examples** for better understanding and usage
+- **79 vocabulary words** with proper Finnish-English translations
+- **1 category** (general vocabulary)
+- **Difficulty levels** set to beginner for all entries
+- **Clean translations** without grammatical descriptions
 
 ## Categories
 
-**Available in English and Finnish!**
+**Current Setup:**
 
-> **Note:** Categories overlap - words belong to both grammar categories (noun/verb/adjective) AND semantic topics (Family/Food/etc). For example, "äiti" (mother) is counted as both a noun and in Family & People.
+- **1 Category**: General vocabulary
+- **Difficulty Distribution**: All words set to beginner level
+- **Total Words**: 79 vocabulary entries
 
-**Grammar Categories:**
+**Previous Categories (from original dataset):**
+
+> **Note:** The original dataset had 16 categories, but the current cleaned dataset focuses on core vocabulary in a single general category for simplicity.
+
+**Grammar Categories (Original):**
 
 - 📖 Noun / Substantiivi (3,121 words)
 - 📘 Adjective / Adjektiivi (721 words)
 - ⚡ Verb / Verbi (548 words)
 - 📗 Preposition / Prepositio (10 words)
 
-**Semantic Categories:**
+**Semantic Categories (Original):**
 
 - 🏃 Basic Actions / Perustoiminnot (101 words)
 - 🌦️ Nature & Weather / Luonto & Sää (100 words)
@@ -221,29 +217,25 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 - 😊 Emotions & Mental States / Tunteet & Mielentilat (35 words)
 - 🏠 Home & Living / Koti & Asuminen (31 words)
 
-**Difficulty Distribution:**
-
-- 🟢 Beginner (A1-A2)
-- 🟡 Intermediate (B1-B2)
-- 🔴 Advanced (C1)
-
 ## Data Cleaning Process
 
-**Removed problematic entries:**
+**Translation Fixes Applied:**
 
-- "alas → second-person singular present imperative of alkaa"
-- "sienna → alternative form of siena"
-- "YT → initialism of yhteistoiminta"
-- "pellet → nominative plural of pelle"
+**Before (Grammatical descriptions):**
 
-**Kept quality translations:**
+- "selvittäminen → verbal noun of selvittää"
+- "vanhempi → comparative degree of vanha"
+- "sienne → present active potential connegative of sietä"
+- "paras → superlative degree of hyvä"
 
-- "luu → bone"
-- "nainen → woman"
-- "kärpänen → fly"
-- "basis → basis, base"
+**After (Proper English translations):**
 
-**Result:** Removed 321 poor entries (6.4%), keeping 4,400 high-quality vocabulary words.
+- "selvittäminen → clarification"
+- "vanhempi → older"
+- "sienne → would sit"
+- "paras → best"
+
+**Result:** Converted 78 out of 79 vocabulary entries from technical grammatical descriptions to user-friendly English translations.
 
 ## Why Firebase?
 
@@ -397,3 +389,127 @@ npm test
 ## License
 
 MIT License - Feel free to use for learning Finnish!
+
+## Project Structure
+```
+src
+  App.tsx
+  assets/
+    activities-2.jpg
+    activities.jpg
+    catagories.jpg
+    home.jpg
+    sample-vocabulary.jpg
+  components/
+    AddToFolderModal.tsx
+    CategoriesView.tsx
+    CategoryList.tsx
+    DeleteConfirmModal.tsx
+    EditWordModal.tsx
+    figma/
+      ImageWithFallback.tsx
+    FolderManager.tsx
+    FoldersView.tsx
+    FolderView.tsx
+    LearningView.tsx
+    PracticeView.tsx
+    ReviewSession.tsx
+    ReviewView.tsx
+    VocabularyManager.tsx
+    VocabularySwiper.tsx
+  contexts/
+    AuthContext.tsx
+  firebase.ts
+  hooks/
+    useAIVocabulary.ts
+    useApiVocabulary.test.ts
+    useApiVocabulary.ts
+    useFirestoreVocabulary.ts
+  index.css
+  main.tsx
+  PracticeGame/
+    PracticeQuiz.tsx
+  services/
+    aiService.ts
+    categoryService.ts
+    firebaseAuth.ts
+    firebaseConfig.ts
+    firebaseVocabulary.ts
+    firestore.ts
+    userService.ts
+    vocabularyService.ts
+  types/
+    index.ts
+  utils/
+    fallbackExamples.ts
+    promptUtils.ts
+    session.ts
+    srsLogic.test.ts
+    srsLogic.ts
+    translations.ts
+  vite-env.d.ts
+public
+scripts
+  update-readme.js
+```
+```
+src
+  App.tsx
+  assets/
+    activities-2.jpg
+    activities.jpg
+    catagories.jpg
+    home.jpg
+    sample-vocabulary.jpg
+  components/
+    AddToFolderModal.tsx
+    CategoriesView.tsx
+    CategoryList.tsx
+    DeleteConfirmModal.tsx
+    EditWordModal.tsx
+    figma/
+      ImageWithFallback.tsx
+    FolderManager.tsx
+    FoldersView.tsx
+    FolderView.tsx
+    LearningView.tsx
+    PracticeView.tsx
+    ReviewSession.tsx
+    ReviewView.tsx
+    VocabularyManager.tsx
+    VocabularySwiper.tsx
+  contexts/
+    AuthContext.tsx
+  firebase.ts
+  hooks/
+    useAIVocabulary.ts
+    useApiVocabulary.test.ts
+    useApiVocabulary.ts
+    useFirestoreVocabulary.ts
+  index.css
+  main.tsx
+  PracticeGame/
+    PracticeQuiz.tsx
+  services/
+    aiService.ts
+    categoryService.ts
+    firebaseAuth.ts
+    firebaseConfig.ts
+    firebaseVocabulary.ts
+    firestore.ts
+    userService.ts
+    vocabularyService.ts
+  types/
+    index.ts
+  utils/
+    fallbackExamples.ts
+    promptUtils.ts
+    session.ts
+    srsLogic.test.ts
+    srsLogic.ts
+    translations.ts
+  vite-env.d.ts
+public
+scripts
+  update-readme.js
+```

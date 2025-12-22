@@ -8,7 +8,7 @@ interface Props {
   word: VocabularyWord;
   onClose: () => void;
   onSave: (updatedWord: VocabularyWord) => void;
-  currentUser: any; // Add currentUser prop
+  currentUser: any;
 }
 
 export const EditWordModal = ({

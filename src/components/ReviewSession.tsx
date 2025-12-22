@@ -6,7 +6,7 @@ interface Props {
   words: VocabularyWord[];
   onGrade: (word: VocabularyWord, grade: number) => void;
   onBack: () => void;
-  onWordUpdate?: (word: VocabularyWord) => void; // Add this prop
+  onWordUpdate?: (word: VocabularyWord) => void;
 }
 
 export const ReviewSession = ({ words, onGrade, onBack }: Props) => {

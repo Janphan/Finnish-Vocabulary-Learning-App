@@ -11,7 +11,7 @@ interface VocabularySwiperProps {
   onAddToFolder: (wordId: string, folderId: string) => void;
   onBack: () => void;
   language?: "en" | "fi";
-  onWordUpdate?: (word: VocabularyWord) => void; // Add this prop
+  onWordUpdate?: (word: VocabularyWord) => void;
 }
 
 export function VocabularySwiper({
@@ -22,7 +22,7 @@ export function VocabularySwiper({
   onAddToFolder,
   onBack,
   language = "en",
-  onWordUpdate, // Add this
+  onWordUpdate,
 }: VocabularySwiperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFolderModal, setShowFolderModal] = useState(false);

@@ -1,8 +1,3 @@
-// ==============================================
-// Fallback Examples Utility
-// Generates basic example sentences when AI fails
-// ==============================================
-
 import { VocabularyWord } from '../types';
 
 // Generate fallback example sentence

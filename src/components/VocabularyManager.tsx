@@ -11,7 +11,7 @@ interface Props {
   onWordUpdate: (updatedWord: VocabularyWord) => void;
   onWordDelete: (deletedId: string) => void;
   onBack: () => void;
-  currentUser: any; // Add currentUser prop
+  currentUser: any;
 }
 
 export const VocabularyManager = ({

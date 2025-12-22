@@ -3,8 +3,8 @@ import { Coffee, Globe, Folder, Brain, LogOut } from "lucide-react";
 import { translations, Language } from "../utils/translations";
 
 interface Props {
-  categories: any[]; // Replace with proper Category[] type
-  vocabularyWords: any[]; // Replace with VocabularyWord[]
+  categories: any[];
+  vocabularyWords: any[];
   selectedDifficulty: "beginner" | "intermediate" | "advanced" | "all";
   language: Language;
   categoryTranslations: any;
@@ -19,9 +19,9 @@ interface Props {
   onSignOut: () => void;
   onSelectDifficulty: (
     difficulty: "beginner" | "intermediate" | "advanced" | "all"
-  ) => void; // Add this
-  onManageDatabase: () => void; // Add this prop
-  isAdmin: boolean; // Add this prop
+  ) => void;
+  onManageDatabase: () => void;
+  isAdmin: boolean;
 }
 
 export function CategoriesView({
@@ -39,9 +39,9 @@ export function CategoriesView({
   currentUser,
   onSignIn,
   onSignOut,
-  onSelectDifficulty, // Add this
-  onManageDatabase, // Add this prop
-  isAdmin, // Add this
+  onSelectDifficulty,
+  onManageDatabase,
+  isAdmin,
 }: Props) {
   const t = translations[language];
 

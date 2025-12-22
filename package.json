@@ -69,9 +69,7 @@
       "scripts": {
             "dev": "vite",
             "build": "vite build",
-            "setup:data": "bash scripts/setup-wiktextract-data.sh",
-            "setup:data:windows": "cmd /c scripts\\setup-wiktextract-data.bat",
-            "upload:firestore": "node scripts/upload-to-firestore.js",
+            "update:readme": "node scripts/update-readme.js",
             "predeploy": "npm run build",
             "deploy": "gh-pages -d build",
             "test": "vitest"

@@ -14,8 +14,8 @@ import {
   translations,
   categoryTranslations,
   Language,
-} from "./utils/translations"; // Add this import
-import { VocabularyWord, Category, UserFolder } from "./types"; // Add this import
+} from "./utils/translations";
+import { VocabularyWord, Category, UserFolder } from "./types";
 import { VocabularyManager } from "./components/VocabularyManager";
 
 const MAX_REVIEW_WORDS = 20;
@@ -43,7 +43,7 @@ export default function App() {
   const [reviewedWordIds, setReviewedWordIds] = useState<Set<string>>(
     new Set()
   );
-  const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
+  const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]);
   const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
   const [mode, setMode] = useState<"home" | "review" | "manager">("home");
 
@@ -303,7 +303,7 @@ export default function App() {
           onSignIn={() => authService.signInWithGoogle()}
           onSignOut={() => authService.signOut()}
           onSelectDifficulty={setSelectedDifficulty} // Fix: Pass the setter function
-          onManageDatabase={() => setMode("manager")} // Add this
+          onManageDatabase={() => setMode("manager")}
           isAdmin={isAdmin || false}
         />
       )}
@@ -335,7 +335,7 @@ export default function App() {
 
       {currentView === "practice" && (
         <PracticeView
-          quizWords={[]} // Placeholder for now, will be populated by quick quiz logic
+          quizWords={[]}
           allWords={allWords}
           onBack={() => setCurrentView("categories")}
         />
