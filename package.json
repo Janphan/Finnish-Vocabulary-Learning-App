@@ -69,6 +69,8 @@
       "scripts": {
             "dev": "vite",
             "build": "vite build",
+            "seed:demo": "node scripts/upload-sample.js",
+            "admin:upload-full": "node scripts/upload-full-production.js",
             "update:readme": "node scripts/update-readme.js",
             "predeploy": "npm run build",
             "deploy": "gh-pages -d build",

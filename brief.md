@@ -1,41 +1,43 @@
 # Finnish Vocabulary Learning App - Brief
 
-A modern, interactive Finnish language learning application built with React and TypeScript, featuring **79 vocabulary words** with clean translations and Firebase Cloud integration.
+A modern, interactive Finnish language learning application built with React and TypeScript, featuring **demo data with 20 sample vocabulary words** and Firebase Cloud integration for custom vocabulary uploads.
 
 ## 📊 Dataset Overview
 
-### Current Vocabulary Database
+### Demo Data Included
 
-- **Source**: Processed backup translations with grammatical fixes
-- **Size**: 79 Finnish vocabulary words
-- **Processing**: Manual translation fixes to convert grammatical descriptions to proper English
-- **Categories**: 1 category (general vocabulary)
-- **Difficulty Levels**: All set to beginner level
+- **Size**: 20 sample Finnish vocabulary words
+- **Categories**: Animals, Food, Family, Education, and more
+- **Difficulty Levels**: Beginner and Intermediate
+- **Features**: Example sentences and proper translations
+- **Extensible**: Full data schema documented for custom vocabulary uploads
 
 ### Data Structure
 
 ```json
 {
-  "id": "vocab-1117",
-  "finnish": "sienne",
-  "english": "would sit",
-  "partOfSpeech": "verb",
+  "id": "sample-1",
+  "finnish": "koira",
+  "english": "dog",
+  "partOfSpeech": "noun",
   "difficulty": "beginner",
-  "categoryId": "general",
-  "examples": []
+  "categoryId": "animals",
+  "examples": ["Minulla on koira.", "Koira haukkuu."]
 }
 ```
 
 ### Categories Include
 
-- **Current**: General vocabulary (all words in one category)
-- **Difficulty-based**: Beginner level (all words)
+- **Animals**: koira (dog), kissa (cat), lehmä (cow)
+- **Food**: syödä (to eat), juoda (to drink), vesi (water)
+- **Family**: äiti (mother), isä (father)
+- **Education**: kirja (book), koulu (school), opiskella (to study)
+- **Descriptions**: iso (big), pieni (small), kaunis (beautiful)
+- **And more**: Travel, emotions, actions, etc.
 
-**Previous Categories (from original dataset):**
-
-- **Semantic**: Family & People, Nature & Weather, Food & Drink, Animals, Transportation, etc.
-- **Grammatical**: Noun, Verb, Adjective, Adverb, Pronoun, Preposition, etc.
-- **Difficulty-based**: Beginner (A1-A2), Intermediate (B1-B2), Advanced (C1-C2)
+**Difficulty Levels:**
+- **Beginner**: Basic vocabulary (14 words)
+- **Intermediate**: Advanced terms (6 words)
 
 ## 🚀 Core Functions
 
