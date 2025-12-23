@@ -3,6 +3,7 @@ import { AddToFolderModal } from "./AddToFolderModal";
 import { Star, FolderPlus, ArrowLeft, Edit } from "lucide-react";
 import { VocabularyWord, UserFolder } from "../types";
 import { EditWordModal } from "./EditWordModal";
+import { User } from "firebase/auth";
 interface VocabularySwiperProps {
   words: VocabularyWord[];
   favorites: Set<string>;
@@ -11,7 +12,8 @@ interface VocabularySwiperProps {
   onAddToFolder: (wordId: string, folderId: string) => void;
   onBack: () => void;
   language?: "en" | "fi";
-  onWordUpdate?: (word: VocabularyWord) => void; // Add this prop
+  onWordUpdate?: (word: VocabularyWord) => void;
+  currentUser: User | null;
 }
 
 export function VocabularySwiper({
@@ -22,7 +24,8 @@ export function VocabularySwiper({
   onAddToFolder,
   onBack,
   language = "en",
-  onWordUpdate, // Add this
+  onWordUpdate,
+  currentUser,
 }: VocabularySwiperProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFolderModal, setShowFolderModal] = useState(false);
@@ -254,6 +257,7 @@ export function VocabularySwiper({
             onWordUpdate(updatedWord);
             setShowEditModal(false);
           }}
+          currentUser={currentUser}
         />
       )}
     </>

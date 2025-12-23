@@ -1,10 +1,11 @@
 import { CategoryList } from "./CategoryList";
 import { Coffee, Globe, Folder, Brain, LogOut } from "lucide-react";
 import { translations, Language } from "../utils/translations";
+import { User } from "firebase/auth";
 
 interface Props {
-  categories: any[]; // Replace with proper Category[] type
-  vocabularyWords: any[]; // Replace with VocabularyWord[]
+  categories: any[];
+  vocabularyWords: any[];
   selectedDifficulty: "beginner" | "intermediate" | "advanced" | "all";
   language: Language;
   categoryTranslations: any;
@@ -14,14 +15,14 @@ interface Props {
   onOpenLearning: () => void;
   onDonate: () => void;
   dueWordsCount: number;
-  currentUser: any;
+  currentUser: User | null;
   onSignIn: () => void;
   onSignOut: () => void;
   onSelectDifficulty: (
     difficulty: "beginner" | "intermediate" | "advanced" | "all"
-  ) => void; // Add this
-  onManageDatabase: () => void; // Add this prop
-  isAdmin: boolean; // Add this prop
+  ) => void;
+  onManageDatabase: () => void;
+  isAdmin: boolean;
 }
 
 export function CategoriesView({
@@ -39,9 +40,9 @@ export function CategoriesView({
   currentUser,
   onSignIn,
   onSignOut,
-  onSelectDifficulty, // Add this
-  onManageDatabase, // Add this prop
-  isAdmin, // Add this
+  onSelectDifficulty,
+  onManageDatabase,
+  isAdmin,
 }: Props) {
   const t = translations[language];
 
@@ -182,11 +183,13 @@ export function CategoriesView({
         categoryTranslations={categoryTranslations}
       />
       {isAdmin && (
-        <div className="mt-8 pt-8 border-t px-8 pb-8">
-          <p className="text-gray-500 mb-2 text-sm">Admin Tools</p>
+        <div className="mt-8 pt-8 border-t border-red-200 px-8 pb-8 bg-red-50/30">
+          <p className="text-red-600 mb-3 text-sm font-medium">
+            🔧 Admin Tools
+          </p>
           <button
             onClick={onManageDatabase}
-            className="px-6 py-3 bg-gray-800 text-black rounded-xl font-medium shadow-lg hover:bg-gray-900 transition-all"
+            className="px-6 py-3 bg-red-600 text-black rounded-xl font-medium shadow-lg hover:bg-red-700 hover:shadow-xl transition-all duration-200 transform hover:scale-105 active:scale-95"
           >
             Manage Database
           </button>

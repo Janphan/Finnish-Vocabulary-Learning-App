@@ -14,8 +14,8 @@ import {
   translations,
   categoryTranslations,
   Language,
-} from "./utils/translations"; // Add this import
-import { VocabularyWord, Category, UserFolder } from "./types"; // Add this import
+} from "./utils/translations";
+import { VocabularyWord, Category, UserFolder } from "./types";
 import { VocabularyManager } from "./components/VocabularyManager";
 
 const MAX_REVIEW_WORDS = 20;
@@ -43,7 +43,7 @@ export default function App() {
   const [reviewedWordIds, setReviewedWordIds] = useState<Set<string>>(
     new Set()
   );
-  const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]); // Add this state
+  const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]);
   const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
   const [mode, setMode] = useState<"home" | "review" | "manager">("home");
 
@@ -258,7 +258,8 @@ export default function App() {
     setAllWords((prev) => prev.filter((w) => w.id !== id));
   };
 
-  const isAdmin = currentUser && currentUser.uid === "your-user-uid"; // Replace with your actual Firebase UID
+  const isAdmin =
+    currentUser && currentUser.uid === import.meta.env.VITE_ADMIN_UID;
 
   if (authLoading || (vocabLoading && currentView === "loading")) {
     return (
@@ -302,8 +303,8 @@ export default function App() {
           onSignIn={() => authService.signInWithGoogle()}
           onSignOut={() => authService.signOut()}
           onSelectDifficulty={setSelectedDifficulty} // Fix: Pass the setter function
-          onManageDatabase={() => setMode("manager")} // Add this
-          isAdmin={false}
+          onManageDatabase={() => setMode("manager")}
+          isAdmin={isAdmin || false}
         />
       )}
 
@@ -317,6 +318,7 @@ export default function App() {
           onBack={handleBack}
           language={language}
           onWordUpdate={handleWordUpdate}
+          currentUser={currentUser}
         />
       )}
 
@@ -334,7 +336,7 @@ export default function App() {
 
       {currentView === "practice" && (
         <PracticeView
-          quizWords={[]} // Placeholder for now, will be populated by quick quiz logic
+          quizWords={[]}
           allWords={allWords}
           onBack={() => setCurrentView("categories")}
         />
@@ -345,7 +347,6 @@ export default function App() {
           sessionWords={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
-          onWordUpdate={handleWordUpdate}
         />
       )}
 
@@ -365,6 +366,7 @@ export default function App() {
           onBack={() => setMode("home")}
           onWordUpdate={handleWordUpdate} // The same update function we wrote before
           onWordDelete={handleWordDelete}
+          currentUser={currentUser}
         />
       )}
     </div>

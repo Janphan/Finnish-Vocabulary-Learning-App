@@ -1,0 +1,182 @@
+[
+  {
+    "id": "sample-1",
+    "finnish": "koira",
+    "english": "dog",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "animals",
+    "examples": ["Minulla on koira.", "Koira haukkuu."]
+  },
+  {
+    "id": "sample-2",
+    "finnish": "kissa",
+    "english": "cat",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "animals",
+    "examples": ["Kissa on pöydällä.", "Minun kissani on musta."]
+  },
+  {
+    "id": "sample-3",
+    "finnish": "talo",
+    "english": "house",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "home",
+    "examples": ["Talo on iso.", "Asun talossa."]
+  },
+  {
+    "id": "sample-4",
+    "finnish": "auto",
+    "english": "car",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "transport",
+    "examples": ["Auto on punainen.", "Ajan autolla."]
+  },
+  {
+    "id": "sample-5",
+    "finnish": "syödä",
+    "english": "to eat",
+    "partOfSpeech": "verb",
+    "difficulty": "beginner",
+    "categoryId": "food",
+    "examples": ["Syön omenaa.", "Hän syö lihaa."]
+  },
+  {
+    "id": "sample-6",
+    "finnish": "juoda",
+    "english": "to drink",
+    "partOfSpeech": "verb",
+    "difficulty": "beginner",
+    "categoryId": "food",
+    "examples": ["Juon vettä.", "Hän juo kahvia."]
+  },
+  {
+    "id": "sample-7",
+    "finnish": "iso",
+    "english": "big",
+    "partOfSpeech": "adjective",
+    "difficulty": "beginner",
+    "categoryId": "descriptions",
+    "examples": ["Iso talo.", "Minun autoni on iso."]
+  },
+  {
+    "id": "sample-8",
+    "finnish": "pieni",
+    "english": "small",
+    "partOfSpeech": "adjective",
+    "difficulty": "beginner",
+    "categoryId": "descriptions",
+    "examples": ["Pieni koira.", "Huone on pieni."]
+  },
+  {
+    "id": "sample-9",
+    "finnish": "äiti",
+    "english": "mother",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "family",
+    "examples": ["Minun äitini.", "Äiti tekee ruokaa."]
+  },
+  {
+    "id": "sample-10",
+    "finnish": "isä",
+    "english": "father",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "family",
+    "examples": ["Minun isäni.", "Isä lukee kirjaa."]
+  },
+  {
+    "id": "sample-11",
+    "finnish": "kirja",
+    "english": "book",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "education",
+    "examples": ["Luen kirjaa.", "Kirja on mielenkiintoinen."]
+  },
+  {
+    "id": "sample-12",
+    "finnish": "koulu",
+    "english": "school",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "education",
+    "examples": ["Menen kouluun.", "Koulu alkaa klo 8."]
+  },
+  {
+    "id": "sample-13",
+    "finnish": "ystävä",
+    "english": "friend",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "people",
+    "examples": ["Minun ystäväni.", "Tapaan ystäviäni."]
+  },
+  {
+    "id": "sample-14",
+    "finnish": "vesi",
+    "english": "water",
+    "partOfSpeech": "noun",
+    "difficulty": "beginner",
+    "categoryId": "food",
+    "examples": ["Juon vettä.", "Vesi on kylmää."]
+  },
+  {
+    "id": "sample-15",
+    "finnish": "lehmä",
+    "english": "cow",
+    "partOfSpeech": "noun",
+    "difficulty": "intermediate",
+    "categoryId": "animals",
+    "examples": ["Lehmä antaa maitoa.", "Maalla on lehmiä."]
+  },
+  {
+    "id": "sample-16",
+    "finnish": "lentää",
+    "english": "to fly",
+    "partOfSpeech": "verb",
+    "difficulty": "intermediate",
+    "categoryId": "actions",
+    "examples": ["Lintu lentää.", "Lennän Suomeen."]
+  },
+  {
+    "id": "sample-17",
+    "finnish": "kaunis",
+    "english": "beautiful",
+    "partOfSpeech": "adjective",
+    "difficulty": "intermediate",
+    "categoryId": "descriptions",
+    "examples": ["Kaunis päivä.", "Hän on kaunis."]
+  },
+  {
+    "id": "sample-18",
+    "finnish": "opiskella",
+    "english": "to study",
+    "partOfSpeech": "verb",
+    "difficulty": "intermediate",
+    "categoryId": "education",
+    "examples": ["Opiskelen suomea.", "Hän opiskelee yliopistossa."]
+  },
+  {
+    "id": "sample-19",
+    "finnish": "matka",
+    "english": "trip",
+    "partOfSpeech": "noun",
+    "difficulty": "intermediate",
+    "categoryId": "travel",
+    "examples": ["Matka Suomeen.", "Hyvä matka!"]
+  },
+  {
+    "id": "sample-20",
+    "finnish": "rakastaa",
+    "english": "to love",
+    "partOfSpeech": "verb",
+    "difficulty": "intermediate",
+    "categoryId": "emotions",
+    "examples": ["Rakastan musiikkia.", "Hän rakastaa minua."]
+  }
+]
