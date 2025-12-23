@@ -280,7 +280,7 @@ Please refer to the Data Schema & Customization section below for the complete J
 4. The app will automatically load your custom vocabulary
 
 **Sample Data Structure:**
-See `sample-data.json` in the repository for complete examples of properly formatted vocabulary entries.
+See `docs/sample-data.json` in the repository for complete examples of properly formatted vocabulary entries.
 
 </details>
 

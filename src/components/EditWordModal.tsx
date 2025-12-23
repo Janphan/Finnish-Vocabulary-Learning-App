@@ -3,12 +3,13 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase"; // Ensure this path matches your setup
 import { VocabularyWord } from "../types";
 import { X, Save, Loader2 } from "lucide-react";
+import { User } from "firebase/auth";
 
 interface Props {
   word: VocabularyWord;
   onClose: () => void;
   onSave: (updatedWord: VocabularyWord) => void;
-  currentUser: any;
+  currentUser: User | null;
 }
 
 export const EditWordModal = ({
@@ -22,6 +23,7 @@ export const EditWordModal = ({
     english: word.english,
     category: word.categoryId || "",
     exampleSentence: word.exampleSentence || "",
+    frequency: word.frequency || "",
   });
   const [loading, setLoading] = useState(false);
 

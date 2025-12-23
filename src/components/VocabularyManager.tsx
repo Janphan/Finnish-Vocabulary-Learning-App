@@ -1,17 +1,18 @@
 import { useState, useMemo } from "react";
 import { EditWordModal } from "./EditWordModal";
 import { DeleteConfirmModal } from "./DeleteConfirmModal";
-import { Search, Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { VocabularyWord } from "../types";
+import { User } from "firebase/auth";
 
 interface Props {
   words: VocabularyWord[];
   onWordUpdate: (updatedWord: VocabularyWord) => void;
   onWordDelete: (deletedId: string) => void;
   onBack: () => void;
-  currentUser: any;
+  currentUser: User | null;
 }
 
 export const VocabularyManager = ({

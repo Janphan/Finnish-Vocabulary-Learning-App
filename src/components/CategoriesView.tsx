@@ -1,6 +1,7 @@
 import { CategoryList } from "./CategoryList";
 import { Coffee, Globe, Folder, Brain, LogOut } from "lucide-react";
 import { translations, Language } from "../utils/translations";
+import { User } from "firebase/auth";
 
 interface Props {
   categories: any[];
@@ -14,7 +15,7 @@ interface Props {
   onOpenLearning: () => void;
   onDonate: () => void;
   dueWordsCount: number;
-  currentUser: any;
+  currentUser: User | null;
   onSignIn: () => void;
   onSignOut: () => void;
   onSelectDifficulty: (

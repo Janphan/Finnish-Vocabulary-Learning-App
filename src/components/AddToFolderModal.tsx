@@ -1,5 +1,5 @@
-import { VocabularyWord, UserFolder } from '../App';
-import { X, Check } from 'lucide-react';
+import { VocabularyWord, UserFolder } from "../types";
+import { X, Check } from "lucide-react";
 
 interface AddToFolderModalProps {
   word: VocabularyWord;
@@ -51,8 +51,8 @@ export function AddToFolderModal({
                   onClick={() => handleAddToFolder(folder.id)}
                   className={`w-full p-4 rounded-xl border-2 transition-all active:scale-98 text-left flex items-center justify-between ${
                     isInFolder
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                 >
                   <div>
@@ -61,9 +61,7 @@ export function AddToFolderModal({
                       {folder.wordIds.length} words
                     </div>
                   </div>
-                  {isInFolder && (
-                    <Check className="w-5 h-5 text-blue-500" />
-                  )}
+                  {isInFolder && <Check className="w-5 h-5 text-blue-500" />}
                 </button>
               );
             })}

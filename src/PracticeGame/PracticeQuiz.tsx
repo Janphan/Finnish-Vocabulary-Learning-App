@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { VocabularyWord } from "../App";
+import { VocabularyWord } from "../types";
 
 interface PracticeQuizProps {
   words: VocabularyWord[];

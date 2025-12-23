@@ -10,7 +10,7 @@ import {
   Unsubscribe 
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { VocabularyWord } from '../App'; // Import the interface from App.tsx
+import { VocabularyWord } from '../types';
 
 export interface Category {
   id: string;
@@ -89,6 +89,7 @@ export function useFirestoreVocabulary(options: {
       }
 
       // Add ordering and limit
+      // Now that all words have frequency values, we can order by frequency
       vocabularyQuery = query(
         vocabularyQuery,
         orderBy('frequency', 'desc'),
@@ -97,10 +98,12 @@ export function useFirestoreVocabulary(options: {
 
       // Get vocabulary data
       const vocabularySnapshot = await getDocs(vocabularyQuery);
-      const vocabularyData = vocabularySnapshot.docs.map(doc => ({
+      let vocabularyData = vocabularySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as VocabularyWord[];
+
+      // No need for client-side sorting anymore - Firestore handles it
 
       console.log(`📚 Loaded ${vocabularyData.length} words from Firestore`);
 

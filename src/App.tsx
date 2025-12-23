@@ -318,6 +318,7 @@ export default function App() {
           onBack={handleBack}
           language={language}
           onWordUpdate={handleWordUpdate}
+          currentUser={currentUser}
         />
       )}
 
@@ -346,7 +347,6 @@ export default function App() {
           sessionWords={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
-          onWordUpdate={handleWordUpdate}
         />
       )}
 
