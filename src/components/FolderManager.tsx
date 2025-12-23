@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { UserFolder, VocabularyWord } from '../App';
-import { Plus, Trash2, Star, Folder as FolderIcon } from 'lucide-react';
+import { useState } from "react";
+import { UserFolder, VocabularyWord } from "../types";
+import { Plus, Trash2, Star, Folder as FolderIcon } from "lucide-react";
 
 interface FolderManagerProps {
   folders: UserFolder[];
@@ -18,13 +18,13 @@ export function FolderManager({
   onDeleteFolder,
 }: FolderManagerProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [folderName, setFolderName] = useState('');
+  const [folderName, setFolderName] = useState("");
   const [expandedFolder, setExpandedFolder] = useState<string | null>(null);
 
   const handleCreate = () => {
     if (folderName.trim()) {
       onCreateFolder(folderName.trim());
-      setFolderName('');
+      setFolderName("");
       setShowCreateModal(false);
     }
   };
@@ -33,7 +33,9 @@ export function FolderManager({
     return vocabularyWords.find((w) => w.id === wordId);
   };
 
-  const favoriteWords = vocabularyWords.filter((word) => favorites.has(word.id));
+  const favoriteWords = vocabularyWords.filter((word) =>
+    favorites.has(word.id)
+  );
 
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
@@ -42,7 +44,9 @@ export function FolderManager({
         <div
           className="flex items-center justify-between cursor-pointer"
           onClick={() =>
-            setExpandedFolder(expandedFolder === 'favorites' ? null : 'favorites')
+            setExpandedFolder(
+              expandedFolder === "favorites" ? null : "favorites"
+            )
           }
         >
           <div className="flex items-center gap-3">
@@ -51,12 +55,14 @@ export function FolderManager({
             </div>
             <div>
               <h3 className="text-gray-900">Favorites</h3>
-              <p className="text-gray-600 text-sm">{favoriteWords.length} words</p>
+              <p className="text-gray-600 text-sm">
+                {favoriteWords.length} words
+              </p>
             </div>
           </div>
         </div>
 
-        {expandedFolder === 'favorites' && favoriteWords.length > 0 && (
+        {expandedFolder === "favorites" && favoriteWords.length > 0 && (
           <div className="mt-4 space-y-2">
             {favoriteWords.map((word) => (
               <div
@@ -91,7 +97,9 @@ export function FolderManager({
               <div
                 className="flex items-center justify-between cursor-pointer"
                 onClick={() =>
-                  setExpandedFolder(expandedFolder === folder.id ? null : folder.id)
+                  setExpandedFolder(
+                    expandedFolder === folder.id ? null : folder.id
+                  )
                 }
               >
                 <div className="flex items-center gap-3">
@@ -100,7 +108,9 @@ export function FolderManager({
                   </div>
                   <div>
                     <h3 className="text-gray-900">{folder.name}</h3>
-                    <p className="text-gray-500 text-sm">{folder.wordIds.length} words</p>
+                    <p className="text-gray-500 text-sm">
+                      {folder.wordIds.length} words
+                    </p>
                   </div>
                 </div>
                 <button
@@ -116,7 +126,7 @@ export function FolderManager({
 
               {expandedFolder === folder.id && folder.wordIds.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  {folder.wordIds.map((wordId) => {
+                  {folder.wordIds.map((wordId: string) => {
                     const word = getWordById(wordId);
                     if (!word) return null;
                     return (
@@ -125,7 +135,9 @@ export function FolderManager({
                         className="bg-gray-50 rounded-lg p-3 flex justify-between items-center"
                       >
                         <div className="text-gray-900">{word.finnish}</div>
-                        <div className="text-gray-500 text-sm">{word.english}</div>
+                        <div className="text-gray-500 text-sm">
+                          {word.english}
+                        </div>
                       </div>
                     );
                   })}
@@ -163,7 +175,7 @@ export function FolderManager({
               <button
                 onClick={() => {
                   setShowCreateModal(false);
-                  setFolderName('');
+                  setFolderName("");
                 }}
                 className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
               >

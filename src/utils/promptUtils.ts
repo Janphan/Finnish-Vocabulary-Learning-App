@@ -1,8 +1,3 @@
-// ==============================================
-// Prompt Utilities
-// Creates AI prompts for vocabulary generation
-// ==============================================
-
 import { VocabularyWord } from '../types';
 
 // Create AI prompt for batch of words

@@ -4,9 +4,9 @@ import { FolderManager } from "./FolderManager";
 import { translations, Language } from "../utils/translations";
 
 interface Props {
-  folders: any[]; // Replace with UserFolder[]
+  folders: any[];
   favorites: Set<string>;
-  vocabularyWords: any[]; // Replace with VocabularyWord[]
+  vocabularyWords: any[];
   language: Language;
   onBack: () => void;
   onCreateFolder: (name: string) => void;

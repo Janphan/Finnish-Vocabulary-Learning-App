@@ -24,6 +24,17 @@ public/finnish-vocab-ai-enhanced.json
 .env
 .env.*.local
 
+# Production Data (keep private!)
+production-data.json
+full-vocabulary.json
+master-vocab-data.json
+private-data/
+*.vocab.backup
+
+# Firebase Admin Keys
+firebase-admin-key.json
+service-account-key.json
+
 # TypeScript
 *.tsbuildinfo
 

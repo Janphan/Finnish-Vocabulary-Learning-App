@@ -1,37 +1,58 @@
 # Finnish Vocabulary Learning App
 
+[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.3.5-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-12.6.0-FFCA28?style=flat&logo=firebase)](https://firebase.google.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.3-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 A modern React-based app for learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
+
+## Table of Contents
+
+- [Demo](#demo)
+- [Features](#features)
+- [How to Use](#how-to-use)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Data Pipeline](#data-pipeline)
+- [Categories](#categories)
+- [Data Schema & Customization](#data-schema--customization)
+- [User Experience](#user-experience)
+- [Development](#development)
+- [Deployment](#deployment)
+- [Future Improvements](#future-improvements)
+- [Getting Started](#getting-started)
+- [Contributing](CONTRIBUTING.md)
+- [Testing](#testing)
+- [License](#license)
 
 ## Demo
 
-Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+Check out the app in action:
+
+[![Finnish Vocabulary Learning App Demo](https://img.youtube.com/vi/Bcwf0F4_alA/maxresdefault.jpg)](https://www.youtube.com/watch?v=Bcwf0F4_alA)
+
+_Click the image above to watch the demo video_
+
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## Screenshots
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; justify-items: center; align-items: start;">
-  <div style="text-align: center;">
-    <img src="src/assets/home.jpg" width="200" alt="Home Screen">
-    <p><strong>Home Screen</strong></p>
-  </div>
-  <div style="text-align: center;">
-    <img src="src/assets/catagories.jpg" width="200" alt="Categories View">
-    <p><strong>Categories View</strong></p>
-  </div>
-  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-    <div style="text-align: center;">
-      <img src="src/assets/activities.jpg" width="200" alt="Learning Activities">
-      <p><strong>Learning Activities</strong></p>
-    </div>
-    <div style="text-align: center;">
-      <img src="src/assets/activities-2.jpg" width="200" alt="Learning Activities 2">
-      <p><strong>Learning Activities 2</strong></p>
-    </div>
-  </div>
-  <div style="text-align: center;">
-    <img src="src/assets/sample-vocabulary.jpg" width="200" alt="Sample Vocabulary Card">
-    <p><strong>Sample Vocabulary Card</strong></p>
-  </div>
-</div>
+| Home Screen                                                    | Categories View                                                          |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| <img src="docs/images/home.jpg" width="200" alt="Home Screen"> | <img src="docs/images/categories.jpg" width="200" alt="Categories View"> |
+
+| Learning Activities                                                                                                                                                                                                          | Sample Vocabulary Card                                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/images/activities.jpg" width="200" alt="Learning Activities"><br>**Learning Activities**<br><br><img src="docs/images/activities-2.jpg" width="200" alt="Learning Activities 2"><br>**Learning Activities 2** | <img src="docs/images/sample-vocabulary.jpg" width="200" alt="Sample Vocabulary Card"><br>**Sample Vocabulary Card** |
+
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## Getting Started
 
@@ -42,6 +63,9 @@ Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf
 - Firebase project with Firestore and Authentication enabled
 
 ### Installation
+
+<details>
+<summary>📦 Click to view detailed installation steps</summary>
 
 1. Clone the repository:
 
@@ -60,21 +84,13 @@ Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf
 
    - Create a Firebase project at https://console.firebase.google.com/
    - Enable Firestore and Authentication (Google Sign-In)
-   - Copy your Firebase config to a `.env` file in the root directory:
-     ```
-     VITE_FIREBASE_API_KEY=your_api_key
-     VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-     VITE_FIREBASE_PROJECT_ID=your_project_id
-     VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-     VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-     VITE_FIREBASE_APP_ID=your_app_id
-     VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
-     ```
+   - Rename `.env.example` to `.env` and fill in your Firebase credentials
 
-4. Upload vocabulary data (optional, if not already done):
+4. Seed the Database (Important):
+   Populate your empty Firestore project with the sample data:
 
    ```bash
-   npm run upload:firestore
+   npm run seed:demo
    ```
 
 5. Start the development server:
@@ -83,6 +99,12 @@ Check out the app in action: [YouTube Demo](https://www.youtube.com/watch?v=Bcwf
    ```
 
 The app will be available at `http://localhost:5173`.
+
+</details>
+
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## Features
 
@@ -96,7 +118,45 @@ The app will be available at `http://localhost:5173`.
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Firebase Integration**: Real-time data sync and user authentication
 
+[↑ Back to Top](#table-of-contents)
+
+---
+
+## How to Use
+
+### Basic Navigation
+
+- **👆 Swipe Right** or **👈 Swipe Left** on vocabulary cards to navigate between words
+- **⌨️ Keyboard**: Use arrow keys (← →) for navigation on desktop
+- **🌐 Language Toggle**: Click the globe icon to switch between English and Finnish interface
+
+### Learning Interactions
+
+- **⭐ Favorites**: Click the star icon to save important words to your personal collection
+- **Folders**: Create custom folders to organize your saved vocabulary
+- **Examples**: View contextual Finnish sentences for better understanding
+
+### Learning Modes
+
+- **Practice Mode**: Random vocabulary selection to test your knowledge
+- **Category Learning**: Browse and learn by semantic topics or grammar categories
+- **Review Sessions**: Spaced repetition for vocabulary retention
+- **Practice Quiz**: Interactive quiz to reinforce learning
+
+### Account Features
+
+- **Sign In**: Use Google authentication for personalized learning
+- **Cross-Device Sync**: Your favorites and folders sync across all your devices
+- **Admin Access**: Manage vocabulary database (admin users only)
+
+[↑ Back to Top](#table-of-contents)
+
+---
+
 ## Architecture
+
+<details>
+<summary>🏗️ Click to view technical architecture and decisions</summary>
 
 - **Frontend**: React 18 + TypeScript + Vite
 - **Styling**: Tailwind CSS with custom animations and Montserrat font
@@ -106,7 +166,29 @@ The app will be available at `http://localhost:5173`.
 - **Admin Features**: Role-based access for vocabulary management
 - **Testing**: Vitest for unit tests and component testing
 
+### Technical Decisions
+
+**Evolution:** JSON files → Firebase Firestore
+
+**Benefits of Firebase:**
+
+- **User accounts** - Google authentication and personalized learning
+- **Cross-device sync** - Favorites and folders sync across devices
+- **Real-time updates** - Live data synchronization
+- **Scalable** - Handles thousands of users without performance issues
+- **Offline-ready** - localStorage caching for offline vocabulary access
+- **Admin-friendly** - Easy data updates without redeploying the app
+
+</details>
+
+[↑ Back to Top](#table-of-contents)
+
+---
+
 ## Project Structure
+
+<details>
+<summary>📁 Click to expand/collapse the full project structure</summary>
 
 ```
 src/
@@ -162,99 +244,143 @@ public/
 ├── (empty - data stored in Firebase)
 
 scripts/
-├── upload-to-firestore.js        # Upload vocabulary to Firebase
-├── ai-cli.js                     # AI processing scripts
-├── ai-config.js                  # AI configuration
-├── ai-example-generator.js       # AI example generation
-└── (other scripts)
+├── (empty - one-time setup scripts removed after use)
 ```
 
-## The Data Pipeline
+</details>
 
-```
-Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → Clean Firestore DB
-```
+[↑ Back to Top](#table-of-contents)
 
-**Source Data:** 264,000+ entries from kaikki.org Finnish dictionary (3.6GB original file)
+---
 
-**Processing Pipeline:**
+## Data Pipeline
 
-1. **Extract vocabulary** - Filter Finnish words with good translations from the raw JSON data
-2. **Clean translations** - Remove grammatical descriptions, inflections, and poor entries
-3. **Add examples** - Generate contextual Finnish sentence examples using AI services
-4. **Assign CEFR levels** - Map vocabulary to beginner/intermediate/advanced difficulty levels
-5. **Semantic categorization** - Assign meaningful learning categories (Family, Food, Travel, etc.)
-6. **Quality filtering** - Keep only high-quality vocabulary suitable for language learning
+<details>
+<summary>📊 Click to view data strategy and schema</summary>
 
-**Current Dataset:**
+**Strategy: Code Public, Data Private** - The app ships with demo data for immediate use.
 
-- **High-quality vocabulary words** with authentic Finnish-English translations
-- **Multiple categories** including semantic topics and grammatical parts of speech
-- **Difficulty levels** based on CEFR standards and usage frequency
-- **Contextual examples** for better understanding and usage
+**Disclaimer:** The repository contains the scripts used to clean and process raw dictionary data (scripts/extract-vocabulary.js). You can use these scripts to process your own dictionary dumps (e.g., from Kaikki.org) by placing your raw file in the data/ folder.
+
+**Demo Data Included:**
+
+- **20 sample vocabulary words** covering various categories and difficulty levels
+- **Complete data schema** documented below for custom data uploads
+- **Ready-to-use examples** with Finnish sentences
+
+**Data Schema for Custom Vocabulary:**
+
+Please refer to the Data Schema & Customization section below for the complete JSON structure and validation rules.
+
+**Adding Your Own Data:**
+
+1. Create a JSON file following the schema above
+2. Upload to Firebase Firestore under the `vocabulary` collection
+3. Update categories in the `categories` collection if needed
+4. The app will automatically load your custom vocabulary
+
+**Sample Data Structure:**
+See `docs/sample-data.json` in the repository for complete examples of properly formatted vocabulary entries.
+
+</details>
+
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## Categories
 
-**Available in English and Finnish!**
+**Demo Data Categories:**
 
-**Semantic Categories:**
+The sample data includes vocabulary from these categories:
 
-- 👨‍👩‍👧‍👦 Family & People / Perhe & Ihmiset (81 words)
-- ⏰ Time & Numbers / Aika & Numerot (80 words)
-- 🏃 Basic Actions / Perustoiminnot (101 words)
-- 🌦️ Nature & Weather / Luonto & Sää (100 words)
-- 🎨 Colors & Appearance / Värit & Ulkonäkö (92 words)
-- 👤 Body / Keho (59 words)
-- 🍽️ Food & Drink / Ruoka & Juoma (58 words)
-- 🐾 Animals / Eläimet (52 words)
-- 🎓 Work & Education / Työ & Koulutus (51 words)
-- 🚗 Transportation / Liikenne (43 words)
-- 😊 Emotions & Mental States / Tunteet & Mielentilat (35 words)
-- 🏠 Home & Living / Koti & Asuminen (31 words)
+- **Animals** (koira, kissa, lehmä)
+- **Home** (talo)
+- **Transport** (auto)
+- **Food** (syödä, juoda, vesi)
+- **Family** (äiti, isä)
+- **Education** (kirja, koulu, opiskella)
+- **People** (ystävä)
+- **Descriptions** (iso, pieni, kaunis)
+- **Actions** (lentää)
+- **Travel** (matka)
+- **Emotions** (rakastaa)
 
-**Grammar Categories:**
+**Difficulty Levels:**
 
-- 📦 Noun / Substantiivi
-- 🎨 Adjective / Adjektiivi
-- 🏃 Verb / Verbi
-- 🔗 Preposition / Prepositio
+- **Beginner**: Basic vocabulary (14 words)
+- **Intermediate**: More advanced terms (6 words)
 
-**Difficulty Distribution:**
+**Total Demo Words**: 20 vocabulary entries with example sentences
 
-- 🟢 Beginner (A1-A2)
-- 🟡 Intermediate (B1-B2)
-- 🔴 Advanced (C1)
+<details>
+<summary>📚 Click to view data schema for custom categories</summary>
 
-## Data Cleaning Process
+**Category Document Structure:**
 
-**Removed problematic entries:**
+```json
+{
+  "id": "string", // Unique category identifier
+  "name": "string", // Display name (e.g., "Family & People")
+  "count": "number", // Number of words in category
+  "emoji": "string", // Category emoji
+  "description": "string" // Optional description
+}
+```
 
-- "alas → second-person singular present imperative of alkaa"
-- "sienna → alternative form of siena"
-- "YT → initialism of yhteistoiminta"
-- "pellet → nominative plural of pelle"
+**Adding Custom Categories:**
 
-**Kept quality translations:**
+1. Create category documents in Firestore `categories` collection
+2. Reference category IDs in vocabulary `categoryId` fields
+3. The app will automatically display your custom categories
 
-- "luu → bone"
-- "nainen → woman"
-- "kärpänen → fly"
-- "basis → basis, base"
+</details>
 
-**Result:** Removed 321 poor entries (6.4%), keeping 4,679 high-quality vocabulary words.
+[↑ Back to Top](#table-of-contents)
 
-## Why Firebase?
+---
 
-**Evolution:** JSON files → Firebase Firestore
+## Data Schema & Customization
 
-**Benefits:**
+<details>
+<summary>🔧 Click to view data schema and customization options</summary>
 
-- **User accounts** - Google authentication and personalized learning
-- **Cross-device sync** - Favorites and folders sync across devices
-- **Real-time updates** - Live data synchronization
-- **Scalable** - Handles thousands of users without performance issues
-- **Offline-ready** - localStorage caching for offline vocabulary access
-- **Admin-friendly** - Easy data updates without redeploying the app
+**Complete Vocabulary Schema:**
+
+```json
+{
+  "id": "string", // Unique identifier (required)
+  "finnish": "string", // Finnish word (required)
+  "english": "string", // English translation (required)
+  "partOfSpeech": "string", // "noun", "verb", "adjective", etc. (optional)
+  "difficulty": "string", // "beginner", "intermediate", "advanced" (required)
+  "categoryId": "string", // Category identifier (required)
+  "examples": ["string"] // Array of example sentences (optional)
+}
+```
+
+**Uploading Custom Data:**
+
+1. **Prepare your data** as JSON array following the schema above
+2. **Create Firebase project** and enable Firestore
+3. **Upload to Firestore** under the `vocabulary` collection
+4. **Add categories** to the `categories` collection if needed
+5. **Configure environment** with your Firebase credentials
+
+**Data Validation:**
+
+- All vocabulary entries must have `id`, `finnish`, `english`, `difficulty`, and `categoryId`
+- Example sentences should be natural Finnish phrases using the vocabulary word
+- Category IDs should match documents in your `categories` collection
+
+**Sample Implementation:**
+See `sample-data.json` for 20 complete examples with proper formatting and realistic example sentences.
+
+</details>
+
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## User Experience
 
@@ -279,39 +405,59 @@ Raw Kaikki Data (JSON) → Cleaning Script (Node.js) → Inflection Filter → C
 - **Progress Tracking** - Word count indicators
 - **Contextual Examples** - Real Finnish sentences
 
+[↑ Back to Top](#table-of-contents)
+
+---
+
 ## Development
 
-**Set up Firebase:**
+<details>
+<summary>🛠️ Click to view development setup and customization options</summary>
+
+**Data Management Scripts:**
 
 ```bash
-# 1. Create Firebase project
-# 2. Enable Firestore and Authentication
-# 3. Copy config to .env file
+# Upload demo data (20 sample words)
+npm run seed:demo
 
-# 4. Upload vocabulary data
-npm run upload:firestore
+# Upload full production data (requires production-data.json)
+npm run admin:upload-full
 ```
 
-**Regenerate vocabulary:**
+**Firebase Setup:**
 
-```bash
-cd scripts
-node extract-vocabulary.js    # Extract & categorize from source
-node clean-translations.js    # Remove poor translations
-node upload-to-firestore.js   # Upload to Firebase
-```
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/).
+2. Enable **Firestore** and **Authentication** (Google Sign-In).
+3. Rename `.env.example` to `.env` and fill in your credentials.
+4. Run one of the data seeding scripts above.
+
+**Custom Vocabulary Upload:**
+
+1. **Prepare your data** as JSON array following the documented schema
+2. **Save as `production-data.json`** in the root directory (add to .gitignore!)
+3. **Run** `npm run admin:upload-full` to upload to Firestore
+4. **Categories** are automatically created from your data
 
 **Modify categories:**
 
-1. Update semantic patterns in `scripts/extract-vocabulary.js`
+1. Update category IDs in your vocabulary data
 2. Update emoji mappings in `src/hooks/useFirestoreVocabulary.ts` and `CategoryList.tsx`
 
 **Custom examples:**
 
-- The app auto-generates Finnish examples
-- Edit `generateFinnishExample()` function to customize
+- The app uses example sentences from your vocabulary data
+- Add contextual Finnish phrases to the `examples` array in your data
+
+</details>
+
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## Deployment
+
+<details>
+<summary>🚀 Click to view deployment instructions and configurations</summary>
 
 **For Vercel/GitHub Pages:**
 
@@ -337,22 +483,16 @@ npm run deploy  # For GitHub Pages
 - Copy `.env` variables to your hosting platform's environment settings
 - Deploy the `build/` folder as static files
 
-## Recent Improvements
+</details>
 
-- **Firebase Integration** - Migrated from static JSON to Firestore with authentication
-- **User Accounts** - Google sign-in with personalized favorites and folders
-- **Cross-Device Sync** - User data syncs across all devices
-- **Full Bilingual Support** - Complete English/Finnish UI with category name translations
-- **Part of Speech Display** - Grammar context (noun, verb, adjective, etc.) shown on vocabulary cards
-- **Smart Navigation** - Swipeable vocabulary cards with smooth transitions
-- **Admin Tools** - Vocabulary management interface for database editing
-- **Modern UI** - Clean, responsive design with Tailwind CSS and Montserrat font
-- **Folder System** - Create custom vocabulary collections
-- **Semantic categorization** - Meaningful learning topics and grammar categories
-- **Quality filtering** - Curated vocabulary from kaikki.org linguistic database
-- **Context Examples** - Finnish sentence examples for better learning
+[↑ Back to Top](#table-of-contents)
+
+---
 
 ## Future Improvements
+
+<details>
+<summary>🚀 Click to explore planned features and roadmap</summary>
 
 **Learning Experience:**
 
@@ -384,6 +524,12 @@ npm run deploy  # For GitHub Pages
 - **Export/Import** - Personal vocabulary lists and progress backup
 - **Sync with Language Tools** - Integration with Anki, Quizlet, or language learning platforms
 
+</details>
+
+[↑ Back to Top](#table-of-contents)
+
+---
+
 ## Testing
 
 Run tests with:
@@ -392,6 +538,14 @@ Run tests with:
 npm test
 ```
 
+[↑ Back to Top](#table-of-contents)
+
+---
+
 ## License
 
 MIT License - Feel free to use for learning Finnish!
+
+[↑ Back to Top](#table-of-contents)
+
+---

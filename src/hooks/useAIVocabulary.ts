@@ -1,8 +1,3 @@
-// ==============================================
-// AI-Enhanced Vocabulary Hook
-// React hook to manage AI-generated examples
-// ==============================================
-
 import { useState, useEffect, useRef } from 'react';
 import { VocabularyWord, AIGenerationOptions } from '../types';
 import { callAIService } from '../services/aiService';
