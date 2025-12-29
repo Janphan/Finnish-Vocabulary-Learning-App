@@ -1,17 +1,18 @@
 import { describe, it, expect } from 'vitest'; // or 'jest' if using CRA
 import { calculateReview } from './srsLogic';
-import { VocabularyWord } from '../App';
+import { VocabularyWord } from '../types';
 
 // Mock a standard word
 const mockWord: VocabularyWord = {
-    id: '1',
-    english: 'Cat',
-    finnish: 'Kissa',
-    interval: 0,
-    repetitions: 0,
-    easinessFactor: 2.5,
-    nextReviewDate: new Date().toISOString(),
-    categories: []
+  id: '1',
+  english: 'Cat',
+  finnish: 'Kissa',
+  interval: 0,
+  repetitions: 0,
+  easinessFactor: 2.5,
+  nextReviewDate: new Date().toISOString(),
+  categories: [],
+  exampleSentence: ''
 };
 
 describe('SRS Logic (SM-2 Algorithm)', () => {
