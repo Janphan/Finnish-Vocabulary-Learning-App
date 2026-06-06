@@ -27,6 +27,9 @@ export function VocabularySwiper({
   onWordUpdate,
   currentUser,
 }: VocabularySwiperProps) {
+  const [order, setOrder] = useState<number[]>(() => {
+    return Array.from({ length: words.length }, (_, i) => i).sort(() => Math.random() - 0.5);
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [touchStart, setTouchStart] = useState(0);
@@ -34,7 +37,14 @@ export function VocabularySwiper({
   const [touchEnd, setTouchEnd] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const currentWord = words[currentIndex];
+  useEffect(() => {
+    if (words.length !== order.length) {
+      setOrder(Array.from({ length: words.length }, (_, i) => i).sort(() => Math.random() - 0.5));
+      setCurrentIndex(0);
+    }
+  }, [words.length, order.length]);
+
+  const currentWord = words[order[currentIndex]];
 
   // Language labels
   const labels = {
@@ -95,6 +105,8 @@ export function VocabularySwiper({
       randomIndex = Math.floor(Math.random() * words.length);
     } while (randomIndex === currentIndex && words.length > 1);
     setCurrentIndex(randomIndex);
+    if (words.length <= 1) return;
+    setCurrentIndex((prev) => (prev + 1) % words.length);
   };
 
   const handlePrevious = () => {
@@ -104,6 +116,8 @@ export function VocabularySwiper({
       randomIndex = Math.floor(Math.random() * words.length);
     } while (randomIndex === currentIndex && words.length > 1);
     setCurrentIndex(randomIndex);
+    if (words.length <= 1) return;
+    setCurrentIndex((prev) => (prev - 1 + words.length) % words.length);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
