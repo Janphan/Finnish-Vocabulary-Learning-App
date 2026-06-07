@@ -1,35 +1,47 @@
 import { VocabularyWord } from "../types";
 export const getSmartSession = (
-  allWords: VocabularyWord[], 
+  allWords: VocabularyWord[],
   limit: number = 20
 ): VocabularyWord[] => {
-  // 1. Identify "Due" words
-  const dueWords = allWords.filter(w => !w.nextReviewDate || new Date(w.nextReviewDate).getTime() <= Date.now());
-
-  // 2. Separate "Hard" words (Interval < 3 days) from "Normal" reviews
-  const hardWords = dueWords.filter(w => (w.interval || 0) < 3);
-  const normalReviews = dueWords.filter(w => (w.interval || 0) >= 3);
-
-  // 3. Shuffle the groups independently
+  const today = Date.now();
+  //Shuffle the groups independently
+  // Replace biased random by Fisher-Yates method
   // (This ensures you see hard stuff, but the order changes every time)
-  const shuffle = (arr: any[]) => [...arr].sort(() => Math.random() - 0.5);
-  
-  const shuffledHard = shuffle(hardWords);
-  const shuffledNormal = shuffle(normalReviews);
+  const shuffle = <T>(arr: T[]): T[] => {
+    const newArr = [...arr];
+    for (let i = newArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+    return newArr;
+  };
+  const newWordsPool = allWords.filter(w => !w.nextReviewDate || (w.interval ?? 0) === 0);
+  const learnedWordsPool = allWords.filter(w => w.nextReviewDate && (w.interval ?? 0) > 0);
+  const dueLearnedWords = learnedWordsPool.filter(w => new Date(w.nextReviewDate!).getTime() <= today);
+  const notDueLearnedWords = learnedWordsPool.filter(w => new Date(w.nextReviewDate!).getTime() > today);
+  //Divide Due into 2 groups
 
-  // 4. Combine: Hard stuff first, then normal reviews
-  let session = [...shuffledHard, ...shuffledNormal];
+  const hardWords = dueLearnedWords.filter(w => (w.interval ?? 0) < 3);
+  const normalWords = dueLearnedWords.filter(w => (w.interval ?? 0) >= 3);
+  //mix word for surprising and appealing effect
+  const shuffledHardWords = shuffle(hardWords);
+  const shuffledNormalWords = shuffle(normalWords);
 
-  // 5. "Boredom Killer": Inject NEW words if the session is too short
+  //Combine Review words, with hard word in priority
+  let session = [...shuffledHardWords, ...shuffledNormalWords, ...newWordsPool];
+  //Boredom Killer: If not enough 20 words, add new words
   if (session.length < limit) {
-    const newWords = allWords.filter(w => !w.nextReviewDate && !session.includes(w));
-    const shuffledNew = shuffle(newWords);
-    
-    // Fill the remaining slots with new words
+    const suffledNewWords = shuffle(newWordsPool);
     const needed = limit - session.length;
-    session = [...session, ...shuffledNew.slice(0, needed)];
+    session = [...session, ...suffledNewWords.slice(0, needed)];
   }
+  //Backup: If not enough 20 words - User learns all new + due words
+  if (session.length < limit) {
+    const remainingOverdue = learnedWordsPool.filter(w => !session.includes(w))
+      .sort((a, b) => new Date(a.nextReviewDate!).getTime() - new Date(b.nextReviewDate!).getTime())
+    const needed = limit - session.length;
+    session = [...session, ...remainingOverdue.slice(0, needed)];
 
-  // 6. Return only the batch size (e.g., 20)
+  }
   return session.slice(0, limit);
 };

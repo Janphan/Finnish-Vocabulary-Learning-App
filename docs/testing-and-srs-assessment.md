@@ -21,8 +21,15 @@ After being evaluated, the grade will be calculated by calculateReview function 
 Also, the easinessFactor will be calculated (HOW?)
 
 -- 
-# Review Session Logic
+## Review Session Logic
 There are 20 random cards to review each time. A word marked as "Known" will be reviewed after a certain interval. A word marked as "Forgot" will be reviewed the next day. The session ends when all 20 cards are reviewed.
+
+# How random Review Session works?
+First, the system will create 20 words according to the logic priority:
+- 1. Known + Due words
+- 2. Totally New words: If 1. is not enough to fill 20 words.
+- 3. Known + Not Due words: If 1. and 2. are not enough to fill 20 words.
+
 
 Use case 1: User stops in the middle of the session
 - Current implementation: Save-as-you-go, when the user stops, the grade of the word will be sent to the server.
