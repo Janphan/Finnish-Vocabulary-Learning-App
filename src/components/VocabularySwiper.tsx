@@ -99,23 +99,11 @@ export function VocabularySwiper({
   };
 
   const handleNext = () => {
-    // Generate random index that's different from current
-    let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * words.length);
-    } while (randomIndex === currentIndex && words.length > 1);
-    setCurrentIndex(randomIndex);
     if (words.length <= 1) return;
     setCurrentIndex((prev) => (prev + 1) % words.length);
   };
 
   const handlePrevious = () => {
-    // Generate random index that's different from current
-    let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * words.length);
-    } while (randomIndex === currentIndex && words.length > 1);
-    setCurrentIndex(randomIndex);
     if (words.length <= 1) return;
     setCurrentIndex((prev) => (prev - 1 + words.length) % words.length);
   };
