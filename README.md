@@ -9,18 +9,9 @@
 
 Inspired by personal need to learn Finnish vocabulary and an interest in flashcard methodology, this modern React-based app facilitates learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
 
-The raw data is from Kaikki.org. After the process of extracting, the data is converted into JSON, with the requirement of these fields:
-- Be a Finnish word, not borrowed word from other language, for example, from English
-- Have the English translation, and not be a proper noun
-- Have the part of speech (e.g., noun, verb, adjective) and its corresponding emoji
-- Have example sentences
-- Not repetition due to word conjunction.
+> 💡 **Technical Deep Dive:** For full implementation details, chunking strategies, and prompt engineering parameters, see the [Data Cleansing & AI Ingestion Deep Dive](./docs/data-cleansing-deep-dive.md).
 
-Difficulty in data cleansing: The raw data was in massive size (23Gb) and inconsistent. It was also in a format that was not directly usable, requiring extensive parsing and transformation. This made the initial data processing a significant challenge, taking several weeks to complete. Also, there were a lot of words without proper examples. 
-
-For this no example-situation, it was then used Gemini to generate a English example for each word accordingly using the Gemini API by running a customized script.
-
-The extracted data is hosted in Firebase for deployment purpose.
+> 💡 **Technical Deep Dive:** Read our comprehensive review on the [SRS Algorithm Design & Component Test Architecture](./docs/testing-and-srs-assessment.md) to explore the Vitest implementation details.
 
 ## Table of Contents
 
@@ -117,10 +108,10 @@ The app will be available at `http://localhost:5173`.
 
 ## Features
 
-- **Bilingual Learning**: Finnish ↔ English vocabulary with contextual examples
-- **Category-Based Organization**: Learn by semantic topics (Family, Food, Travel) and grammar categories (Nouns, Verbs, etc.)
-- **Spaced Repetition System**: Basic review scheduling for vocabulary retention
+- **Bilingual Learning**: Finnish ↔ English vocabulary with contextual examples. The vocabulary cards are shown randomly in each session to prevent memorization by order, ensuring a more effective learning experience. The cons of this feature are not having the audio pronunciation yet due to limited resources.
 - **Smart Vocabulary Cards**: Swipeable cards with pronunciation guides and part-of-speech information
+- **Spaced Repetition System**: Basic review scheduling for vocabulary retention
+- **Category-Based Organization**: Learn by semantic topics (Family, Food, Travel) and grammar categories (Nouns, Verbs, etc.)
 - **User Authentication**: Google Sign-In for personalized learning
 - **Favorites & Folders**: Save and organize personal vocabulary collections
 - **Admin Vocabulary Management**: Edit and manage vocabulary database (admin only)

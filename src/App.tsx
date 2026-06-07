@@ -17,6 +17,7 @@ import {
 } from "./utils/translations";
 import { VocabularyWord, Category, UserFolder } from "./types";
 import { VocabularyManager } from "./components/VocabularyManager";
+import { getSmartSession } from "./utils/session";
 
 const MAX_REVIEW_WORDS = 20;
 
@@ -82,26 +83,10 @@ export default function App() {
     })
     .slice(0, MAX_REVIEW_WORDS);
 
-  const getSessionWords = (updatedSessionWords?: VocabularyWord[]) => {
-    const wordsToUse = updatedSessionWords || allWords;
-    const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
-
-    // Prioritize hard words (grade <= 2)
-    const hardWords = wordsToUse.filter((word) => history[word.id]?.grade <= 2);
-
-    // Add new words not yet reviewed
-    const newWords = wordsToUse.filter((word) => !history[word.id]);
-
-    // Fill up to MAX_REVIEW_WORDS
-    const sessionWords = [...hardWords, ...newWords].slice(0, MAX_REVIEW_WORDS);
-
-    return sessionWords;
+  const getSessionWords = () => {
+    return getSmartSession(allWords, MAX_REVIEW_WORDS);
   };
 
-  useEffect(() => {
-    const words = getSessionWords();
-    setSessionWords(words);
-  }, [allWords, reviewedWordIds]); // Update when dependencies change
 
   useEffect(() => {
     if (!authLoading && !vocabLoading && currentView === "loading") {
@@ -250,6 +235,7 @@ export default function App() {
   const resetReviewSession = async () => {
     await refresh(); // Fetch updated words from Firestore
     setReviewedWordIds(new Set());
+    setSessionWords(getSessionWords()); // Lock in the 20 words for this session here
     setCurrentView("review");
   };
 
