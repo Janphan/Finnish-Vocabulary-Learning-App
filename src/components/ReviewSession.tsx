@@ -6,14 +6,53 @@ interface Props {
   words: VocabularyWord[];
   onGrade: (word: VocabularyWord, grade: number) => void;
   onBack: () => void;
+  onReviewAgain: () => void;
 }
 
-export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
+export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [complete, setComplete] = useState(false);
   const [showHelp, setShowHelp] = useState(false); // Help modal state
   const [touchStartX, setTouchStartX] = useState(0);
+
+  const currentWord = words[currentIndex];
+
+  const handleGrade = (grade: number) => {
+    if (!currentWord) return;
+    onGrade(currentWord, grade); // Update Logic
+    setIsFlipped(false);
+    setTouchStartX(0);
+
+    if (currentIndex < words.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setComplete(true);
+    }
+  };
+
+  // Keyboard controls for desktop
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (words.length === 0 || complete) return; // Prevent keyboard actions if session is empty or done
+      if (!isFlipped) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault(); // Prevent scrolling
+          setIsFlipped(true);
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        handleGrade(1); // Forgot
+      } else if (e.key === 'ArrowRight') {
+        handleGrade(4); // Known
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFlipped, currentIndex, words, complete]); // Dependencies ensure latest handleGrade closure
 
   // Scenario: No words due
   if (words.length === 0) {
@@ -40,55 +79,32 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
   if (complete) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6 text-center">
-        <Brain className="w-12 h-12 text-blue-500 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Session Complete!
+        <div className="bg-yellow-100 p-6 rounded-full mb-6 animate-bounce">
+          <span className="text-6xl">🎉</span>
+        </div>
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+          Congratulations!
         </h2>
-        <button
-          onClick={onBack}
-          className="px-6 py-3 bg-blue-600 text-black rounded-xl font-medium"
-        >
-          Finish
-        </button>
+        <p className="text-gray-600 mb-8 max-w-sm text-lg">
+          You've completed your review session. Keep up the great work!
+        </p>
+        <div className="space-y-4 w-full max-w-xs">
+          <button
+            onClick={onReviewAgain}
+            className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            Review Again
+          </button>
+          <button
+            onClick={onBack}
+            className="w-full py-4 bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 rounded-2xl font-bold shadow-sm transform hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     );
   }
-
-  const currentWord = words[currentIndex];
-
-  const handleGrade = (grade: number) => {
-    onGrade(currentWord, grade); // Update Logic
-    setIsFlipped(false);
-    setTouchStartX(0);
-
-    if (currentIndex < words.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    } else {
-      setComplete(true);
-    }
-  };
-
-  // Keyboard controls for desktop
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isFlipped) {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault(); // Prevent scrolling
-          setIsFlipped(true);
-        }
-        return;
-      }
-
-      if (e.key === 'ArrowLeft') {
-        handleGrade(1); // Forgot
-      } else if (e.key === 'ArrowRight') {
-        handleGrade(4); // Known
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFlipped, currentIndex, words]); // Dependencies ensure latest handleGrade closure
 
   // Simple Touch Swipe Handlers (No visual drag animation)
   const handleTouchStart = (e: React.TouchEvent) => {
