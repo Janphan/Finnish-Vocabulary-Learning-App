@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Check, Brain, HelpCircle } from "lucide-react";
 import { VocabularyWord } from "../types";
 
@@ -13,6 +13,7 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [complete, setComplete] = useState(false);
   const [showHelp, setShowHelp] = useState(false); // Help modal state
+  const [touchStartX, setTouchStartX] = useState(0);
 
   // Scenario: No words due
   if (words.length === 0) {
@@ -58,6 +59,7 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
   const handleGrade = (grade: number) => {
     onGrade(currentWord, grade); // Update Logic
     setIsFlipped(false);
+    setTouchStartX(0);
 
     if (currentIndex < words.length - 1) {
       setCurrentIndex((prev) => prev + 1);
@@ -65,6 +67,47 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
       setComplete(true);
     }
   };
+
+  // Keyboard controls for desktop
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isFlipped) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault(); // Prevent scrolling
+          setIsFlipped(true);
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        handleGrade(1); // Forgot
+      } else if (e.key === 'ArrowRight') {
+        handleGrade(4); // Known
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFlipped, currentIndex, words]); // Dependencies ensure latest handleGrade closure
+
+  // Simple Touch Swipe Handlers (No visual drag animation)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isFlipped || touchStartX === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const distance = touchStartX - touchEndX;
+
+    if (distance < -50) {
+      handleGrade(4); // Swipe Right -> Known
+    } else if (distance > 50) {
+      handleGrade(1); // Swipe Left -> Forgot
+    }
+    setTouchStartX(0);
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 flex flex-col max-w-lg mx-auto">
@@ -86,8 +129,10 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
 
       {/* Flashcard Area */}
       <div
-        onClick={() => setIsFlipped(!isFlipped)}
-        className="flex-1 bg-white rounded-3xl shadow-lg border border-gray-100 p-8 flex flex-col items-center justify-center text-center cursor-pointer mb-8 min-h-[300px]"
+        onClick={() => !isFlipped && setIsFlipped(true)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        className="relative flex-1 bg-white rounded-3xl shadow-lg border border-gray-100 p-8 flex flex-col items-center justify-center text-center cursor-pointer mb-8 min-h-[300px]"
       >
         <span className="text-sm uppercase tracking-wider text-gray-400 font-semibold mb-4">
           {isFlipped ? "English" : "Finnish"}
@@ -106,36 +151,31 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
       {isFlipped ? (
         <div className="space-y-3">
           <p className="text-center text-sm text-gray-600 mb-4">
-            How well did you know this word?
+            Did you remember it correctly? (Swipe, use arrows, or buttons)
           </p>
           <div className="flex justify-center gap-3">
             <button
               onClick={() => handleGrade(1)}
-              className="px-6 py-3 bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-gray-900 rounded-full font-semibold shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-200"
+              className="flex-1 py-3 bg-red-100 text-red-700 hover:bg-red-200 rounded-2xl font-semibold shadow-sm transform hover:scale-105 active:scale-95 transition-all duration-200"
             >
-              Hard
+              👈 ❌ Forgot
             </button>
             <button
-              onClick={() => handleGrade(3)}
-              className="px-6 py-3 bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-gray-900 rounded-full font-semibold shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-200"
+              onClick={() => handleGrade(4)}
+              className="flex-1 py-3 bg-green-100 text-green-700 hover:bg-green-200 rounded-2xl font-semibold shadow-sm transform hover:scale-105 active:scale-95 transition-all duration-200"
             >
-              Good
-            </button>
-            <button
-              onClick={() => handleGrade(5)}
-              className="px-6 py-3 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-gray-900 rounded-full font-semibold shadow-lg transform hover:scale-110 active:scale-95 transition-all duration-200"
-            >
-              Easy
+              ✅ Known 👉
             </button>
           </div>
         </div>
       ) : (
-        <button
-          onClick={() => setIsFlipped(true)}
-          className="w-full py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-black rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
-        >
-          Show Answer
-        </button>
+          <button
+            onClick={() => setIsFlipped(true)}
+            className="w-full py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            Show Answer
+            <span className="hidden sm:inline font-normal text-gray-300 ml-2 text-sm">(Press Space)</span>
+          </button>
       )}
 
       {/* Help Modal */}
@@ -144,18 +184,17 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
           <div className="bg-white rounded-lg p-6 max-w-md">
             <h3 className="font-bold mb-4">How Grading Works</h3>
             <p className="text-sm mb-4">
-              Rate each word based on difficulty. Lower ratings mean you'll see
-              it sooner for practice.
+              Once you reveal the answer, evaluate your memory:
             </p>
             <ul className="text-sm space-y-1">
               <li>
-                <strong>1-2:</strong> Hard - Review soon
+                <strong>Space / Enter:</strong> Flip the card to show the answer.
               </li>
               <li>
-                <strong>3:</strong> Good - Standard interval
+                <strong>Swipe Left / ← Arrow (Forgot):</strong> You'll see this word again tomorrow.
               </li>
               <li>
-                <strong>4-5:</strong> Easy - Longer intervals
+                <strong>Swipe Right / → Arrow (Known):</strong> The interval before the next review increases.
               </li>
             </ul>
             <button
