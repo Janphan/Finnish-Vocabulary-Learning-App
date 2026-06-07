@@ -132,7 +132,8 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
         onClick={() => !isFlipped && setIsFlipped(true)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative flex-1 bg-white rounded-3xl shadow-lg border border-gray-100 p-8 flex flex-col items-center justify-center text-center cursor-pointer mb-8 min-h-[300px]"
+        style={{ touchAction: 'pan-y' }}
+        className="relative flex-1 bg-white rounded-3xl shadow-lg border border-gray-100 p-6 flex flex-col items-center justify-center text-center cursor-pointer mb-6 min-h-[250px] md:min-h-[300px]"
       >
         <span className="text-sm uppercase tracking-wider text-gray-400 font-semibold mb-4">
           {isFlipped ? "English" : "Finnish"}
@@ -150,21 +151,21 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
       {/* Grading Buttons */}
       {isFlipped ? (
         <div className="space-y-3">
-          <p className="text-center text-sm text-gray-600 mb-4">
-            Did you remember it correctly? (Swipe, use arrows, or buttons)
+          <p className="text-center text-sm text-gray-600 mb-2">
+            Did you remember it correctly?
           </p>
           <div className="flex justify-center gap-3">
             <button
               onClick={() => handleGrade(1)}
-              className="flex-1 py-3 bg-red-100 text-red-700 hover:bg-red-200 rounded-2xl font-semibold shadow-sm transform hover:scale-105 active:scale-95 transition-all duration-200"
+              className="flex-1 py-3 bg-red-100 text-red-700 hover:bg-red-200 rounded-2xl font-semibold shadow-sm transform active:scale-95 transition-all duration-200"
             >
-              👈 ❌ Forgot
+              ❌ Forgot
             </button>
             <button
               onClick={() => handleGrade(4)}
-              className="flex-1 py-3 bg-green-100 text-green-700 hover:bg-green-200 rounded-2xl font-semibold shadow-sm transform hover:scale-105 active:scale-95 transition-all duration-200"
+              className="flex-1 py-3 bg-green-100 text-green-700 hover:bg-green-200 rounded-2xl font-semibold shadow-sm transform active:scale-95 transition-all duration-200"
             >
-              ✅ Known 👉
+              ✅ Known
             </button>
           </div>
         </div>
