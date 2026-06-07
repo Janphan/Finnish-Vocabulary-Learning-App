@@ -28,20 +28,13 @@ export const getSmartSession = (
   const shuffledNormalWords = shuffle(normalWords);
 
   //Combine Review words, with hard word in priority
-  let session = [...shuffledHardWords, ...shuffledNormalWords, ...newWordsPool];
+  let session = [...shuffledHardWords, ...shuffledNormalWords];
   //Boredom Killer: If not enough 20 words, add new words
   if (session.length < limit) {
-    const suffledNewWords = shuffle(newWordsPool);
+    const shuffledNewWords = shuffle(newWordsPool);
     const needed = limit - session.length;
-    session = [...session, ...suffledNewWords.slice(0, needed)];
+    session = [...session, ...shuffledNewWords.slice(0, needed)];
   }
-  //Backup: If not enough 20 words - User learns all new + due words
-  if (session.length < limit) {
-    const remainingOverdue = learnedWordsPool.filter(w => !session.includes(w))
-      .sort((a, b) => new Date(a.nextReviewDate!).getTime() - new Date(b.nextReviewDate!).getTime())
-    const needed = limit - session.length;
-    session = [...session, ...remainingOverdue.slice(0, needed)];
 
-  }
   return session.slice(0, limit);
 };
