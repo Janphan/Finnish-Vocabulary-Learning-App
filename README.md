@@ -7,7 +7,20 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.3-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A modern React-based app for learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
+Inspired by personal need to learn Finnish vocabulary and an interest in flashcard methodology, this modern React-based app facilitates learning Finnish vocabulary with spaced repetition, Firebase integration, and bilingual support.
+
+The raw data is from Kaikki.org. After the process of extracting, the data is converted into JSON, with the requirement of these fields:
+- Be a Finnish word, not borrowed word from other language, for example, from English
+- Have the English translation, and not be a proper noun
+- Have the part of speech (e.g., noun, verb, adjective) and its corresponding emoji
+- Have example sentences
+- Not repetition due to word conjunction.
+
+Difficulty in data cleansing: The raw data was in massive size (23Gb) and inconsistent. It was also in a format that was not directly usable, requiring extensive parsing and transformation. This made the initial data processing a significant challenge, taking several weeks to complete. Also, there were a lot of words without proper examples. 
+
+For this no example-situation, it was then used Gemini to generate a English example for each word accordingly using the Gemini API by running a customized script.
+
+The extracted data is hosted in Firebase for deployment purpose.
 
 ## Table of Contents
 
@@ -18,10 +31,6 @@ A modern React-based app for learning Finnish vocabulary with spaced repetition,
 - [Project Structure](#project-structure)
 - [Data Pipeline](#data-pipeline)
 - [Categories](#categories)
-- [Data Schema & Customization](#data-schema--customization)
-- [User Experience](#user-experience)
-- [Development](#development)
-- [Deployment](#deployment)
 - [Future Improvements](#future-improvements)
 - [Getting Started](#getting-started)
 - [Contributing](CONTRIBUTING.md)
@@ -306,78 +315,6 @@ The sample data includes vocabulary from these categories:
 - **Travel** (matka)
 - **Emotions** (rakastaa)
 
-**Difficulty Levels:**
-
-- **Beginner**: Basic vocabulary (14 words)
-- **Intermediate**: More advanced terms (6 words)
-
-**Total Demo Words**: 20 vocabulary entries with example sentences
-
-<details>
-<summary>📚 Click to view data schema for custom categories</summary>
-
-**Category Document Structure:**
-
-```json
-{
-  "id": "string", // Unique category identifier
-  "name": "string", // Display name (e.g., "Family & People")
-  "count": "number", // Number of words in category
-  "emoji": "string", // Category emoji
-  "description": "string" // Optional description
-}
-```
-
-**Adding Custom Categories:**
-
-1. Create category documents in Firestore `categories` collection
-2. Reference category IDs in vocabulary `categoryId` fields
-3. The app will automatically display your custom categories
-
-</details>
-
-[↑ Back to Top](#table-of-contents)
-
----
-
-## Data Schema & Customization
-
-<details>
-<summary>🔧 Click to view data schema and customization options</summary>
-
-**Complete Vocabulary Schema:**
-
-```json
-{
-  "id": "string", // Unique identifier (required)
-  "finnish": "string", // Finnish word (required)
-  "english": "string", // English translation (required)
-  "partOfSpeech": "string", // "noun", "verb", "adjective", etc. (optional)
-  "difficulty": "string", // "beginner", "intermediate", "advanced" (required)
-  "categoryId": "string", // Category identifier (required)
-  "examples": ["string"] // Array of example sentences (optional)
-}
-```
-
-**Uploading Custom Data:**
-
-1. **Prepare your data** as JSON array following the schema above
-2. **Create Firebase project** and enable Firestore
-3. **Upload to Firestore** under the `vocabulary` collection
-4. **Add categories** to the `categories` collection if needed
-5. **Configure environment** with your Firebase credentials
-
-**Data Validation:**
-
-- All vocabulary entries must have `id`, `finnish`, `english`, `difficulty`, and `categoryId`
-- Example sentences should be natural Finnish phrases using the vocabulary word
-- Category IDs should match documents in your `categories` collection
-
-**Sample Implementation:**
-See `sample-data.json` for 20 complete examples with proper formatting and realistic example sentences.
-
-</details>
-
 [↑ Back to Top](#table-of-contents)
 
 ---
@@ -501,28 +438,6 @@ npm run deploy  # For GitHub Pages
 - **Advanced Analytics** - Learning curves, retention rates, and weak points identification
 - **AI-Powered Recommendations** - Personalized word suggestions based on learning patterns
 - **Conjugation Practice** - Interactive verb and noun inflection exercises
-
-**Mobile & Accessibility:**
-
-- **Progressive Web App** - Installable mobile app with offline functionality
-- **Dark Mode** - Eye-friendly interface for evening study sessions
-- **Accessibility** - Screen reader support and keyboard navigation improvements
-- **Native Mobile App** - iOS and Android apps with push notifications
-
-**Content & Features:**
-
-- **Conversational Finnish** - Common phrases and dialogue practice
-- **Cultural Context** - Finnish customs, history, and cultural notes
-- **Reading Comprehension** - Short Finnish stories and articles
-- **Multiple Languages** - Expand beyond English to support other native languages
-- **Community Features** - User-generated content and shared learning paths
-
-**Technical Enhancements:**
-
-- **Performance Optimization** - Faster loading and smoother animations
-- **Advanced Search** - Full-text search across all vocabulary and examples
-- **Export/Import** - Personal vocabulary lists and progress backup
-- **Sync with Language Tools** - Integration with Anki, Quizlet, or language learning platforms
 
 </details>
 
