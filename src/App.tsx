@@ -204,6 +204,9 @@ export default function App() {
   const handleSmartReview = async (word: VocabularyWord, grade: number) => {
     if (!currentUser) return;
     const updates = calculateReview(word, grade);
+
+    handleWordUpdate({ ...word, ...updates });
+
     await FirebaseVocabularyService.updateWord(
       currentUser.uid,
       word.id,
