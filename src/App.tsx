@@ -336,6 +336,7 @@ export default function App() {
           sessionWords={sessionWords}
           onGrade={handleSmartReview}
           onBack={() => setCurrentView("categories")}
+          onReviewAgain={resetReviewSession}
         />
       )}
 
