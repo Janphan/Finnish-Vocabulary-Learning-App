@@ -20,3 +20,18 @@ After being evaluated, the grade will be calculated by calculateReview function 
 - Swipe right (Known): Grade 4. The algorithm will increase the repetition and the interval. 
 Also, the easinessFactor will be calculated (HOW?)
 
+-- 
+# Review Session Logic
+There are 20 random cards to review each time. A word marked as "Known" will be reviewed after a certain interval. A word marked as "Forgot" will be reviewed the next day. The session ends when all 20 cards are reviewed.
+
+Use case 1: User stops in the middle of the session
+- Current implementation: Save-as-you-go, when the user stops, the grade of the word will be sent to the server.
+Use case 2: User takes many review session in a day
+- Current implementation: The system will provide 20 new words for each session.
+
+Use case 3: User wants to review known words
+- Current implementation: The system will not provide known words for review, unless the user specifically requests to review them.
+Reason to choose: To ensure that the user focuses on learning new or difficult words, and to prevent overwhelming them with already mastered vocabulary.
+Trade-offs: Need to review consistently to remember
+
+
