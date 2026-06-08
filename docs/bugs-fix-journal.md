@@ -1,4 +1,4 @@
-## 6th June 2026
+## 7th June 2026
 # Fix: Review Session incorrectly repeats words on the same day & deck resuffling
 
 # Fix: Function shuffle using Math.random() - 0.5
@@ -30,3 +30,31 @@ Facing "Rendered fewer hooks than expected" error while implementing this screen
 Not in loop, if switch, nested function or after an early return.
 
 2. Only call Hooks from React Functions: In React Function Components or Custom Hooks
+
+# Fix: ReviewSession.tsx - Keyboard event handling for flipping and grading
+
+Allow user to flip a card repeatedly before deciding to swipe
+
+**Learning:** Functional Update
+
+```
+if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault(); // Prevent scrolling
+        setIsFlipped((prev) => !prev);
+        return;
+      }
+
+      if (!isFlipped) return; // Allow grading only when the answer is revealed
+
+```
+
+setIsFlipped((prev) => !prev); -> change the status of the current card. For example, if the card is opened then close.
+
+## 8th June 2026
+
+# Review Again feature after finishing Review Session
+  - Reset `currentIndex` to 0
+  - Reset `isFlipped` to false
+  - Reset `complete` to false
+
+

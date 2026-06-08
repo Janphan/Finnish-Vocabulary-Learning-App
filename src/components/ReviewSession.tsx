@@ -6,10 +6,9 @@ interface Props {
   words: VocabularyWord[];
   onGrade: (word: VocabularyWord, grade: number) => void;
   onBack: () => void;
-  onReviewAgain: () => void;
 }
 
-export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) => {
+export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [complete, setComplete] = useState(false);
@@ -35,13 +34,14 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (words.length === 0 || complete) return; // Prevent keyboard actions if session is empty or done
-      if (!isFlipped) {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault(); // Prevent scrolling
-          setIsFlipped(true);
-        }
+
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault(); // Prevent scrolling
+        setIsFlipped((prev) => !prev);
         return;
       }
+
+      if (!isFlipped) return; // Allow grading only when the answer is revealed
 
       if (e.key === 'ArrowLeft') {
         handleGrade(1); // Forgot
@@ -90,8 +90,12 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
         </p>
         <div className="space-y-4 w-full max-w-xs">
           <button
-            onClick={onReviewAgain}
-            className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
+            onClick={() => {
+              setCurrentIndex(0);
+              setIsFlipped(false);
+              setComplete(false);
+            }}
+            className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-black rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             Review Again
           </button>
@@ -145,7 +149,7 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
 
       {/* Flashcard Area */}
       <div
-        onClick={() => !isFlipped && setIsFlipped(true)}
+        onClick={() => setIsFlipped(!isFlipped)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{ touchAction: 'pan-y' }}
