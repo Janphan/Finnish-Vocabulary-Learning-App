@@ -6,9 +6,10 @@ interface Props {
   words: VocabularyWord[];
   onGrade: (word: VocabularyWord, status: "known" | "forgot") => void;
   onBack: () => void;
+  onReviewAgain?: () => void;
 }
 
-export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
+export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [complete, setComplete] = useState(false);
@@ -91,9 +92,13 @@ export const ReviewSession = ({ words, onGrade, onBack }: Props) => {
         <div className="space-y-4 w-full max-w-xs">
           <button
             onClick={() => {
-              setCurrentIndex(0);
-              setIsFlipped(false);
-              setComplete(false);
+              if (onReviewAgain) {
+                onReviewAgain(); // Lấy 20 từ tiếp theo để học
+              } else {
+                setCurrentIndex(0);
+                setIsFlipped(false);
+                setComplete(false);
+              }
             }}
             className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-black rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >

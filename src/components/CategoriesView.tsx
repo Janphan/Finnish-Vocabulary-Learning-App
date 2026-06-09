@@ -2,13 +2,14 @@ import { CategoryList } from "./CategoryList";
 import { Coffee, Globe, Folder, Brain, LogOut } from "lucide-react";
 import { translations, Language } from "../utils/translations";
 import { User } from "firebase/auth";
+import { Category, VocabularyWord } from "../types";
 
 interface Props {
-  categories: any[];
-  vocabularyWords: any[];
+  categories: Category[];
+  vocabularyWords: VocabularyWord[];
   selectedDifficulty: "beginner" | "intermediate" | "advanced" | "all";
   language: Language;
-  categoryTranslations: any;
+  categoryTranslations: Record<Language, Record<string, string>>;
   onSelectCategory: (id: string) => void;
   onToggleLanguage: () => void;
   onOpenFolders: () => void;

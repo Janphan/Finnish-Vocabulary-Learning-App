@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  collection, 
-  getDocs, 
-  query, 
-  where, 
-  orderBy, 
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
   limit as firestoreLimit,
   onSnapshot,
-  Unsubscribe 
+  Unsubscribe
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { VocabularyWord } from '../types';
@@ -47,33 +47,7 @@ export function useFirestoreVocabulary(options: {
       setLoading(true);
       setError(null);
 
-      // Check cache first
-      const cacheKey = 'vocabularyCache';
-      const cachedData = localStorage.getItem(cacheKey);
-      const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-
-      if (cachedData) {
-        try {
-          const { words: cachedWords, categories: cachedCategories, timestamp } = JSON.parse(cachedData);
-          const now = Date.now();
-          
-          if (now - timestamp < CACHE_DURATION) {
-            console.log('📚 Using cached vocabulary data');
-            setWords(cachedWords);
-            setCategories(cachedCategories);
-            setLoading(false);
-            return;
-          } else {
-            console.log('📚 Cache expired, fetching fresh data');
-            localStorage.removeItem(cacheKey);
-          }
-        } catch (parseError) {
-          console.warn('📚 Invalid cache data, clearing and fetching fresh');
-          localStorage.removeItem(cacheKey);
-        }
-      }
-
-      console.log('🔥 Loading vocabulary from Firestore...');
+      console.log(' Loading vocabulary from Firestore...');
 
       // Build vocabulary query
       const vocabularyRef = collection(db, 'vocabulary');
@@ -83,7 +57,7 @@ export function useFirestoreVocabulary(options: {
       if (categoryFilter) {
         vocabularyQuery = query(vocabularyQuery, where('categories', 'array-contains', categoryFilter));
       }
-      
+
       if (difficultyFilter && difficultyFilter !== 'all') {
         vocabularyQuery = query(vocabularyQuery, where('difficulty', '==', difficultyFilter));
       }
@@ -117,26 +91,13 @@ export function useFirestoreVocabulary(options: {
 
       console.log(`🏷️ Loaded ${categoriesData.length} categories from Firestore`);
 
-      // Cache the data
-      try {
-        const cacheData = {
-          words: vocabularyData,
-          categories: categoriesData,
-          timestamp: Date.now()
-        };
-        localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-        console.log('📚 Data cached successfully');
-      } catch (storageError) {
-        console.warn('📚 Failed to cache data:', storageError);
-      }
-
       setWords(vocabularyData);
       setCategories(categoriesData);
 
     } catch (err) {
       console.error('❌ Failed to load vocabulary from Firestore:', err);
       setError(err instanceof Error ? err.message : 'Failed to load vocabulary');
-      
+
       // Fallback to empty data
       setWords([]);
       setCategories([]);
@@ -171,8 +132,7 @@ export function useFirestoreVocabulary(options: {
   }, []);
 
   const refresh = useCallback(async () => {
-    console.log('🔄 Clearing cache and refreshing data');
-    localStorage.removeItem('vocabularyCache');
+    console.log('🔄 Refreshing data');
     await loadVocabulary();
   }, [loadVocabulary]);
 
@@ -191,7 +151,7 @@ export function useFirestoreVocabulary(options: {
       if (categoryFilter) {
         vocabularyQuery = query(vocabularyQuery, where('categories', 'array-contains', categoryFilter));
       }
-      
+
       if (difficultyFilter && difficultyFilter !== 'all') {
         vocabularyQuery = query(vocabularyQuery, where('difficulty', '==', difficultyFilter));
       }
@@ -202,13 +162,13 @@ export function useFirestoreVocabulary(options: {
         firestoreLimit(pageSize)
       );
 
-      vocabularyUnsubscribe = onSnapshot(vocabularyQuery, 
+      vocabularyUnsubscribe = onSnapshot(vocabularyQuery,
         (snapshot) => {
           const vocabularyData = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
           })) as VocabularyWord[];
-          
+
           console.log(`🔥 Real-time update: ${vocabularyData.length} words`);
           setWords(vocabularyData);
         },
@@ -226,7 +186,7 @@ export function useFirestoreVocabulary(options: {
             id: doc.id,
             ...doc.data()
           })) as Category[];
-          
+
           console.log(`🔥 Real-time update: ${categoriesData.length} categories`);
           setCategories(categoriesData);
         },

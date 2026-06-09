@@ -1,9 +1,9 @@
-import React from "react";
 import { PracticeQuiz } from "../PracticeGame/PracticeQuiz";
+import { VocabularyWord } from "../types";
 
 interface Props {
-  quizWords: any[];
-  allWords: any[];
+  quizWords: VocabularyWord[];
+  allWords: VocabularyWord[];
   onBack: () => void;
 }
 

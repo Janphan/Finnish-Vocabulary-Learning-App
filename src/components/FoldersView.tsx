@@ -1,12 +1,12 @@
-import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { FolderManager } from "./FolderManager";
 import { translations, Language } from "../utils/translations";
+import { UserFolder, VocabularyWord } from "../types";
 
 interface Props {
-  folders: any[];
+  folders: UserFolder[];
   favorites: Set<string>;
-  vocabularyWords: any[];
+  vocabularyWords: VocabularyWord[];
   language: Language;
   onBack: () => void;
   onCreateFolder: (name: string) => void;

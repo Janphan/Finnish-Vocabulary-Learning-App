@@ -201,24 +201,22 @@ export default function App() {
   );
 
   // Save review results in localStorage or Firestore
-  const handleSmartReview = async (word: VocabularyWord, grade: number) => {
+  const handleSmartReview = async (word: VocabularyWord, status: "known" | "forgot") => {
     if (!currentUser) return;
-    const updates = calculateReview(word, grade);
+    const updates = calculateReview(word, status);
 
     handleWordUpdate({ ...word, ...updates });
 
-    await FirebaseVocabularyService.updateWord(
-      currentUser.uid,
-      word.id,
-      updates
-    );
-
-    // Save review history locally
     const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
-    history[word.id] = { grade, reviewedAt: new Date().toISOString() };
+    history[word.id] = { status, reviewedAt: new Date().toISOString() };
     localStorage.setItem("reviewHistory", JSON.stringify(history));
 
     setReviewedWordIds((prev) => new Set(prev).add(word.id));
+    FirebaseVocabularyService.updateWord(
+      currentUser.uid,
+      word.id,
+      updates
+    ).catch((err) => console.log("Sync delayed (offline):", err));
   };
 
   // Handle word updates from review session
@@ -235,8 +233,7 @@ export default function App() {
     }
   };
 
-  const resetReviewSession = async () => {
-    await refresh(); // Fetch updated words from Firestore
+  const resetReviewSession = () => {
     setReviewedWordIds(new Set());
     setSessionWords(getSessionWords()); // Lock in the 20 words for this session here
     setCurrentView("review");
