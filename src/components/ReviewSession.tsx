@@ -4,9 +4,9 @@ import { VocabularyWord } from "../types";
 
 interface Props {
   words: VocabularyWord[];
-  onGrade: (word: VocabularyWord, grade: number) => void;
+  onGrade: (word: VocabularyWord, status: "known" | "forgot") => void;
   onBack: () => void;
-  onReviewAgain: () => void;
+  onReviewAgain?: () => void;
 }
 
 export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) => {
@@ -18,9 +18,9 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
 
   const currentWord = words[currentIndex];
 
-  const handleGrade = (grade: number) => {
+  const handleGrade = (status: "known" | "forgot") => {
     if (!currentWord) return;
-    onGrade(currentWord, grade); // Update Logic
+    onGrade(currentWord, status); // Update Logic
     setIsFlipped(false);
     setTouchStartX(0);
 
@@ -35,18 +35,19 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (words.length === 0 || complete) return; // Prevent keyboard actions if session is empty or done
-      if (!isFlipped) {
-        if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault(); // Prevent scrolling
-          setIsFlipped(true);
-        }
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault(); // Prevent scrolling
+        setIsFlipped((prev) => !prev);
         return;
       }
 
+      if (!isFlipped) return; // Allow grading only when the answer is revealed
+
       if (e.key === 'ArrowLeft') {
-        handleGrade(1); // Forgot
+        handleGrade("forgot"); // Forgot
       } else if (e.key === 'ArrowRight') {
-        handleGrade(4); // Known
+        handleGrade("known"); // Known
       }
     };
 
@@ -90,8 +91,16 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
         </p>
         <div className="space-y-4 w-full max-w-xs">
           <button
-            onClick={onReviewAgain}
-            className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
+            onClick={() => {
+              if (onReviewAgain) {
+                onReviewAgain(); // Lấy 20 từ tiếp theo để học
+              } else {
+                setCurrentIndex(0);
+                setIsFlipped(false);
+                setComplete(false);
+              }
+            }}
+            className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-black rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             Review Again
           </button>
@@ -117,9 +126,9 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
     const distance = touchStartX - touchEndX;
 
     if (distance < -50) {
-      handleGrade(4); // Swipe Right -> Known
+      handleGrade("known"); // Swipe Right -> Known
     } else if (distance > 50) {
-      handleGrade(1); // Swipe Left -> Forgot
+      handleGrade("forgot"); // Swipe Left -> Forgot
     }
     setTouchStartX(0);
   };
@@ -145,7 +154,7 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
 
       {/* Flashcard Area */}
       <div
-        onClick={() => !isFlipped && setIsFlipped(true)}
+        onClick={() => setIsFlipped(!isFlipped)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{ touchAction: 'pan-y' }}
@@ -172,13 +181,13 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
           </p>
           <div className="flex justify-center gap-3">
             <button
-              onClick={() => handleGrade(1)}
+              onClick={() => handleGrade("forgot")}
               className="flex-1 py-3 bg-red-100 text-red-700 hover:bg-red-200 rounded-2xl font-semibold shadow-sm transform active:scale-95 transition-all duration-200"
             >
               ❌ Forgot
             </button>
             <button
-              onClick={() => handleGrade(4)}
+              onClick={() => handleGrade("known")}
               className="flex-1 py-3 bg-green-100 text-green-700 hover:bg-green-200 rounded-2xl font-semibold shadow-sm transform active:scale-95 transition-all duration-200"
             >
               ✅ Known
@@ -191,7 +200,7 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
             className="w-full py-4 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-2xl font-bold shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             Show Answer
-            <span className="hidden sm:inline font-normal text-gray-300 ml-2 text-sm">(Press Space)</span>
+            <span className="hidden sm:inline font-normal text-gray-300 ml-2 text-sm">(Press ↑/↓)</span>
           </button>
       )}
 
@@ -205,7 +214,7 @@ export const ReviewSession = ({ words, onGrade, onBack, onReviewAgain }: Props) 
             </p>
             <ul className="text-sm space-y-1">
               <li>
-                <strong>Space / Enter:</strong> Flip the card to show the answer.
+                <strong>↑ / ↓ Arrows:</strong> Flip the card to show the answer.
               </li>
               <li>
                 <strong>Swipe Left / ← Arrow (Forgot):</strong> You'll see this word again tomorrow.

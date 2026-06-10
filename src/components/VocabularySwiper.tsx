@@ -255,7 +255,7 @@ export function VocabularySwiper({
         <EditWordModal
           word={currentWord}
           onClose={() => setShowEditModal(false)}
-          onSave={(updatedWord: any) => {
+          onSave={(updatedWord: VocabularyWord) => {
             onWordUpdate(updatedWord);
             setShowEditModal(false);
           }}

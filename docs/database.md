@@ -22,7 +22,11 @@ Stores all vocabulary words available in the app.
   "partOfSpeech": "string?", // noun, verb, adjective, etc.
   "difficulty": "string", // Difficulty level (beginner/intermediate/advanced)
   "categoryId": "string", // Primary category ID
-  "examples": ["string"] // Example sentences (currently empty array)
+  "categories": ["string"], // Array of category IDs
+  "exampleSentence": "string", // Primary example sentence
+  "examples": ["string"], // Additional example sentences
+  "frequency": "number", // Word frequency for sorting
+  "difficultyScore": "number" // Difficulty rating
 }
 ```
 
@@ -79,12 +83,13 @@ Stores user account data and preferences.
 
 #### `users/{userId}/srsWords` Subcollection
 
-Stores Spaced Repetition System (SRS) data for each word per user.
+Stores Spaced Repetition System (SRS) data for each word per user. The Document ID in this subcollection matches exactly with the `wordId` from the global vocabulary collection.
 
 **Document Structure:**
 
 ```json
 {
+  // Document ID: {wordId}
   "interval": "number", // Current interval in days
   "repetitions": "number", // Streak of correct answers
   "easinessFactor": "number", // Multiplier (starts at 2.5)

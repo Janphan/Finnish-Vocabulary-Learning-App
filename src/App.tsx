@@ -16,7 +16,7 @@ import {
   Language,
 } from "./utils/translations";
 import { VocabularyWord, Category, UserFolder } from "./types";
-import { VocabularyManager } from "./components/VocabularyManager";
+import { AdminDashboard } from "./components/AdminDashboard";
 import { getSmartSession } from "./utils/session";
 
 const MAX_REVIEW_WORDS = 20;
@@ -46,20 +46,22 @@ export default function App() {
   );
   const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]);
   const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
+  const [categories, setCategories] = useState<Category[]>([]); // Local state for optimistic updates
   const [mode, setMode] = useState<"home" | "review" | "manager">("home");
 
   const t = translations[language];
 
   const {
     words: fetchedWords,
-    categories,
+    categories: fetchedCategories,
     loading: vocabLoading,
     refresh,
   } = useFirestoreVocabulary({});
 
   useEffect(() => {
     setAllWords(fetchedWords);
-  }, [fetchedWords]);
+    setCategories(fetchedCategories);
+  }, [fetchedWords, fetchedCategories]);
 
   const getDueWords = () => {
     const now = new Date();
@@ -201,24 +203,22 @@ export default function App() {
   );
 
   // Save review results in localStorage or Firestore
-  const handleSmartReview = async (word: VocabularyWord, grade: number) => {
+  const handleSmartReview = async (word: VocabularyWord, status: "known" | "forgot") => {
     if (!currentUser) return;
-    const updates = calculateReview(word, grade);
+    const updates = calculateReview(word, status);
 
     handleWordUpdate({ ...word, ...updates });
 
-    await FirebaseVocabularyService.updateWord(
-      currentUser.uid,
-      word.id,
-      updates
-    );
-
-    // Save review history locally
     const history = JSON.parse(localStorage.getItem("reviewHistory") || "{}");
-    history[word.id] = { grade, reviewedAt: new Date().toISOString() };
+    history[word.id] = { status, reviewedAt: new Date().toISOString() };
     localStorage.setItem("reviewHistory", JSON.stringify(history));
 
     setReviewedWordIds((prev) => new Set(prev).add(word.id));
+    FirebaseVocabularyService.updateWord(
+      currentUser.uid,
+      word.id,
+      updates
+    ).catch((err) => console.log("Sync delayed (offline):", err));
   };
 
   // Handle word updates from review session
@@ -235,8 +235,7 @@ export default function App() {
     }
   };
 
-  const resetReviewSession = async () => {
-    await refresh(); // Fetch updated words from Firestore
+  const resetReviewSession = () => {
     setReviewedWordIds(new Set());
     setSessionWords(getSessionWords()); // Lock in the 20 words for this session here
     setCurrentView("review");
@@ -245,6 +244,15 @@ export default function App() {
   // Handle deletions locally
   const handleWordDelete = (id: string) => {
     setAllWords((prev) => prev.filter((w) => w.id !== id));
+  };
+
+  const handleCategoryUpdate = (updatedCategory: Category) => {
+    // Update local state
+    setCategories((prev) =>
+      prev.map((c) => (c.id === updatedCategory.id ? updatedCategory : c))
+    );
+    // The EditCategoryModal already handles the Firestore update.
+    // This handler is just for updating the UI state in App.tsx.
   };
 
   const isAdmin =
@@ -351,11 +359,13 @@ export default function App() {
 
       {/* MANAGER SCREEN */}
       {mode === "manager" && (
-        <VocabularyManager
+        <AdminDashboard
           words={allWords}
+          categories={categories}
           onBack={() => setMode("home")}
-          onWordUpdate={handleWordUpdate} // The same update function we wrote before
+          onWordUpdate={handleWordUpdate}
           onWordDelete={handleWordDelete}
+          onCategoryUpdate={handleCategoryUpdate}
           currentUser={currentUser}
         />
       )}
