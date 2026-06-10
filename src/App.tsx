@@ -16,7 +16,7 @@ import {
   Language,
 } from "./utils/translations";
 import { VocabularyWord, Category, UserFolder } from "./types";
-import { VocabularyManager } from "./components/VocabularyManager";
+import { AdminDashboard } from "./components/AdminDashboard";
 import { getSmartSession } from "./utils/session";
 
 const MAX_REVIEW_WORDS = 20;
@@ -348,10 +348,11 @@ export default function App() {
 
       {/* MANAGER SCREEN */}
       {mode === "manager" && (
-        <VocabularyManager
+        <AdminDashboard
           words={allWords}
+          categories={categories}
           onBack={() => setMode("home")}
-          onWordUpdate={handleWordUpdate} // The same update function we wrote before
+          onWordUpdate={handleWordUpdate}
           onWordDelete={handleWordDelete}
           currentUser={currentUser}
         />
