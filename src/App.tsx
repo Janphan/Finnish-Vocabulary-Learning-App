@@ -46,20 +46,22 @@ export default function App() {
   );
   const [sessionWords, setSessionWords] = useState<VocabularyWord[]>([]);
   const [allWords, setAllWords] = useState<VocabularyWord[]>([]); // Your full word list
+  const [categories, setCategories] = useState<Category[]>([]); // Local state for optimistic updates
   const [mode, setMode] = useState<"home" | "review" | "manager">("home");
 
   const t = translations[language];
 
   const {
     words: fetchedWords,
-    categories,
+    categories: fetchedCategories,
     loading: vocabLoading,
     refresh,
   } = useFirestoreVocabulary({});
 
   useEffect(() => {
     setAllWords(fetchedWords);
-  }, [fetchedWords]);
+    setCategories(fetchedCategories);
+  }, [fetchedWords, fetchedCategories]);
 
   const getDueWords = () => {
     const now = new Date();
@@ -244,6 +246,15 @@ export default function App() {
     setAllWords((prev) => prev.filter((w) => w.id !== id));
   };
 
+  const handleCategoryUpdate = (updatedCategory: Category) => {
+    // Update local state
+    setCategories((prev) =>
+      prev.map((c) => (c.id === updatedCategory.id ? updatedCategory : c))
+    );
+    // The EditCategoryModal already handles the Firestore update.
+    // This handler is just for updating the UI state in App.tsx.
+  };
+
   const isAdmin =
     currentUser && currentUser.uid === import.meta.env.VITE_ADMIN_UID;
 
@@ -354,6 +365,7 @@ export default function App() {
           onBack={() => setMode("home")}
           onWordUpdate={handleWordUpdate}
           onWordDelete={handleWordDelete}
+          onCategoryUpdate={handleCategoryUpdate}
           currentUser={currentUser}
         />
       )}

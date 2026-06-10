@@ -11,6 +11,7 @@ interface Props {
   onBack: () => void;
   onWordUpdate: (word: VocabularyWord) => void;
   onWordDelete: (id: string) => void;
+  onCategoryUpdate: (category: Category) => void;
   currentUser: User | null;
 }
 
@@ -22,6 +23,7 @@ export const AdminDashboard = ({
   onBack,
   onWordUpdate,
   onWordDelete,
+  onCategoryUpdate,
   currentUser,
 }: Props) => {
   const [activeTab, setActiveTab] = useState<AdminTab>("vocabulary");
@@ -40,14 +42,14 @@ export const AdminDashboard = ({
             </button>
           </div>
           <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <nav className="-mb-px flex space-x-6" aria-label="Tabs">
               <button
                 onClick={() => setActiveTab("vocabulary")}
                 className={`${
                   activeTab === "vocabulary"
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200 hover:bg-gray-50"
+                } whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-md transition-colors`}
               >
                 Vocabulary ({words.length})
               </button>
@@ -56,8 +58,8 @@ export const AdminDashboard = ({
                 className={`${
                   activeTab === "categories"
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200 hover:bg-gray-50"
+                } whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-md transition-colors`}
               >
                 Categories ({categories.length})
               </button>
@@ -66,8 +68,8 @@ export const AdminDashboard = ({
                 className={`${
                   activeTab === "users"
                     ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200 hover:bg-gray-50"
+                } whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-md transition-colors`}
               >
                 Users
               </button>
@@ -87,7 +89,9 @@ export const AdminDashboard = ({
               currentUser={currentUser}
             />
           )}
-          {activeTab === "categories" && <CategoryManager categories={categories} />}
+          {activeTab === "categories" && (
+            <CategoryManager categories={categories} onCategoryUpdate={onCategoryUpdate} />
+          )}
           {activeTab === "users" && <UserManager />}
         </div>
       </div>
